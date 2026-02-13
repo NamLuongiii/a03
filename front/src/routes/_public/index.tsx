@@ -1,5 +1,6 @@
 import {createFileRoute} from '@tanstack/react-router'
 import styled from "styled-components";
+import {FeaturedItems, Footer, Hero} from "@components";
 
 export const Route = createFileRoute('/_public/')({
     component: Index,
@@ -9,7 +10,12 @@ export const Route = createFileRoute('/_public/')({
 function Index() {
 
     return <Screen>
-        hello
+        <Hero />
+        <FeaturedItems />
+        <FeaturedItems />
+        <FeaturedItems />
+
+        <Footer />
     </Screen>
 }
 
