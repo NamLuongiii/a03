@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: back
+      target: dev
+      dockerfile: Dockerfile
+    volumes:
+      - ./back:/app
+      - go_cache:/go
+    ports:
+      - "8080:8080"
+    env_file:
+      - back/.env.dev
+
+volumes:
+  go_cache:

@@ -1,0 +1,37 @@
+package types
+
+import "github.com/golang-jwt/jwt/v5"
+
+type CommonResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+	Data    any    `json:"data,omitempty"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+type SignUpDto struct {
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
+
+type AuthClaims struct {
+	Email string `json:"Email"`
+	ID    int    `json:"ID"`
+	jwt.RegisteredClaims
+}
+
+type ProfileDto struct {
+	Name      string `json:"name"`
+	BirthYear int    `json:"birth_year"`
+}
+
+type ActivityDto struct {
+	LessonName  string `json:"lesson_name"`
+	EarnedStars int    `json:"earned_stars"`
+	Result      string `json:"result"`
+}

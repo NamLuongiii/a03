@@ -1,0 +1,4 @@
+profile page
+    if profile is null redirect to profile selection
+    display profile
+    call api load activity
