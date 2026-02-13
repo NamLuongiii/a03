@@ -20,25 +20,6 @@ import (
 // Database instance
 var db *gorm.DB
 
-// CORSMiddleware handles CORS
-func CORSMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		origin := c.Request.Header.Get("Origin")
-
-		c.Header("Access-Control-Allow-Origin", origin)
-		c.Header("Access-Control-Allow-Credentials", "true")
-		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Header("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
-		c.Next()
-	}
-}
-
 //	@title		My API
 //	@version	1.0
 //	@BasePath	/api/v1
@@ -63,7 +44,6 @@ func main() {
 	migrateErr := db.AutoMigrate(
 		&models.Account{},
 		&models.Profile{},
-		&models.Activity{},
 		&models.OTP{})
 
 	if migrateErr != nil {
@@ -86,18 +66,15 @@ func main() {
 
 	// Initialize repositories
 	accountRepo := models.NewAccountRepository(db)
-	profileRepo := models.CreateProfileRepository(db)
-	activityRepo := models.NewActivityRepository(db)
 	OTPRepo := models.NewOTPRepository(db)
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(mailHandler, accountRepo, OTPRepo)
-	profileHandler := handlers.NewProfileHandler(&profileRepo, &activityRepo)
 
 	router := gin.Default()
 
 	// Add CORS middleware
-	router.Use(CORSMiddleware())
+	router.Use(middleware.CORSMiddleware())
 
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
@@ -114,17 +91,6 @@ func main() {
 			auth.POST("/ask-reset-password", authHandler.RequestChangePassword)
 			auth.POST("/verify-OTP", authHandler.VerifyOTP)
 			auth.POST("/reset-password", authHandler.ResetPassword)
-		}
-
-		// Profile routes
-		profile := v1.Group("/profiles")
-		{
-			profile.GET("", middleware.RequiredAuth(), profileHandler.GetProfiles)
-			profile.POST("", middleware.RequiredAuth(), profileHandler.CreateProfile)
-			profile.PUT("/:id", middleware.RequiredAuth(), profileHandler.UpdateProfile)
-			profile.DELETE("/:id", middleware.RequiredAuth(), profileHandler.DeleteProfile)
-			profile.GET("/:id/activities", middleware.RequiredAuth(), profileHandler.GetActivities)
-			profile.POST("/:id/activities", middleware.RequiredAuth(), profileHandler.SaveActivity)
 		}
 	}
 

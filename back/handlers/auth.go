@@ -192,7 +192,7 @@ func (h *AuthHandler) RequestChangePassword(c *gin.Context) {
 //
 //	@Summary	Verify OTP
 //	@Tags		auth
-//	@Router	/auth/verify-OTP [post]
+//	@Router		/auth/verify-OTP [post]
 //	@Param		verifyOTP	body	dtos.VerifyOTP	true	"OTP code"
 func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 

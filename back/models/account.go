@@ -9,11 +9,11 @@ import (
 )
 
 type Account struct {
-	ID        int       `json:"id" gorm:"primaryKey;autoIncrement:true"`
-	Name      string    `json:"name" gorm:"not null"`
-	Email     string    `json:"email" gorm:"unique"`
-	HPassword string    `json:"-" gorm:"column:h_password;not null"`
-	Profiles  []Profile `json:"profiles" gorm:"foreignKey:AccountID"`
+	ID        int     `json:"id" gorm:"primaryKey;autoIncrement:true"`
+	Name      string  `json:"name" gorm:"not null"`
+	Email     string  `json:"email" gorm:"unique"`
+	HPassword string  `json:"-" gorm:"column:h_password;not null"`
+	Profile   Profile `json:"profile" gorm:"foreignKey:AccountID"`
 }
 
 type AccountRepositoryInterface interface {

@@ -29,50 +29,18 @@ definitions:
         type: integer
       name:
         type: string
-      profiles:
-        items:
-          $ref: '#/definitions/models.Profile'
-        type: array
-    type: object
-  models.Activity:
-    properties:
-      earned_stars:
-        type: integer
-      id:
-        type: integer
-      lesson_name:
-        type: string
-      log_at:
-        type: string
-      profile_id:
-        type: integer
-      result:
-        type: string
+      profile:
+        $ref: '#/definitions/models.Profile'
     type: object
   models.Profile:
     properties:
       account_id:
         type: integer
-      activities:
-        items:
-          $ref: '#/definitions/models.Activity'
-        type: array
-      birth_year:
-        type: integer
+      avatar:
+        type: string
       id:
-        type: integer
+        type: string
       name:
-        type: string
-      stars:
-        type: integer
-    type: object
-  types.ActivityDto:
-    properties:
-      earned_stars:
-        type: integer
-      lesson_name:
-        type: string
-      result:
         type: string
     type: object
   types.CommonResponse:
@@ -92,13 +60,6 @@ definitions:
     required:
     - email
     - password
-    type: object
-  types.ProfileDto:
-    properties:
-      birth_year:
-        type: integer
-      name:
-        type: string
     type: object
   types.SignUpDto:
     properties:
@@ -200,94 +161,6 @@ paths:
       summary: Verify OTP
       tags:
       - auth
-  /profiles:
-    get:
-      responses: {}
-      security:
-      - BearerAuth: []
-      summary: Get account profiles
-      tags:
-      - Profile
-    post:
-      parameters:
-      - description: Profile dto
-        in: body
-        name: profile
-        required: true
-        schema:
-          $ref: '#/definitions/types.ProfileDto'
-      responses: {}
-      security:
-      - BearerAuth: []
-      summary: Create a new profile
-      tags:
-      - Profile
-  /profiles/{id}:
-    delete:
-      parameters:
-      - description: Profile ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses: {}
-      security:
-      - BearerAuth: []
-      summary: Delete profile
-      tags:
-      - Profile
-    put:
-      parameters:
-      - description: Profile ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Profile dto
-        in: body
-        name: profile
-        required: true
-        schema:
-          $ref: '#/definitions/types.ProfileDto'
-      responses: {}
-      security:
-      - BearerAuth: []
-      summary: Update profile
-      tags:
-      - Profile
-  /profiles/{id}/activities:
-    get:
-      parameters:
-      - description: Profile ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses: {}
-      security:
-      - BearerAuth: []
-      summary: Get activities of a profile
-      tags:
-      - Profile
-    post:
-      parameters:
-      - description: Profile ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Activity dto
-        in: body
-        name: activity
-        required: true
-        schema:
-          $ref: '#/definitions/types.ActivityDto'
-      responses: {}
-      security:
-      - BearerAuth: []
-      summary: Save activity of a profile
-      tags:
-      - Profile
 securityDefinitions:
   BearerAuth:
     description: Type only token (not include Bearer)

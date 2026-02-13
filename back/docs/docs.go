@@ -147,149 +147,6 @@ const docTemplate = `{
                 ],
                 "responses": {}
             }
-        },
-        "/profiles": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "tags": [
-                    "Profile"
-                ],
-                "summary": "Get account profiles",
-                "responses": {}
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "tags": [
-                    "Profile"
-                ],
-                "summary": "Create a new profile",
-                "parameters": [
-                    {
-                        "description": "Profile dto",
-                        "name": "profile",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.ProfileDto"
-                        }
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/profiles/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "tags": [
-                    "Profile"
-                ],
-                "summary": "Update profile",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Profile ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Profile dto",
-                        "name": "profile",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.ProfileDto"
-                        }
-                    }
-                ],
-                "responses": {}
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "tags": [
-                    "Profile"
-                ],
-                "summary": "Delete profile",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Profile ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/profiles/{id}/activities": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "tags": [
-                    "Profile"
-                ],
-                "summary": "Get activities of a profile",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Profile ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {}
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "tags": [
-                    "Profile"
-                ],
-                "summary": "Save activity of a profile",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Profile ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Activity dto",
-                        "name": "activity",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.ActivityDto"
-                        }
-                    }
-                ],
-                "responses": {}
-            }
         }
     },
     "definitions": {
@@ -338,34 +195,8 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "profiles": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Profile"
-                    }
-                }
-            }
-        },
-        "models.Activity": {
-            "type": "object",
-            "properties": {
-                "earned_stars": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "lesson_name": {
-                    "type": "string"
-                },
-                "log_at": {
-                    "type": "string"
-                },
-                "profile_id": {
-                    "type": "integer"
-                },
-                "result": {
-                    "type": "string"
+                "profile": {
+                    "$ref": "#/definitions/models.Profile"
                 }
             }
         },
@@ -375,36 +206,13 @@ const docTemplate = `{
                 "account_id": {
                     "type": "integer"
                 },
-                "activities": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Activity"
-                    }
-                },
-                "birth_year": {
-                    "type": "integer"
+                "avatar": {
+                    "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "stars": {
-                    "type": "integer"
-                }
-            }
-        },
-        "types.ActivityDto": {
-            "type": "object",
-            "properties": {
-                "earned_stars": {
-                    "type": "integer"
-                },
-                "lesson_name": {
-                    "type": "string"
-                },
-                "result": {
                     "type": "string"
                 }
             }
@@ -432,17 +240,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "types.ProfileDto": {
-            "type": "object",
-            "properties": {
-                "birth_year": {
-                    "type": "integer"
-                },
-                "name": {
                     "type": "string"
                 }
             }
