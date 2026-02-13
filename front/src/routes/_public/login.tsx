@@ -7,8 +7,6 @@ import {toast} from "react-toastify";
 import {z} from "zod";
 import styled from "styled-components";
 import {Input} from "../../components/ui/Input.tsx";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEnvelope, faLock} from "@fortawesome/free-solid-svg-icons";
 import {Button} from "../../components/ui/Button.tsx";
 import {useAuth} from "../../auth.tsx";
 
@@ -51,20 +49,17 @@ function RouteComponent() {
             <h1>Welcome Back!</h1>
             <div>Sign in to continue your learning journey</div>
 
-            <Input id='email' icon={
-                <FontAwesomeIcon icon={faEnvelope}/>
-            } label="Email" inputProps={{
-                ...register('email'),
-                placeholder: 'Enter your email',
-                type: 'email',
-            }}/>
-            <Input id='password' icon={<FontAwesomeIcon icon={faLock}/>} label="Password"
-                   inputProps={{
-                       ...register('password'),
-                       placeholder: 'Enter your password',
-                       type: 'password',
-                   }}/>
-            <Button type="submit" disabled={isPending} isFullWidth>Login</Button>
+            <Input id='email' icon={<span/>} label="Email"
+                   {...register('email')}
+                   placeholder="Enter your email"
+                   type="email"
+            />
+            <Input id='password' icon={<span/>} label="Password"
+                   {...register('password')}
+                   placeholder="Enter your password"
+                   type="password"
+            />
+            <Button type="submit" disabled={isPending} fullWidth>Login</Button>
 
             <div>
                 Don't have an account? <StyledLink to="/register">Register</StyledLink>

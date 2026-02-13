@@ -1,203 +1,80 @@
-
+/* Reset */
 *, *::before, *::after {
     box-sizing: border-box;
-}
-
-* {
     margin: 0;
+    padding: 0;
 }
 
 body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     line-height: 1.5;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    line-height: 1.2;
-    text-wrap: balance;
-}
-
-p, h1, h2, h3, h4, h5, h6 {
-    overflow-wrap: break-word;
-}
-
-p {
-    text-wrap: pretty;
-}
-
-image, picture, video, canvas, svg {
+img, picture, video, canvas, svg {
     display: block;
     max-width: 100%;
 }
 
 input, button, textarea, select {
     font: inherit;
-    display: block;
 }
 
 button {
     cursor: pointer;
-    border: none;
-    outline: none;
-    padding: .2rem .5rem;
-    border-radius: .2rem;
-    transition: opacity .2s ease-in-out;
 }
 
-button:hover {
-    opacity: .9;
-}
-
-a {
-    color: inherit;
-    text-decoration: none;
-}
-
-
+/* CSS Variables */
 :root {
-    --bg-header: #FFFFFF; /* Header */
-
-    /* Brand */
-    --color-primary: #38BDF8; /* Sky blue dịu, hiện đại */
-    --color-secondary: #4F46E5; /* Indigo sang, hợp SaaS */
+    /* Colors */
+    --color-primary: #38BDF8;
+    --color-secondary: #4F46E5;
 
     /* Background */
-    --bg-color: #F9FAFB; /* Rất sáng, sạch */
-    --surface-color: #FFFFFF; /* Card / Modal */
+    --bg-color: #F9FAFB;
+    --bg-header: #FFFFFF;
+    --surface-color: #FFFFFF;
 
     /* Text */
-    --text-color: #111827; /* Gần đen, đọc tốt */
-    --text-muted: #6B7280; /* Text phụ */
+    --text-color: #111827;
+    --text-muted: #6B7280;
 
-    /* Border & Overlay */
+    /* Border */
     --border-color: #E5E7EB;
-    --overlay-color: rgb(0 0 0 / 0.55);
 
     /* Shadow */
     --shadow-low: 0 1px 2px rgb(0 0 0 / 0.05);
     --shadow-high: 0 8px 24px rgb(0 0 0 / 0.08);
 
-    /* Gradient – Logo */
-    --gradient-logo: linear-gradient(
-            90deg,
-            #38BDF8 0%,
-            #4F46E5 100%
-    );
+    /* Gradient */
+    --gradient-logo: linear-gradient(90deg, #38BDF8 0%, #4F46E5 100%);
 
-    /* Gradient – Number / KPI */
-    --gradient-number: linear-gradient(
-            90deg,
-            #22D3EE 0%,
-            #38BDF8 50%,
-            #4F46E5 100%
-    );
-
-    /* Gradient – Accent / Badge */
-    --gradient-accent: linear-gradient(
-            135deg,
-            #A5F3FC 0%,
-            #C7D2FE 100%
-    );
-
-    /* Button – Primary */
-    --btn-primary-bg: #38BDF8;
+    /* Button */
     --btn-primary-text: #FFFFFF;
-    --btn-primary-hover: #0EA5E9;
-    --btn-primary-active: #0284C7;
-    --btn-primary-disabled: #BAE6FD;
-
-    /* Button – Secondary */
-    --btn-secondary-bg: #EEF2FF;
-    --btn-secondary-text: #4F46E5;
-    --btn-secondary-hover: #E0E7FF;
-    --btn-secondary-active: #C7D2FE;
-
-    /* Button – Ghost */
-    --btn-ghost-text: #111827;
-    --btn-ghost-hover: #F3F4F6;
-
-    /* Button – Danger */
-    --btn-danger-bg: #EF4444;
-    --btn-danger-text: #FFFFFF;
-    --btn-danger-hover: #DC2626;
-
-    --success-color: #22D3EE;
-    --error-color: #EF4444;
 }
 
-
+/* Dark Mode */
 html[aria-theme="dark"] {
-    /* Header */
-    --bg-header: #0F172A; /* Slate-900 */
-
-    /* Brand (giữ nguyên để nhận diện) */
     --color-primary: #38BDF8;
     --color-secondary: #6366F1;
 
-    /* Background */
-    --bg-color: #020617; /* Gần đen, rất sâu */
-    --surface-color: #020617; /* Card / Modal */
+    --bg-color: #020617;
+    --bg-header: #0F172A;
+    --surface-color: #020617;
 
-    /* Text */
-    --text-color: #E5E7EB; /* Gần trắng, dễ đọc */
-    --text-muted: #94A3B8; /* Text phụ */
+    --text-color: #E5E7EB;
+    --text-muted: #94A3B8;
 
-    /* Border & Overlay */
     --border-color: #1E293B;
-    --overlay-color: rgb(2 6 23 / 0.7);
 
-    /* Shadow (giảm mạnh trong dark mode) */
     --shadow-low: 0 1px 2px rgb(0 0 0 / 0.4);
     --shadow-high: 0 8px 24px rgb(0 0 0 / 0.6);
 
-    /* Gradient – Logo (tăng sáng nhẹ) */
-    --gradient-logo: linear-gradient(
-            90deg,
-            #60A5FA 0%,
-            #818CF8 100%
-    );
+    --gradient-logo: linear-gradient(90deg, #60A5FA 0%, #818CF8 100%);
 
-    /* Gradient – Number / KPI */
-    --gradient-number: linear-gradient(
-            90deg,
-            #22D3EE 0%,
-            #60A5FA 50%,
-            #818CF8 100%
-    );
-
-    /* Gradient – Accent / Badge */
-    --gradient-accent: linear-gradient(
-            135deg,
-            #164E63 0%,
-            #1E1B4B 100%
-    );
-
-    /* Button – Primary */
-    --btn-primary-bg: #38BDF8;
     --btn-primary-text: #020617;
-    --btn-primary-hover: #60A5FA;
-    --btn-primary-active: #0EA5E9;
-    --btn-primary-disabled: #075985;
-
-    /* Button – Secondary */
-    --btn-secondary-bg: #1E1B4B;
-    --btn-secondary-text: #E0E7FF;
-    --btn-secondary-hover: #312E81;
-    --btn-secondary-active: #4338CA;
-
-    /* Button – Ghost */
-    --btn-ghost-text: #E5E7EB;
-    --btn-ghost-hover: #020617;
-
-    /* Button – Danger */
-    --btn-danger-bg: #DC2626;
-    --btn-danger-text: #FFFFFF;
-    --btn-danger-hover: #B91C1C;
-}
-
-body {
-    color: var(--text-color);
-    background-color: var(--bg-color);
 }
 
 

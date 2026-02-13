@@ -1,19 +1,14 @@
 import {Link, useNavigate} from "@tanstack/react-router";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMoon, faSun} from "@fortawesome/free-regular-svg-icons";
 import {useAuth} from "../auth.tsx";
-import {useState} from "react";
 import styled from "styled-components";
 import Avatar from "boring-avatars";
 import {motion} from "motion/react"
 import {Button} from "./ui/Button.tsx";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-enum Theme {
-    LIGHT = 'light',
-    DARK = 'dark',
-}
+// enum Theme {
+//     LIGHT = 'light',
+//     DARK = 'dark',
+// }
 
 const HeaderStyled = styled.header`
     border-bottom: 1px solid var(--border-color);
@@ -41,8 +36,8 @@ const Logo = styled(Link)`
 `
 
 export function Header() {
-    const {isAuthenticated, logout, me, profile} = useAuth()
-    const [theme, setTheme] = useState<Theme>(Theme.LIGHT)
+    const {isAuthenticated, logout, me} = useAuth()
+    // const [theme, setTheme] = useState<Theme>(Theme.LIGHT)
     const navigate = useNavigate()
 
     const changeMode = () => {
@@ -54,7 +49,7 @@ export function Header() {
         } else {
             document.documentElement.setAttribute('aria-theme', 'dark');
         }
-        setTheme(currentTheme === 'dark' ? Theme.LIGHT : Theme.DARK)
+        // setTheme(currentTheme === 'dark' ? Theme.LIGHT : Theme.DARK)
     }
 
     const onLogin = () => {
@@ -65,13 +60,10 @@ export function Header() {
         navigate({to: '/register'}).then()
     }
 
-    const selectProfile = () => {
-        navigate({to: '/profile'})
-    }
 
     return (
         <HeaderStyled>
-            <Logo to="/">Kid Learning</Logo>
+            <Logo to="/">World</Logo>
 
             <motion.button
                 // whileHover={{
@@ -84,12 +76,9 @@ export function Header() {
                     marginLeft: 'auto'
                 }}
                 onClick={changeMode}>
-                {theme === Theme.LIGHT ? <FontAwesomeIcon icon={faMoon}/> : <FontAwesomeIcon icon={faSun}/>}
             </motion.button>
 
             {isAuthenticated ? <>
-                {profile ? <Link to='/summary'><Button type='button'>{profile.name}</Button></Link> :
-                    <Button onClick={selectProfile}>Select profile</Button>}
                 <Avatar name={me?.name} onClick={logout}>Logout</Avatar>
             </> : <>
                 <div style={{

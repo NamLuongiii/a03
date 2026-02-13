@@ -5,8 +5,6 @@ import {AuthService} from "../../services";
 import {toast} from "react-toastify";
 import styled from "styled-components";
 import {Input} from "../../components/ui/Input.tsx";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEnvelope, faLock, faUser} from "@fortawesome/free-solid-svg-icons";
 import {Button} from "../../components/ui/Button.tsx";
 
 export const Route = createFileRoute('/_public/register')({
@@ -51,34 +49,31 @@ function RouteComponent() {
             <Input
                 id='name'
                 label="Your name"
-                icon={<FontAwesomeIcon icon={faUser}/>}
-                inputProps={{
-                    type: 'text',
-                    placeholder: 'Enter your username',
-                    ...register('name')
-                }}/>
+                icon={<span/>}
+                required={true}
+                {...register('name')}
+                placeholder="Enter your username"
+                type="text"/>
 
             <Input
                 id='email'
                 label="Your email"
-                icon={<FontAwesomeIcon icon={faEnvelope}/>}
-                inputProps={{
-                    type: 'email',
-                    placeholder: 'Enter your email',
-                    ...register('email')
-                }}/>
+                icon={<span/>}
+                required={true}
+                {...register('email')}
+                placeholder="Enter your email"
+                type="email"/>
+
 
             <Input
                 id='password'
                 label="Your password"
-                icon={<FontAwesomeIcon icon={faLock}/>}
-                inputProps={{
-                    type: 'password',
-                    placeholder: 'Enter your password',
-                    ...register('password')
-                }}/>
+                icon={<span/>}
+                {...register('password')}
+                placeholder="Enter your password"
+                type="password"/>
 
-            <Button isFullWidth type="submit" disabled={isSubmitting}>Register</Button>
+            <Button fullWidth type="submit" disabled={isSubmitting}>Register</Button>
             <div>Already have an account? <StyledLink to="/login">Login</StyledLink></div>
         </RegisterForm>
     </div>

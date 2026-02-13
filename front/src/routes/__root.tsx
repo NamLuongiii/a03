@@ -1,8 +1,6 @@
-import {createRootRoute, Outlet, useNavigate} from '@tanstack/react-router'
+import {createRootRoute, Outlet} from '@tanstack/react-router'
 import {ErrorBoundary, type FallbackProps} from "react-error-boundary";
 import styled from "styled-components";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faHome} from "@fortawesome/free-solid-svg-icons";
 
 const FallbackStyled = styled.div`
     display: flex;
@@ -13,18 +11,11 @@ const FallbackStyled = styled.div`
 `
 
 function Fallback({error, resetErrorBoundary}: FallbackProps) {
-    const navigate = useNavigate();
 
-    const handleClick = () => {
-        navigate({to: '/'}).then(() => {
-            resetErrorBoundary();
-        });
-    }
     return (
         <FallbackStyled role="alert">
-            <FontAwesomeIcon icon={faHome} size='xl' onClick={handleClick}/>
             <p>Something went wrong:</p>
-            <pre>{error.message}</pre>
+            <pre>{(error as Error).message}</pre>
             <button type="button" onClick={resetErrorBoundary}>Retry</button>
         </FallbackStyled>
     );
