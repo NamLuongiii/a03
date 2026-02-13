@@ -17,7 +17,6 @@ const DialogContainer = styled.div`
     align-items: center;
     width: 100vw;
     height: 100vh;
-    background-color: var(--overlay-color)
 `
 
 const DialogPanelWithStyle = styled(DialogPanel)`

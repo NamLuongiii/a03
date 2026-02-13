@@ -12,15 +12,6 @@ export const Route = createFileRoute('/_auth')({
                     redirect: location.href,
                 },
             })
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-        } else if (!context.auth.profile && location.pathname !== '/profile') {
-            throw redirect({
-                to: '/profile',
-                search: {
-                    redirect: location.href
-                }
-            })
         }
     },
     component: AuthLayout,
