@@ -26,6 +26,12 @@ const Logo = styled(Link)`
     word-spacing: 2px;
 `
 
+const Container = styled.div`
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+`
+
 export function HeaderDesktop() {
     // const {isAuthenticated, logout, me} = useAuth()
     // // const [theme, setTheme] = useState<Theme>(Theme.LIGHT)
@@ -42,9 +48,11 @@ export function HeaderDesktop() {
     return (
         <HeaderStyled>
             <Logo to="/">BookOn</Logo>
-            <CategorySelect/>
 
-            <SearchBox/>
+            <Container>
+                <CategorySelect/>
+                <SearchBox/>
+            </Container>
 
 
             <HeaderUser/>
