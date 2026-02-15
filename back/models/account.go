@@ -4,16 +4,20 @@ import (
 	"errors"
 	"quickstart/functions"
 	"quickstart/types"
+	"time"
 
 	"gorm.io/gorm"
 )
 
 type Account struct {
-	ID        int     `json:"id" gorm:"primaryKey;autoIncrement:true"`
-	Name      string  `json:"name" gorm:"not null"`
-	Email     string  `json:"email" gorm:"unique"`
-	HPassword string  `json:"-" gorm:"column:h_password;not null"`
-	Profile   Profile `json:"profile" gorm:"foreignKey:AccountID"`
+	ID        int            `json:"id" gorm:"primaryKey;autoIncrement:true"`
+	Name      string         `json:"name" gorm:"type:varchar(150)"`
+	Email     string         `json:"email" gorm:"type:varchar(255);not null;uniqueIndex:idx_accounts_email"`
+	HPassword string         `json:"-" gorm:"column:password;type:varchar(255);not null"`
+	Profile   *Profile       `json:"profile,omitempty" gorm:"foreignKey:AccountID"`
+	CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
+	DeletedAt gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index:idx_accounts_deleted_at"`
 }
 
 type AccountRepositoryInterface interface {

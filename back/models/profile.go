@@ -1,12 +1,19 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Profile struct {
-	ID        string `json:"id" gorm:"primaryKey"`
-	Name      string `json:"name" gorm:"not null"`
-	Avatar    string `json:"avatar"`
-	AccountID int    `json:"account_id" gorm:"unique;not null"`
+	ID        int       `json:"id" gorm:"primaryKey;autoIncrement:true"`
+	AccountID int       `json:"account_id" gorm:"not null;uniqueIndex:idx_profiles_account_id"`
+	FullName  string    `json:"full_name" gorm:"type:varchar(150)"`
+	Avatar    string    `json:"avatar" gorm:"type:varchar(255)"`
+	Bio       string    `json:"bio" gorm:"type:text"`
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }
 
 type ProfileRepositoryInterface interface {

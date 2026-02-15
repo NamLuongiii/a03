@@ -44,7 +44,16 @@ func main() {
 	migrateErr := db.AutoMigrate(
 		&models.Account{},
 		&models.Profile{},
-		&models.OTP{})
+		&models.OTP{},
+		&models.Account{},
+		&models.DigitalBook{},
+		&models.FeaturedBookGroup{},
+		&models.FeaturedGroupBook{},
+		&models.Comment{},
+		&models.Book{},
+		&models.BookRating{},
+		&models.BookSeries{},
+		&models.Category{})
 
 	if migrateErr != nil {
 		log.Fatal("Failed to migrate database:", migrateErr)
@@ -67,14 +76,33 @@ func main() {
 	// Initialize repositories
 	accountRepo := models.NewAccountRepository(db)
 	OTPRepo := models.NewOTPRepository(db)
+	bookRepo := models.NewBookRepository(db)
+	bookSeriesRepo := models.NewBookSeriesRepository(db)
+	digitalBookRepo := models.NewDigitalBookRepository(db)
+	bookRatingRepo := models.NewBookRatingRepository(db)
+	categoryRepo := models.NewCategoryRepository(db)
+	commentRepo := models.NewCommentRepository(db)
+	featuredGroupRepo := models.NewFeaturedBookGroupRepository(db)
+	authorRepo := models.NewAuthorRepository(db)
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(mailHandler, accountRepo, OTPRepo)
 
+	bookHandler := handlers.NewBooksHandler(handlers.BookParams{
+		BookRepository:          bookRepo,
+		CategoryRepository:      categoryRepo,
+		AuthorRepository:        authorRepo,
+		CommentRepository:       commentRepo,
+		FeaturedGroupRepository: featuredGroupRepo,
+		DigitalBookRepository:   digitalBookRepo,
+		BookSeriesRepository:    bookSeriesRepo,
+		BookRatingRepository:    bookRatingRepo,
+	})
+
 	router := gin.Default()
 
 	// Add CORS middleware
-	router.Use(middleware.CORSMiddleware())
+	//router.Use(middleware.CORSMiddleware())
 
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
@@ -91,6 +119,12 @@ func main() {
 			auth.POST("/ask-reset-password", authHandler.RequestChangePassword)
 			auth.POST("/verify-OTP", authHandler.VerifyOTP)
 			auth.POST("/reset-password", authHandler.ResetPassword)
+		}
+
+		// Book routes
+		book := v1.Group("/books")
+		{
+			book.GET("/", bookHandler.GetBooks)
 		}
 	}
 
