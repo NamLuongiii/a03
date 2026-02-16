@@ -31,4 +31,8 @@ go.work.sum
 # .idea/
 # .vscode/
 
-src/back/app.db
+back/app.db
+browser-automation/package-lock.json
+browser-automation/pnpm-lock.yaml
+front/package-lock.json
+front/pnpm-lock.yaml
