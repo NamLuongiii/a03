@@ -147,6 +147,182 @@ const docTemplate = `{
                 ],
                 "responses": {}
             }
+        },
+        "/books": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get all books",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Book"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "Create a new book",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Book name",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Summary",
+                        "name": "summary",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category ID",
+                        "name": "category_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Author ID",
+                        "name": "author_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Cover image",
+                        "name": "cover",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.Book"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/books/authors/{authorID}": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get all authors",
+                "responses": {}
+            }
+        },
+        "/books/categories": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get all categories",
+                "responses": {}
+            }
+        },
+        "/books/featured": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get featured books",
+                "responses": {}
+            }
+        },
+        "/books/popular": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get popular books",
+                "responses": {}
+            }
+        },
+        "/books/{bookID}/comments": {
+            "post": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Add a comment to a book",
+                "responses": {}
+            }
+        },
+        "/books/{bookID}/ratings": {
+            "post": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Add a rating to a book",
+                "responses": {}
+            }
+        },
+        "/books/{bookId}/get-by-series": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get books in a series",
+                "responses": {}
+            }
+        },
+        "/books/{id}": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get a book by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
         }
     },
     "definitions": {
@@ -186,6 +362,9 @@ const docTemplate = `{
         "models.Account": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -197,6 +376,136 @@ const docTemplate = `{
                 },
                 "profile": {
                     "$ref": "#/definitions/models.Profile"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Author": {
+            "type": "object",
+            "properties": {
+                "country": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "summary": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Book": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "$ref": "#/definitions/models.Author"
+                },
+                "author_id": {
+                    "type": "string"
+                },
+                "category": {
+                    "description": "Relationships",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.Category"
+                        }
+                    ]
+                },
+                "category_id": {
+                    "type": "string"
+                },
+                "cover": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "integer"
+                },
+                "creator": {
+                    "$ref": "#/definitions/models.Account"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "download_nums": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_hidden": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rating_avg": {
+                    "type": "number"
+                },
+                "rating_count": {
+                    "type": "integer"
+                },
+                "series": {
+                    "$ref": "#/definitions/models.BookSeries"
+                },
+                "series_id": {
+                    "type": "string"
+                },
+                "summary": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "view_nums": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.BookSeries": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Category": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -209,10 +518,19 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
-                "id": {
+                "bio": {
                     "type": "string"
                 },
-                "name": {
+                "created_at": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }

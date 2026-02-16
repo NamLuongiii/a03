@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"os"
+	dbmigrate "quickstart/db"
 	"quickstart/docs"
 	"quickstart/env"
 	"quickstart/handlers"
@@ -18,7 +18,7 @@ import (
 )
 
 // Database instance
-var db *gorm.DB
+var database *gorm.DB
 
 //	@title		My API
 //	@version	1.0
@@ -34,39 +34,25 @@ func main() {
 
 	// Initialize Database
 	var dbErr error
-	db, dbErr = gorm.Open(sqlite.Open("app.db"), &gorm.Config{})
+	database, dbErr = gorm.Open(sqlite.Open("app.db"), &gorm.Config{})
 	if dbErr != nil {
 		log.Fatal("Failed to connect to database:", dbErr)
 		return
 	}
 
-	// Auto Migrate the schema
-	migrateErr := db.AutoMigrate(
-		&models.Account{},
-		&models.Profile{},
-		&models.OTP{},
-		&models.Account{},
-		&models.DigitalBook{},
-		&models.FeaturedBookGroup{},
-		&models.FeaturedGroupBook{},
-		&models.Comment{},
-		&models.Book{},
-		&models.BookRating{},
-		&models.BookSeries{},
-		&models.Category{})
-
-	if migrateErr != nil {
-		log.Fatal("Failed to migrate database:", migrateErr)
+	// Run migrations
+	if err := dbmigrate.RunMigrations(database); err != nil {
+		log.Fatal("Failed to run migrations:", err)
 		return
 	}
 
 	// Initialize mailer
 	mailClient, mailErr := mail.NewClient(
-		os.Getenv(env.MailHost),
+		env.GetEnv(env.MailHost),
 		mail.WithPort(587),
 		mail.WithSMTPAuth(mail.SMTPAuthPlain),
-		mail.WithUsername(os.Getenv(env.MailAddress)),
-		mail.WithPassword(os.Getenv(env.MailPassword)))
+		mail.WithUsername(env.GetEnv(env.MailAddress)),
+		mail.WithPassword(env.GetEnv(env.MailPassword)))
 	if mailErr != nil {
 		log.Fatal("failed to create mail client:", mailErr)
 		return
@@ -74,19 +60,27 @@ func main() {
 	mailHandler := handlers.NewMailHandler(mailClient)
 
 	// Initialize repositories
-	accountRepo := models.NewAccountRepository(db)
-	OTPRepo := models.NewOTPRepository(db)
-	bookRepo := models.NewBookRepository(db)
-	bookSeriesRepo := models.NewBookSeriesRepository(db)
-	digitalBookRepo := models.NewDigitalBookRepository(db)
-	bookRatingRepo := models.NewBookRatingRepository(db)
-	categoryRepo := models.NewCategoryRepository(db)
-	commentRepo := models.NewCommentRepository(db)
-	featuredGroupRepo := models.NewFeaturedBookGroupRepository(db)
-	authorRepo := models.NewAuthorRepository(db)
+	accountRepo := models.NewAccountRepository(database)
+	OTPRepo := models.NewOTPRepository(database)
+	bookRepo := models.NewBookRepository(database)
+	bookSeriesRepo := models.NewBookSeriesRepository(database)
+	digitalBookRepo := models.NewDigitalBookRepository(database)
+	bookRatingRepo := models.NewBookRatingRepository(database)
+	categoryRepo := models.NewCategoryRepository(database)
+	commentRepo := models.NewCommentRepository(database)
+	featuredGroupRepo := models.NewFeaturedBookGroupRepository(database)
+	authorRepo := models.NewAuthorRepository(database)
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(mailHandler, accountRepo, OTPRepo)
+
+	storage := handlers.NewFileStorage(
+		env.GetEnv(env.DOSpaceKey),
+		env.GetEnv(env.DOSpaceSecret),
+		env.GetEnv(env.DOSpaceBucket),
+		env.GetEnv(env.DOSpaceRegion),
+		env.GetEnv(env.DOSpaceEndpoint),
+	)
 
 	bookHandler := handlers.NewBooksHandler(handlers.BookParams{
 		BookRepository:          bookRepo,
@@ -97,6 +91,7 @@ func main() {
 		DigitalBookRepository:   digitalBookRepo,
 		BookSeriesRepository:    bookSeriesRepo,
 		BookRatingRepository:    bookRatingRepo,
+		FileStorage:             storage,
 	})
 
 	router := gin.Default()
@@ -125,6 +120,15 @@ func main() {
 		book := v1.Group("/books")
 		{
 			book.GET("/", bookHandler.GetBooks)
+			book.GET("/:id", bookHandler.GetBookByID)
+			book.POST("/", bookHandler.CreateBook)
+			book.GET("/featured", bookHandler.GetFeaturedBooks)
+			book.GET("/popular", bookHandler.GetPopularBooks)
+			book.GET("/categories", bookHandler.GetCategories)
+			book.GET("/authors/:authorID", bookHandler.GetAuthors)
+			book.POST("/:id/comments", bookHandler.AddComment)
+			book.POST("/:id/ratings", bookHandler.AddRating)
+			book.GET("/:id/get-by-series", bookHandler.GetBooksInSeries)
 		}
 	}
 

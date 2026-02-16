@@ -15,6 +15,7 @@ type BooksHandler struct {
 	digitalBookRepository   models.DigitalBookRepositoryInterface
 	bookSeriesRepository    models.BookSeriesRepositoryInterface
 	bookRatingRepository    models.BookRatingRepositoryInterface
+	fileStorage             FileStorageInterface
 }
 
 type BookParams struct {
@@ -26,6 +27,7 @@ type BookParams struct {
 	DigitalBookRepository   models.DigitalBookRepositoryInterface
 	BookSeriesRepository    models.BookSeriesRepositoryInterface
 	BookRatingRepository    models.BookRatingRepositoryInterface
+	FileStorage             FileStorageInterface
 }
 
 func NewBooksHandler(params BookParams) *BooksHandler {
@@ -38,42 +40,131 @@ func NewBooksHandler(params BookParams) *BooksHandler {
 		digitalBookRepository:   params.DigitalBookRepository,
 		bookSeriesRepository:    params.BookSeriesRepository,
 		bookRatingRepository:    params.BookRatingRepository,
+		fileStorage:             params.FileStorage,
 	}
 }
 
+// GetBooks godoc
+//
+//	@Summary	Get all books
+//	@Tags		books
+//	@Router		/books [get]
+//	@Success	200	{array}	models.Book	"OK"
 func (h *BooksHandler) GetBooks(c *gin.Context) {
 	books := make([]*models.Book, 0)
 	c.JSON(200, books)
 }
 
-func (h *BooksHandler) GetFeaturedBooks() bool {
-	return true
+// GetFeaturedBooks godoc
+//
+//	@Summary	Get featured books
+//	@Tags		books
+//	@Router		/books/featured [get]
+func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
+	return
 }
 
-func (h *BooksHandler) GetBookByID(id int) (*models.Book, error) {
-	return nil, nil
+// GetBookByID godoc
+//
+//	@Summary	Get a book by ID
+//	@Tags		books
+//	@Router		/books/{id} [get]
+//	@Param		id	path	int	true	"Book ID"
+func (h *BooksHandler) GetBookByID(c *gin.Context) {
+	return
 }
 
-func (h *BooksHandler) GetCategories() ([]*models.Category, error) {
-	return make([]*models.Category, 0), nil
+// GetCategories godoc
+//
+//	@Summary	Get all categories
+//	@Tags		books
+//	@Router		/books/categories [get]
+func (h *BooksHandler) GetCategories(c *gin.Context) {
+	return
 }
 
-func (h *BooksHandler) GetPopularBooks() ([]*models.Book, error) {
-	return make([]*models.Book, 0), nil
+// GetPopularBooks godoc
+//
+//	@Summary	Get popular books
+//	@Tags		books
+//	@Router		/books/popular [get]
+func (h *BooksHandler) GetPopularBooks(c *gin.Context) {
+	return
 }
 
-func (h *BooksHandler) GetAuthors() ([]*models.Author, error) {
-	return make([]*models.Author, 0), nil
+// GetAuthors godoc
+//
+//	@Summary	Get all authors
+//	@Tags		books
+//	@Router		/books/authors/{authorID} [get]
+func (h *BooksHandler) GetAuthors(c *gin.Context) {
+	return
 }
 
-func (h *BooksHandler) AddComment(bookId int, comment *models.Comment) error {
-	return nil
+// AddComment godoc
+//
+//	@Summary	Add a comment to a book
+//	@Tags		books
+//	@Router		/books/{bookID}/comments [post]
+func (h *BooksHandler) AddComment(c *gin.Context) {
+	return
 }
 
-func (h *BooksHandler) AddRating(bookId int, rating *models.BookRating) error {
-	return nil
+// AddRating godoc
+//
+//	@Summary	Add a rating to a book
+//	@Tags		books
+//	@Router		/books/{bookID}/ratings [post]
+func (h *BooksHandler) AddRating(c *gin.Context) {
+	return
 }
 
-func (h *BooksHandler) GetBooksInSeries(seriesId int) ([]*models.Book, error) {
-	return make([]*models.Book, 0), nil
+// GetBooksInSeries godoc
+//
+//	@Summary	Get books in a series
+//	@Tags		books
+//	@Router		/books/{bookId}/get-by-series [get]
+func (h *BooksHandler) GetBooksInSeries(c *gin.Context) {
+	return
+}
+
+// CreateBook godoc
+//
+//	@Summary	Create a new book
+//	@Tags		books
+//	@Router		/books [post]
+//	@Accept		multipart/form-data
+//	@Param		name		formData	string	true	"Book name"
+//	@Param		description	formData	string	false	"Description"
+//	@Param		summary		formData	string	false	"Summary"
+//	@Param		category_id	formData	string	true	"Category ID"
+//	@Param		author_id	formData	string	true	"Author ID"
+//	@Param		cover		formData	file	true	"Cover image"
+//	@Success	200			{object}	types.CommonResponse{data=models.Book}
+//	@Security	BearerAuth
+func (h *BooksHandler) CreateBook(c *gin.Context) {
+	// Get file from the form
+	file, err := c.FormFile("cover")
+	if err != nil {
+		c.JSON(400, gin.H{
+			"success": false,
+			"message": "Cover image is required",
+		})
+		return
+	}
+
+	// Upload file to DigitalOcean Spaces
+	coverURL, err := h.fileStorage.UploadFile(file, FolderBookCovers)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"success": false,
+			"message": "Failed to upload cover image: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"success": true,
+		"data":    coverURL,
+	})
 }

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"os"
 	"quickstart/env"
 
 	"github.com/wneessen/go-mail"
@@ -21,7 +20,7 @@ func NewMailHandler(client *mail.Client) *MailHandler {
 func (mh *MailHandler) SendMail(to string, subject string, body string) (err error) {
 	message := mail.NewMsg()
 
-	if err := message.From(os.Getenv(env.MailAddress)); err != nil {
+	if err := message.From(env.GetEnv(env.MailAddress)); err != nil {
 		return err
 	}
 	if err := message.To(to); err != nil {
