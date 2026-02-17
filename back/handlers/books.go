@@ -20,6 +20,7 @@ type BooksHandler struct {
 	bookSeriesRepository    models.BookSeriesRepositoryInterface
 	bookRatingRepository    models.BookRatingRepositoryInterface
 	fileStorage             FileStorageInterface
+	imageProcessor          ImageProcessorInterface
 }
 
 type BookParams struct {
@@ -32,6 +33,7 @@ type BookParams struct {
 	BookSeriesRepository    models.BookSeriesRepositoryInterface
 	BookRatingRepository    models.BookRatingRepositoryInterface
 	FileStorage             FileStorageInterface
+	ImageProcessor          ImageProcessorInterface
 }
 
 func NewBooksHandler(params BookParams) *BooksHandler {
@@ -45,6 +47,7 @@ func NewBooksHandler(params BookParams) *BooksHandler {
 		bookSeriesRepository:    params.BookSeriesRepository,
 		bookRatingRepository:    params.BookRatingRepository,
 		fileStorage:             params.FileStorage,
+		imageProcessor:          params.ImageProcessor,
 	}
 }
 
@@ -177,17 +180,23 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 
 	// Get digital book files
 	files, _ := mf.File["files"]
-	for _, file := range files {
-		url, e := h.fileStorage.UploadFile(file, FolderBookFiles)
+	for _, fh := range files {
+
+		file, err := fh.Open()
+		if err != nil {
+			c.Error(middleware.NewServerInternalError(err.Error()))
+			return
+		}
+		url, e := h.fileStorage.UploadFile(file, fh.Filename, FolderBookFiles)
 		if e != nil {
 			c.Error(middleware.NewServerInternalError(e.Error()))
 			return
 		}
 
 		db := models.DigitalBook{
-			Name:     file.Filename,
-			FileType: file.Header["Content-Type"][0],
-			FileSize: file.Size,
+			Name:     fh.Filename,
+			FileType: fh.Header["Content-Type"][0],
+			FileSize: fh.Size,
 			BookID:   book.ID,
 			URL:      url,
 		}

@@ -82,6 +82,8 @@ func main() {
 		env.GetEnv(env.DOSpaceEndpoint),
 	)
 
+	imageProcessor := handlers.NewImageProcessor()
+
 	bookHandler := handlers.NewBooksHandler(handlers.BookParams{
 		BookRepository:          bookRepo,
 		CategoryRepository:      categoryRepo,
@@ -92,10 +94,10 @@ func main() {
 		BookSeriesRepository:    bookSeriesRepo,
 		BookRatingRepository:    bookRatingRepo,
 		FileStorage:             storage,
+		ImageProcessor:          imageProcessor,
 	})
 
 	router := gin.Default()
-
 	router.Use(middleware.ErrorHandler())
 
 	// Add CORS middleware
@@ -121,7 +123,7 @@ func main() {
 		// Book routes
 		book := v1.Group("/books")
 		{
-			book.GET("/", bookHandler.GetBooks)
+			book.GET("", bookHandler.GetBooks)
 			book.GET("/:id", bookHandler.GetBookByID)
 			book.POST("", bookHandler.CreateBook)
 			book.GET("/featured", bookHandler.GetFeaturedBooks)
@@ -131,6 +133,12 @@ func main() {
 			book.POST("/:id/comments", bookHandler.AddComment)
 			book.POST("/:id/ratings", bookHandler.AddRating)
 			book.GET("/:id/get-by-series", bookHandler.GetBooksInSeries)
+		}
+
+		// Image processor
+		processor := v1.Group("/processor")
+		{
+			processor.POST("", imageProcessor.ProcessHandler)
 		}
 	}
 

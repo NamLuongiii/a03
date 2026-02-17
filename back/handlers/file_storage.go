@@ -1,18 +1,16 @@
 package handlers
 
 import (
-	"bytes"
 	"fmt"
-	"mime/multipart"
+	"io"
+	"mime"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/google/uuid"
 )
 
 type StorageFolder string
@@ -26,7 +24,7 @@ const (
 )
 
 type FileStorageInterface interface {
-	UploadFile(file *multipart.FileHeader, folder StorageFolder) (string, error)
+	UploadFile(reader io.ReadSeeker, fileName string, folder StorageFolder) (string, error)
 	DeleteFile(fileURL string, folder StorageFolder) error
 }
 
@@ -58,40 +56,42 @@ func NewFileStorage(accessKey, secretKey, bucketName, region, endpoint string) F
 	}
 }
 
-func (f *FileStorage) UploadFile(fileHeader *multipart.FileHeader, folder StorageFolder) (string, error) {
-	file, err := fileHeader.Open()
-	if err != nil {
-		return "", err
+func (f *FileStorage) UploadFile(
+	reader io.ReadSeeker,
+	fileName string,
+	folder StorageFolder,
+) (string, error) {
+	// generate filename
+	ext := filepath.Ext(fileName)
+
+	key := fmt.Sprintf("%s/%s", folder, fileName)
+
+	// detect content type (optional but recommended)
+	contentType := mime.TypeByExtension(ext)
+	if contentType == "" {
+		contentType = "application/octet-stream"
 	}
-	defer file.Close()
 
-	buffer := make([]byte, fileHeader.Size)
-	_, err = file.Read(buffer)
-	if err != nil {
-		return "", err
-	}
-
-	// Generate unique filename with folder path
-	ext := filepath.Ext(fileHeader.Filename)
-	filename := fmt.Sprintf("%d-%s%s", time.Now().Unix(), uuid.New().String(), ext)
-	key := fmt.Sprintf("%s/%s", folder, filename)
-
-	// Upload to DigitalOcean Spaces
-	_, err = f.s3Client.PutObject(&s3.PutObjectInput{
+	// upload directly (streaming)
+	_, err := f.s3Client.PutObject(&s3.PutObjectInput{
 		Bucket:             aws.String(f.bucketName),
 		Key:                aws.String(key),
-		Body:               bytes.NewReader(buffer),
+		Body:               reader,
 		ACL:                aws.String("public-read"),
-		ContentType:        aws.String(fileHeader.Header.Get("Content-Type")),
+		ContentType:        aws.String(contentType),
 		ContentDisposition: aws.String("inline"),
 	})
 	if err != nil {
 		return "", err
 	}
 
-	// Return the public URL
-	// Format: https://bucket.region.digitaloceanspaces.com/folder/file
-	publicURL := fmt.Sprintf("https://%s.%s.digitaloceanspaces.com/%s", f.bucketName, f.region, key)
+	publicURL := fmt.Sprintf(
+		"https://%s.%s.digitaloceanspaces.com/%s",
+		f.bucketName,
+		f.region,
+		key,
+	)
+
 	return publicURL, nil
 }
 

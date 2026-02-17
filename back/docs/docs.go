@@ -225,8 +225,7 @@ const docTemplate = `{
                         "collectionFormat": "csv",
                         "description": "Digital book files",
                         "name": "files",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -326,6 +325,24 @@ const docTemplate = `{
                         "description": "Book ID",
                         "name": "id",
                         "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/processor": {
+            "post": {
+                "tags": [
+                    "processor"
+                ],
+                "summary": "image processing flow",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Image to process",
+                        "name": "cover",
+                        "in": "formData",
                         "required": true
                     }
                 ],
