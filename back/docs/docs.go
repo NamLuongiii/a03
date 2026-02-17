@@ -203,20 +203,28 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Category ID",
                         "name": "category_id",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     },
                     {
                         "type": "string",
                         "description": "Author ID",
                         "name": "author_id",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     },
                     {
                         "type": "file",
                         "description": "Cover image",
                         "name": "cover",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "file"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Digital book files",
+                        "name": "files",
                         "in": "formData",
                         "required": true
                     }
@@ -426,7 +434,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "cover": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.Image"
+                },
+                "cover_id": {
+                    "type": "integer"
                 },
                 "created_at": {
                     "type": "string"
@@ -482,7 +493,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -505,6 +516,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Image": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "md": {
+                    "type": "string"
+                },
+                "sm": {
+                    "type": "string"
+                },
+                "xs": {
                     "type": "string"
                 }
             }

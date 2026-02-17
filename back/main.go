@@ -96,6 +96,8 @@ func main() {
 
 	router := gin.Default()
 
+	router.Use(middleware.ErrorHandler())
+
 	// Add CORS middleware
 	//router.Use(middleware.CORSMiddleware())
 
@@ -121,7 +123,7 @@ func main() {
 		{
 			book.GET("/", bookHandler.GetBooks)
 			book.GET("/:id", bookHandler.GetBookByID)
-			book.POST("/", bookHandler.CreateBook)
+			book.POST("", bookHandler.CreateBook)
 			book.GET("/featured", bookHandler.GetFeaturedBooks)
 			book.GET("/popular", bookHandler.GetPopularBooks)
 			book.GET("/categories", bookHandler.GetCategories)

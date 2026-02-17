@@ -23,6 +23,7 @@ type DigitalBook struct {
 
 type DigitalBookRepositoryInterface interface {
 	GetByID(id int) (*DigitalBook, error)
+	Create(book *DigitalBook) error
 }
 
 type DigitalBookRepository struct {
@@ -37,4 +38,9 @@ func (r *DigitalBookRepository) GetByID(id int) (*DigitalBook, error) {
 	var digitalBook DigitalBook
 	err := r.db.First(&digitalBook, id).Error
 	return &digitalBook, err
+}
+
+func (r *DigitalBookRepository) Create(book *DigitalBook) error {
+	err := r.db.Create(book).Error
+	return err
 }

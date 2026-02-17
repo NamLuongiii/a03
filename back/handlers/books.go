@@ -1,9 +1,13 @@
 package handlers
 
 import (
+	"net/http"
+	"quickstart/middleware"
 	"quickstart/models"
+	"quickstart/types"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gosimple/slug"
 )
 
 type BooksHandler struct {
@@ -137,34 +141,68 @@ func (h *BooksHandler) GetBooksInSeries(c *gin.Context) {
 //	@Param		name		formData	string	true	"Book name"
 //	@Param		description	formData	string	false	"Description"
 //	@Param		summary		formData	string	false	"Summary"
-//	@Param		category_id	formData	string	true	"Category ID"
-//	@Param		author_id	formData	string	true	"Author ID"
-//	@Param		cover		formData	file	true	"Cover image"
+//	@Param		category_id	formData	string	false	"Category ID"
+//	@Param		author_id	formData	string	false	"Author ID"
+//	@Param		cover		formData	file	false	"Cover image"
+//	@Param		files		formData	[]file	false	"Digital book files"
 //	@Success	200			{object}	types.CommonResponse{data=models.Book}
 //	@Security	BearerAuth
 func (h *BooksHandler) CreateBook(c *gin.Context) {
-	// Get file from the form
-	file, err := c.FormFile("cover")
-	if err != nil {
-		c.JSON(400, gin.H{
-			"success": false,
-			"message": "Cover image is required",
-		})
+	name := c.PostForm("name")
+
+	// create a book
+	book := &models.Book{
+		ID:   slug.Make(name),
+		Name: name,
+	}
+
+	e := h.bookRepository.Create(book)
+	if e != nil {
+		c.Error(middleware.NewServerInternalError(e.Error()))
 		return
 	}
 
-	// Upload file to DigitalOcean Spaces
-	coverURL, err := h.fileStorage.UploadFile(file, FolderBookCovers)
-	if err != nil {
-		c.JSON(500, gin.H{
-			"success": false,
-			"message": "Failed to upload cover image: " + err.Error(),
-		})
+	//cover, e := c.FormFile("cover")
+	//if e != nil {
+	//	c.Error(middleware.NewBadRequestError(e.Error()))
+	//	return
+	//}
+
+	// Get multipart form
+	mf, e := c.MultipartForm()
+	if e != nil {
+		c.Error(middleware.NewBadRequestError(e.Error()))
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"success": true,
-		"data":    coverURL,
+	// Get digital book files
+	files, _ := mf.File["files"]
+	for _, file := range files {
+		url, e := h.fileStorage.UploadFile(file, FolderBookFiles)
+		if e != nil {
+			c.Error(middleware.NewServerInternalError(e.Error()))
+			return
+		}
+
+		db := models.DigitalBook{
+			Name:     file.Filename,
+			FileType: file.Header["Content-Type"][0],
+			FileSize: file.Size,
+			BookID:   book.ID,
+			URL:      url,
+		}
+
+		er := h.digitalBookRepository.Create(&db)
+		if er != nil {
+			c.Error(middleware.NewServerInternalError(er.Error()))
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, types.CommonResponse{
+		Data:    book,
+		Success: true,
+		Message: "Book created",
 	})
+
 }

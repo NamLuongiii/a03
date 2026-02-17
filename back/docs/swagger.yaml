@@ -64,7 +64,9 @@ definitions:
       category_id:
         type: string
       cover:
-        type: string
+        $ref: '#/definitions/models.Image'
+      cover_id:
+        type: integer
       created_at:
         type: string
       created_by:
@@ -101,7 +103,7 @@ definitions:
       created_at:
         type: string
       id:
-        type: integer
+        type: string
       name:
         type: string
       updated_at:
@@ -116,6 +118,17 @@ definitions:
       name:
         type: string
       updated_at:
+        type: string
+    type: object
+  models.Image:
+    properties:
+      id:
+        type: integer
+      md:
+        type: string
+      sm:
+        type: string
+      xs:
         type: string
     type: object
   models.Profile:
@@ -285,18 +298,23 @@ paths:
       - description: Category ID
         in: formData
         name: category_id
-        required: true
         type: string
       - description: Author ID
         in: formData
         name: author_id
-        required: true
         type: string
       - description: Cover image
         in: formData
         name: cover
-        required: true
         type: file
+      - collectionFormat: csv
+        description: Digital book files
+        in: formData
+        items:
+          type: file
+        name: files
+        required: true
+        type: array
       responses:
         "200":
           description: OK

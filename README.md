@@ -43,6 +43,7 @@ npm run build
 ```bash
 cd back
 go run main.go
+air
 ```
 Server: `http://localhost:8080`
 Database: `back/app.db` (auto-created)
