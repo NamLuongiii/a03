@@ -8,7 +8,7 @@ import (
 
 type BookRating struct {
 	ID        int            `json:"id" gorm:"primaryKey;autoIncrement:true"`
-	BookID    int            `json:"book_id" gorm:"not null;index:idx_book_ratings_book_id;uniqueIndex:idx_book_ratings_book_account"`
+	BookID    string         `json:"book_id" gorm:"type:varchar(255);not null;index:idx_book_ratings_book_id;uniqueIndex:idx_book_ratings_book_account"`
 	AccountID int            `json:"account_id" gorm:"not null;index:idx_book_ratings_account_id;uniqueIndex:idx_book_ratings_book_account"`
 	Rating    int            `json:"rating" gorm:"not null;comment:1-5"`
 	CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`

@@ -8,7 +8,7 @@ import (
 
 type Comment struct {
 	ID        int            `json:"id" gorm:"primaryKey;autoIncrement:true"`
-	BookID    int            `json:"book_id" gorm:"not null;index:idx_comments_book_id"`
+	BookID    string         `json:"book_id" gorm:"type:varchar(255);not null;index:idx_comments_book_id"`
 	AccountID int            `json:"account_id" gorm:"not null;index:idx_comments_account_id"`
 	Title     string         `json:"title" gorm:"type:varchar(255)"`
 	Content   string         `json:"content" gorm:"type:text;not null"`

@@ -8,7 +8,7 @@ import (
 
 type DigitalBook struct {
 	ID        int            `json:"id" gorm:"primaryKey;autoIncrement:true"`
-	BookID    int            `json:"book_id" gorm:"not null;index:idx_digital_books_book_id"`
+	BookID    string         `json:"book_id" gorm:"type:varchar(255);not null;index:idx_digital_books_book_id"`
 	Name      string         `json:"name" gorm:"type:varchar(255)"`
 	FileType  string         `json:"file_type" gorm:"type:varchar(50)"`
 	FileSize  int64          `json:"file_size" gorm:"type:bigint"`

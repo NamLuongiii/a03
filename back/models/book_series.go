@@ -7,7 +7,7 @@ import (
 )
 
 type BookSeries struct {
-	ID        int            `json:"id" gorm:"primaryKey;autoIncrement:true"`
+	ID        string         `json:"id" gorm:"primaryKey;type:varchar(255)"`
 	Name      string         `json:"name" gorm:"type:varchar(150);not null;index:idx_book_series_name"`
 	CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time      `json:"updated_at" gorm:"autoUpdateTime"`

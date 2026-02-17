@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "get-content": "ts-node get-element-content.ts"
+    "dvt": "ts-node dvtbook.ts"
   },
   "keywords": [],
   "author": "",
