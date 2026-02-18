@@ -70,6 +70,7 @@ func main() {
 	commentRepo := models.NewCommentRepository(database)
 	featuredGroupRepo := models.NewFeaturedBookGroupRepository(database)
 	authorRepo := models.NewAuthorRepository(database)
+	imageRepo := models.NewImageRepository(database)
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(mailHandler, accountRepo, OTPRepo)
@@ -95,6 +96,7 @@ func main() {
 		BookRatingRepository:    bookRatingRepo,
 		FileStorage:             storage,
 		ImageProcessor:          imageProcessor,
+		ImageRepository:         imageRepo,
 	})
 
 	router := gin.Default()
@@ -135,11 +137,6 @@ func main() {
 			book.GET("/:id/get-by-series", bookHandler.GetBooksInSeries)
 		}
 
-		// Image processor
-		processor := v1.Group("/processor")
-		{
-			processor.POST("", imageProcessor.ProcessHandler)
-		}
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, ginSwagger.PersistAuthorization(true)))

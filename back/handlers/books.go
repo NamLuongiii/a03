@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"quickstart/middleware"
 	"quickstart/models"
@@ -21,6 +22,7 @@ type BooksHandler struct {
 	bookRatingRepository    models.BookRatingRepositoryInterface
 	fileStorage             FileStorageInterface
 	imageProcessor          ImageProcessorInterface
+	imageRepository         models.ImageRepositoryInterface
 }
 
 type BookParams struct {
@@ -34,6 +36,7 @@ type BookParams struct {
 	BookRatingRepository    models.BookRatingRepositoryInterface
 	FileStorage             FileStorageInterface
 	ImageProcessor          ImageProcessorInterface
+	ImageRepository         models.ImageRepositoryInterface
 }
 
 func NewBooksHandler(params BookParams) *BooksHandler {
@@ -48,6 +51,7 @@ func NewBooksHandler(params BookParams) *BooksHandler {
 		bookRatingRepository:    params.BookRatingRepository,
 		fileStorage:             params.FileStorage,
 		imageProcessor:          params.ImageProcessor,
+		imageRepository:         params.ImageRepository,
 	}
 }
 
@@ -165,11 +169,44 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 		return
 	}
 
-	//cover, e := c.FormFile("cover")
-	//if e != nil {
-	//	c.Error(middleware.NewBadRequestError(e.Error()))
-	//	return
-	//}
+	cover, e := c.FormFile("cover")
+	if e != nil {
+		if errors.Is(e, http.ErrMissingFile) {
+			cover = nil
+		} else {
+			c.Error(middleware.NewBadRequestError(e.Error()))
+			return
+		}
+	}
+
+	if cover != nil {
+		xs, sm, md, xsn, smn, mdn, e := h.imageProcessor.ProcessImage(cover)
+		if e != nil {
+			c.Error(middleware.NewServerInternalError(e.Error()))
+			return
+		}
+		xsUrl, e := h.fileStorage.UploadFile(xs, xsn, FolderBookCovers)
+		smUrl, e1 := h.fileStorage.UploadFile(sm, smn, FolderBookCovers)
+		mdUrl, e2 := h.fileStorage.UploadFile(md, mdn, FolderBookCovers)
+		if e != nil || e1 != nil || e2 != nil {
+			c.Error(middleware.NewServerInternalError(e.Error()))
+			return
+		}
+
+		dbImg := &models.Image{
+			XS: xsUrl,
+			SM: smUrl,
+			MD: mdUrl,
+		}
+		e3 := h.imageRepository.Create(dbImg)
+		if e3 != nil {
+			c.Error(middleware.NewServerInternalError(e3.Error()))
+			return
+		}
+
+		book.CoverID = &dbImg.ID
+
+	}
 
 	// Get multipart form
 	mf, e := c.MultipartForm()

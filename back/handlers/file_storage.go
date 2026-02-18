@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/google/uuid"
 )
 
 type StorageFolder string
@@ -63,8 +64,9 @@ func (f *FileStorage) UploadFile(
 ) (string, error) {
 	// generate filename
 	ext := filepath.Ext(fileName)
+	name := strings.TrimSuffix(fileName, ext)
 
-	key := fmt.Sprintf("%s/%s", folder, fileName)
+	key := fmt.Sprintf("%s/%s_%s%s", folder, name, uuid.New().String(), ext)
 
 	// detect content type (optional but recommended)
 	contentType := mime.TypeByExtension(ext)

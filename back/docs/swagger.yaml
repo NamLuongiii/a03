@@ -383,18 +383,6 @@ paths:
       summary: Get popular books
       tags:
       - books
-  /processor:
-    post:
-      parameters:
-      - description: Image to process
-        in: formData
-        name: cover
-        required: true
-        type: file
-      responses: {}
-      summary: image processing flow
-      tags:
-      - processor
 securityDefinitions:
   BearerAuth:
     description: Type only token (not include Bearer)

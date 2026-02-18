@@ -330,24 +330,6 @@ const docTemplate = `{
                 ],
                 "responses": {}
             }
-        },
-        "/processor": {
-            "post": {
-                "tags": [
-                    "processor"
-                ],
-                "summary": "image processing flow",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "Image to process",
-                        "name": "cover",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {}
-            }
         }
     },
     "definitions": {

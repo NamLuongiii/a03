@@ -2,6 +2,7 @@ package db
 
 import (
 	"log"
+	"quickstart/db/seeding"
 	"quickstart/models"
 
 	"gorm.io/gorm"
@@ -34,25 +35,21 @@ func RunMigrations(db *gorm.DB) error {
 		return err
 	}
 
+	// Run seeding
+	e := runSeeding(db)
+	if e != nil {
+		return e
+	}
+
 	log.Println("Migrations completed successfully")
 	return nil
 }
 
 // runManualMigrations handles breaking changes that AutoMigrate can't handle
 func runManualMigrations(db *gorm.DB) error {
-	// Migration 1: Clean up duplicate password columns
-	//if db.Migrator().HasColumn(&models.Account{}, "password") {
-	//	log.Println("Migration: Dropping old 'password' column from accounts")
-	//	if err := db.Migrator().DropColumn(&models.Account{}, "password"); err != nil {
-	//		log.Printf("Warning: Failed to drop 'password' column: %v", err)
-	//	}
-	//}
-
-	// Add more manual migrations here as needed
-	// Example:
-	// if db.Migrator().HasTable("old_table") {
-	//     db.Migrator().DropTable("old_table")
-	// }
-
 	return nil
+}
+
+func runSeeding(db *gorm.DB) error {
+	return seeding.CategoriesSeeding(db)
 }
