@@ -1,23 +1,23 @@
 basePath: /api/v1
 definitions:
-  dtos.CommentDto:
+  dto.CommentDto:
     properties:
       text:
         type: string
       title:
         type: string
     type: object
-  dtos.RatingDto:
+  dto.RatingDto:
     properties:
       rating:
         type: integer
     type: object
-  dtos.RequestChangePassword:
+  dto.RequestChangePassword:
     properties:
       email:
         type: string
     type: object
-  dtos.ResetPassword:
+  dto.ResetPassword:
     properties:
       email:
         type: string
@@ -26,7 +26,7 @@ definitions:
       token:
         type: string
     type: object
-  dtos.VerifyOTP:
+  dto.VerifyOTP:
     properties:
       email:
         type: string
@@ -231,7 +231,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dtos.RequestChangePassword'
+          $ref: '#/definitions/dto.RequestChangePassword'
       responses: {}
       summary: send otp to email ask change password
       tags:
@@ -262,10 +262,10 @@ paths:
       parameters:
       - description: new password
         in: body
-        name: reset-password
+        name: reset_password
         required: true
         schema:
-          $ref: '#/definitions/dtos.ResetPassword'
+          $ref: '#/definitions/dto.ResetPassword'
       responses: {}
       summary: change password with the singed token
       tags:
@@ -300,7 +300,7 @@ paths:
         name: verifyOTP
         required: true
         schema:
-          $ref: '#/definitions/dtos.VerifyOTP'
+          $ref: '#/definitions/dto.VerifyOTP'
       responses: {}
       summary: Verify OTP
       tags:
@@ -311,9 +311,12 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.Book'
-            type: array
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Book'
+              type: object
       summary: Get all books
       tags:
       - books
@@ -381,7 +384,7 @@ paths:
         name: comment
         required: true
         schema:
-          $ref: '#/definitions/dtos.CommentDto'
+          $ref: '#/definitions/dto.CommentDto'
       responses: {}
       summary: Add a comment to a book
       tags:
@@ -399,7 +402,7 @@ paths:
         name: rating
         required: true
         schema:
-          $ref: '#/definitions/dtos.RatingDto'
+          $ref: '#/definitions/dto.RatingDto'
       responses: {}
       summary: Add a rating to a book
       tags:
@@ -412,7 +415,16 @@ paths:
         name: id
         required: true
         type: string
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Book'
+              type: object
       summary: Get a book by ID
       tags:
       - books
@@ -424,7 +436,16 @@ paths:
         name: authorID
         required: true
         type: string
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Author'
+              type: object
       summary: Get an author by ID
       tags:
       - books
@@ -434,9 +455,12 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.Category'
-            type: array
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Category'
+              type: object
       summary: Get all categories
       tags:
       - books
@@ -452,9 +476,12 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.Book'
-            type: array
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Book'
+              type: object
       summary: Get featured books
       tags:
       - books

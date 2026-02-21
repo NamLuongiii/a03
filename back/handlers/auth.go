@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"quickstart/dtos"
+	"quickstart/dto"
 	"quickstart/env"
 	"quickstart/functions"
 	"quickstart/models"
@@ -144,10 +144,10 @@ func (h *AuthHandler) Me(c *gin.Context) {
 //	@Summary	send otp to email ask change password
 //	@Tags		auth
 //	@Router		/auth/ask-reset-password [post]
-//	@Param		request	body	dtos.RequestChangePassword	true	"email"
+//	@Param		request	body	dto.RequestChangePassword	true	"email"
 func (h *AuthHandler) RequestChangePassword(c *gin.Context) {
 	exe := func() error {
-		var body dtos.RequestChangePassword
+		var body dto.RequestChangePassword
 		e := c.ShouldBindJSON(&body)
 		if e != nil {
 			return e
@@ -193,11 +193,11 @@ func (h *AuthHandler) RequestChangePassword(c *gin.Context) {
 //	@Summary	Verify OTP
 //	@Tags		auth
 //	@Router		/auth/verify-OTP [post]
-//	@Param		verifyOTP	body	dtos.VerifyOTP	true	"OTP code"
+//	@Param		verifyOTP	body	dto.VerifyOTP	true	"OTP code"
 func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 
 	exe := func() (string, error) {
-		var body dtos.VerifyOTP
+		var body dto.VerifyOTP
 		e := c.ShouldBindJSON(&body)
 		if e != nil {
 			return "", e
@@ -243,22 +243,22 @@ func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 //	@Summary	change password with the singed token
 //	@Tags		auth
 //	@Router		/auth/reset-password [post]
-//	@Param		reset-password	body	dtos.ResetPassword	true	"new password"
+//	@Param		reset_password	body	dto.ResetPassword	true	"new password"
 func (h *AuthHandler) ResetPassword(c *gin.Context) {
 	exe := func() error {
-		var body dtos.ResetPassword
+		var body dto.ResetPassword
 		e := c.ShouldBindJSON(&body)
 		if e != nil {
 			return e
 		}
 
-		t, e := jwt.ParseWithClaims(body.Token, &dtos.ResetOTPClaim{}, func(token *jwt.Token) (interface{}, error) {
+		t, e := jwt.ParseWithClaims(body.Token, &dto.ResetOTPClaim{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(env.GetEnv(env.OTPSecret)), nil
 		})
 		if e != nil {
 			return e
 		}
-		claims, ok := t.Claims.(*dtos.ResetOTPClaim)
+		claims, ok := t.Claims.(*dto.ResetOTPClaim)
 		if !ok || !t.Valid {
 			return errors.New("invalid token")
 		}

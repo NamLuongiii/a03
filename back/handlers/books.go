@@ -3,7 +3,7 @@ package handlers
 import (
 	"errors"
 	"net/http"
-	"quickstart/dtos"
+	"quickstart/dto"
 	"quickstart/middleware"
 	"quickstart/models"
 	"quickstart/types"
@@ -61,7 +61,7 @@ func NewBooksHandler(params BookParams) *BooksHandler {
 //	@Summary	Get all books
 //	@Tags		books
 //	@Router		/books [get]
-//	@Success	200	{array}	models.Book	"OK"
+//	@Success	200	{object}	types.CommonResponse{data=models.Book[]}
 func (h *BooksHandler) GetBooks(c *gin.Context) {
 	b, e := h.bookRepository.GetAll()
 	if e != nil {
@@ -79,8 +79,8 @@ func (h *BooksHandler) GetBooks(c *gin.Context) {
 //	@Summary	Get featured books
 //	@Tags		books
 //	@Router		/books/featured [get]
-//	@Param		recommender	query	string		true	"recommender"
-//	@Success	200			{array}	models.Book	"OK"
+//	@Param		recommender	query		string	true	"recommender"
+//	@Success	200			{object}	types.CommonResponse{data=models.Book[]}
 func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
 	recommender := c.Query("recommender")
 
@@ -123,7 +123,8 @@ func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
 //	@Summary	Get a book by ID
 //	@Tags		books
 //	@Router		/books/{id} [get]
-//	@Param		id	path	string	true	"Book ID"
+//	@Param		id	path		string	true	"Book ID"
+//	@Success	200	{object}	types.CommonResponse{data=models.Book}
 func (h *BooksHandler) GetBookByID(c *gin.Context) {
 	id := c.Param("id")
 
@@ -145,7 +146,7 @@ func (h *BooksHandler) GetBookByID(c *gin.Context) {
 //	@Summary	Get all categories
 //	@Tags		books
 //	@Router		/books/categories [get]
-//	@Success	200	{array}	models.Category	"OK"
+//	@Success	200	{object}	types.CommonResponse{data=models.Category[]}
 func (h *BooksHandler) GetCategories(c *gin.Context) {
 	cs, e := h.categoryRepository.GetAll()
 	if e != nil {
@@ -163,7 +164,8 @@ func (h *BooksHandler) GetCategories(c *gin.Context) {
 //	@Summary	Get an author by ID
 //	@Tags		books
 //	@Router		/books/authors/{authorID} [get]
-//	@Param		authorID	path	string	true	"Author ID"
+//	@Param		authorID	path		string	true	"Author ID"
+//	@Success	200			{object}	types.CommonResponse{data=models.Author}
 func (h *BooksHandler) GetAuthors(c *gin.Context) {
 	id := c.Param("authorID")
 	author, e := h.authorRepository.GetByID(id)
@@ -183,13 +185,13 @@ func (h *BooksHandler) GetAuthors(c *gin.Context) {
 //	@Tags		books
 //	@Router		/books/{bookID}/comments [post]
 //	@Param		bookID	path	string			true	"Book ID"
-//	@Param		comment	body	dtos.CommentDto	true	"Comment"
+//	@Param		comment	body	dto.CommentDto	true	"Comment"
 //	@Sucesss	200 {object} types.CommonResponse {data=models.Comment}
 func (h *BooksHandler) AddComment(c *gin.Context) {
 	bID := c.Param("bookID")
 	uID := c.MustGet(types.ContextKeyTokenClaims).(*types.AuthClaims).ID
 
-	var body dtos.CommentDto
+	var body dto.CommentDto
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.Error(middleware.NewBadRequestError(err.Error()))
 		return
@@ -218,7 +220,7 @@ func (h *BooksHandler) AddComment(c *gin.Context) {
 //	@Tags		books
 //	@Router		/books/{bookID}/ratings [post]
 //	@Param		bookID	path	string			true	"Book ID"
-//	@Param		rating	body	dtos.RatingDto	true	"Rating"
+//	@Param		rating	body	dto.RatingDto	true	"Rating"
 //	@Sucesss	200 {object} types.CommonResponse {data=models.Rating}
 func (h *BooksHandler) AddRating(c *gin.Context) {
 	bID := c.Param("bookID")
@@ -229,7 +231,7 @@ func (h *BooksHandler) AddRating(c *gin.Context) {
 		return
 	}
 
-	var body dtos.RatingDto
+	var body dto.RatingDto
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.Error(middleware.NewBadRequestError(err.Error()))
 		return

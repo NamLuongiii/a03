@@ -1,6 +1,8 @@
 import {createFileRoute} from '@tanstack/react-router'
 import styled from "styled-components";
 import {FeaturedItems, Footer, Hero} from "@components";
+import {useQuery} from "@tanstack/react-query";
+import {apiBooks} from "../../services/ApiGenerate.ts";
 
 export const Route = createFileRoute('/_public/')({
     component: Index,
@@ -9,13 +11,17 @@ export const Route = createFileRoute('/_public/')({
 
 function Index() {
 
-    return <Screen>
-        <Hero />
-        <FeaturedItems />
-        <FeaturedItems />
-        <FeaturedItems />
+    const {data: newBooksData} = useQuery({
+        queryKey: ['featured-items-news'],
+        queryFn: () => apiBooks.featuredList({recommender: "new-books"})
+    })
 
-        <Footer />
+    return <Screen>
+        <Hero/>
+        {newBooksData && (
+            <FeaturedItems books={newBooksData.data.data}/>)}
+
+        <Footer/>
     </Screen>
 }
 

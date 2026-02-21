@@ -28,7 +28,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.RequestChangePassword"
+                            "$ref": "#/definitions/dto.RequestChangePassword"
                         }
                     }
                 ],
@@ -78,11 +78,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "new password",
-                        "name": "reset-password",
+                        "name": "reset_password",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.ResetPassword"
+                            "$ref": "#/definitions/dto.ResetPassword"
                         }
                     }
                 ],
@@ -141,7 +141,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.VerifyOTP"
+                            "$ref": "#/definitions/dto.VerifyOTP"
                         }
                     }
                 ],
@@ -158,10 +158,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Book"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.Book"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -265,7 +274,26 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.Author"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "/books/categories": {
@@ -278,10 +306,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Category"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.Category"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -306,10 +343,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Book"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.Book"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -335,7 +381,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.CommentDto"
+                            "$ref": "#/definitions/dto.CommentDto"
                         }
                     }
                 ],
@@ -362,7 +408,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.RatingDto"
+                            "$ref": "#/definitions/dto.RatingDto"
                         }
                     }
                 ],
@@ -384,12 +430,31 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.Book"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         }
     },
     "definitions": {
-        "dtos.CommentDto": {
+        "dto.CommentDto": {
             "type": "object",
             "properties": {
                 "text": {
@@ -400,7 +465,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dtos.RatingDto": {
+        "dto.RatingDto": {
             "type": "object",
             "properties": {
                 "rating": {
@@ -408,7 +473,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dtos.RequestChangePassword": {
+        "dto.RequestChangePassword": {
             "type": "object",
             "properties": {
                 "email": {
@@ -416,7 +481,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dtos.ResetPassword": {
+        "dto.ResetPassword": {
             "type": "object",
             "properties": {
                 "email": {
@@ -430,7 +495,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dtos.VerifyOTP": {
+        "dto.VerifyOTP": {
             "type": "object",
             "properties": {
                 "email": {

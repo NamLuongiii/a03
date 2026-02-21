@@ -1,42 +1,39 @@
 import styled from 'styled-components';
 import {useNavigate} from "@tanstack/react-router";
+import type {ModelsBook} from "../api/data-contracts.ts";
 
 const Card = styled.div`
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  transition: box-shadow 0.3s;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: box-shadow 0.3s;
 
-  &:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  }
+    &:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
 `;
 
 const Name = styled.h3`
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-`;
-
-const Subname = styled.p`
-  font-size: 0.875rem;
-  color: #4b5563;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
 `;
 
 interface ItemProps {
-  name: string;
-  subname: string;
+    book: ModelsBook
 }
 
-export const Item = ({ name, subname }: ItemProps) => {
+export const Item = ({book}: ItemProps) => {
     const navigate = useNavigate()
     const handleClick = (id: number) => {
         navigate({to: `/book/${id}`}).then()
     }
-  return (
-    <Card onClick={() => handleClick(1)}>
-      <Name>{name}</Name>
-      <Subname>{subname}</Subname>
-    </Card>
-  );
+    return (
+        <Card onClick={() => handleClick(1)}>
+            {/*Cover */}
+            <img src={book.cover?.sm} alt="cover"/>
+
+            <Name>{book.name}</Name>
+        </Card>
+    );
 };
