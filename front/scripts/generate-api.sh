@@ -3,7 +3,7 @@
 SWAGGER_URL="http://localhost:8080/swagger/doc.json"
 OUTPUT_DIR="./src/api"
 
-echo "🚀 Generating modular API..."
+echo "🚀 Generating API for Vite..."
 
 rm -rf $OUTPUT_DIR
 
@@ -13,6 +13,11 @@ npx swagger-typescript-api generate \
   --modular \
   --axios \
   --single-http-client \
-  --clean-output
+  --clean-output \
+  --module-esm \
+  --extract-request-params \
+  --extract-response-body \
+  --type-prefix "" \
+  --type-suffix ""
 
 echo "✅ API generated successfully!"

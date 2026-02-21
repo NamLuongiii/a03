@@ -10,16 +10,15 @@
  * ---------------------------------------------------------------
  */
 
-import {
-  DtoRequestChangePassword,
-  DtoResetPassword,
-  DtoVerifyOTP,
-  ModelsAccount,
-  TypesCommonResponse,
-  TypesLoginRequest,
-  TypesSignUpDto,
+import type {
+    DtoRequestChangePassword,
+    DtoResetPassword,
+    DtoVerifyOTP,
+    SignupCreateData,
+    TypesLoginRequest,
+    TypesSignUpDto,
 } from "./data-contracts";
-import { ContentType, HttpClient, RequestParams } from "./http-client";
+import {ContentType, HttpClient, type RequestParams} from "./http-client";
 
 export class Auth<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
@@ -107,12 +106,7 @@ export class Auth<SecurityDataType = unknown> {
    * @request POST:/auth/signup
    */
   signupCreate = (user: TypesSignUpDto, params: RequestParams = {}) =>
-    this.http.request<
-      TypesCommonResponse & {
-        data?: ModelsAccount;
-      },
-      any
-    >({
+    this.http.request<SignupCreateData, any>({
       path: `/auth/signup`,
       method: "POST",
       body: user,

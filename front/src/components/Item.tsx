@@ -31,7 +31,7 @@ export const Item = ({book}: ItemProps) => {
     return (
         <Card onClick={() => handleClick(1)}>
             {/*Cover */}
-            <img src={book.cover?.sm} alt="cover"/>
+            <img src={book.cover?.xs} alt="cover" style={{width: '100%'}}/>
 
             <Name>{book.name}</Name>
         </Card>

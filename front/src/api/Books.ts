@@ -10,15 +10,22 @@
  * ---------------------------------------------------------------
  */
 
-import {
-  DtoCommentDto,
-  DtoRatingDto,
-  ModelsAuthor,
-  ModelsBook,
-  ModelsCategory,
-  TypesCommonResponse,
+import type {
+    AuthorsDetailData,
+    AuthorsDetailParams,
+    BooksCreateData,
+    BooksDetailData,
+    BooksDetailParams,
+    BooksListData,
+    CategoriesListData,
+    CommentsCreateParams,
+    DtoCommentDto,
+    DtoRatingDto,
+    FeaturedListData,
+    FeaturedListParams,
+    RatingsCreateParams,
 } from "./data-contracts";
-import { ContentType, HttpClient, RequestParams } from "./http-client";
+import {ContentType, HttpClient, type RequestParams} from "./http-client";
 
 export class Books<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
@@ -36,12 +43,7 @@ export class Books<SecurityDataType = unknown> {
    * @request GET:/books
    */
   booksList = (params: RequestParams = {}) =>
-    this.http.request<
-      TypesCommonResponse & {
-        data?: ModelsBook;
-      },
-      any
-    >({
+    this.http.request<BooksListData, any>({
       path: `/books`,
       method: "GET",
       ...params,
@@ -77,12 +79,7 @@ export class Books<SecurityDataType = unknown> {
     },
     params: RequestParams = {},
   ) =>
-    this.http.request<
-      TypesCommonResponse & {
-        data?: ModelsBook;
-      },
-      any
-    >({
+    this.http.request<BooksCreateData, any>({
       path: `/books`,
       method: "POST",
       body: data,
@@ -98,13 +95,11 @@ export class Books<SecurityDataType = unknown> {
    * @summary Get an author by ID
    * @request GET:/books/authors/{authorID}
    */
-  authorsDetail = (authorId: string, params: RequestParams = {}) =>
-    this.http.request<
-      TypesCommonResponse & {
-        data?: ModelsAuthor;
-      },
-      any
-    >({
+  authorsDetail = (
+    { authorId, ...query }: AuthorsDetailParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<AuthorsDetailData, any>({
       path: `/books/authors/${authorId}`,
       method: "GET",
       ...params,
@@ -118,12 +113,7 @@ export class Books<SecurityDataType = unknown> {
    * @request GET:/books/categories
    */
   categoriesList = (params: RequestParams = {}) =>
-    this.http.request<
-      TypesCommonResponse & {
-        data?: ModelsCategory;
-      },
-      any
-    >({
+    this.http.request<CategoriesListData, any>({
       path: `/books/categories`,
       method: "GET",
       ...params,
@@ -136,19 +126,8 @@ export class Books<SecurityDataType = unknown> {
    * @summary Get featured books
    * @request GET:/books/featured
    */
-  featuredList = (
-    query: {
-      /** recommender */
-      recommender: string;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.http.request<
-      TypesCommonResponse & {
-        data?: ModelsBook;
-      },
-      any
-    >({
+  featuredList = (query: FeaturedListParams, params: RequestParams = {}) =>
+    this.http.request<FeaturedListData, any>({
       path: `/books/featured`,
       method: "GET",
       query: query,
@@ -163,7 +142,7 @@ export class Books<SecurityDataType = unknown> {
    * @request POST:/books/{bookID}/comments
    */
   commentsCreate = (
-    bookId: string,
+    { bookId, ...query }: CommentsCreateParams,
     comment: DtoCommentDto,
     params: RequestParams = {},
   ) =>
@@ -183,7 +162,7 @@ export class Books<SecurityDataType = unknown> {
    * @request POST:/books/{bookID}/ratings
    */
   ratingsCreate = (
-    bookId: string,
+    { bookId, ...query }: RatingsCreateParams,
     rating: DtoRatingDto,
     params: RequestParams = {},
   ) =>
@@ -202,13 +181,11 @@ export class Books<SecurityDataType = unknown> {
    * @summary Get a book by ID
    * @request GET:/books/{id}
    */
-  booksDetail = (id: string, params: RequestParams = {}) =>
-    this.http.request<
-      TypesCommonResponse & {
-        data?: ModelsBook;
-      },
-      any
-    >({
+  booksDetail = (
+    { id, ...query }: BooksDetailParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<BooksDetailData, any>({
       path: `/books/${id}`,
       method: "GET",
       ...params,

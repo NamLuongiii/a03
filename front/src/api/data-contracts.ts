@@ -138,3 +138,56 @@ export interface TypesSignUpDto {
   name: string;
   password: string;
 }
+
+export type SignupCreateData = TypesCommonResponse & {
+  data?: ModelsAccount;
+};
+
+export type BooksListData = TypesCommonResponse & {
+  data?: ModelsBook;
+};
+
+export type BooksCreateData = TypesCommonResponse & {
+  data?: ModelsBook;
+};
+
+export interface AuthorsDetailParams {
+  /** Author ID */
+  authorId: string;
+}
+
+export type AuthorsDetailData = TypesCommonResponse & {
+  data?: ModelsAuthor;
+};
+
+export type CategoriesListData = TypesCommonResponse & {
+  data?: ModelsCategory;
+};
+
+export interface FeaturedListParams {
+  /** recommender */
+  recommender: string;
+}
+
+export type FeaturedListData = TypesCommonResponse & {
+  data?: ModelsBook;
+};
+
+export interface CommentsCreateParams {
+  /** Book ID */
+  bookId: string;
+}
+
+export interface RatingsCreateParams {
+  /** Book ID */
+  bookId: string;
+}
+
+export interface BooksDetailParams {
+  /** Book ID */
+  id: string;
+}
+
+export type BooksDetailData = TypesCommonResponse & {
+  data?: ModelsBook;
+};

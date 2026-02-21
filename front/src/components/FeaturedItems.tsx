@@ -27,7 +27,7 @@ const Grid = styled.div`
     }
 
     @media (min-width: 1024px) {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(10, 1fr);
     }
 `;
 

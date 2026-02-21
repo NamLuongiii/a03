@@ -18,7 +18,7 @@ function Index() {
 
     return <Screen>
         <Hero/>
-        {newBooksData && (
+        {newBooksData?.data.data && (
             <FeaturedItems books={newBooksData.data.data}/>)}
 
         <Footer/>

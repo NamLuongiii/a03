@@ -8,7 +8,9 @@ import (
 	"quickstart/handlers"
 	"quickstart/middleware"
 	"quickstart/models"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
 	swaggerfiles "github.com/swaggo/files"
@@ -102,8 +104,15 @@ func main() {
 	router := gin.Default()
 	router.Use(middleware.ErrorHandler())
 
-	// Add CORS middleware
-	//router.Use(middleware.CORSMiddleware())
+	// Add CORS for all ip
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"}, // cho tất cả origin
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: false,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
