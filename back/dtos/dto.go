@@ -22,3 +22,12 @@ type ResetOTPClaim struct {
 	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
+
+type CommentDto struct {
+	Text  string `json:"text"`
+	Title string `json:"title"`
+}
+
+type RatingDto struct {
+	Rating int `json:"rating"`
+}

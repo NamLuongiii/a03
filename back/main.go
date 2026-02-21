@@ -129,12 +129,10 @@ func main() {
 			book.GET("/:id", bookHandler.GetBookByID)
 			book.POST("", bookHandler.CreateBook)
 			book.GET("/featured", bookHandler.GetFeaturedBooks)
-			book.GET("/popular", bookHandler.GetPopularBooks)
 			book.GET("/categories", bookHandler.GetCategories)
 			book.GET("/authors/:authorID", bookHandler.GetAuthors)
-			book.POST("/:id/comments", bookHandler.AddComment)
-			book.POST("/:id/ratings", bookHandler.AddRating)
-			book.GET("/:id/get-by-series", bookHandler.GetBooksInSeries)
+			book.POST("/:id/comments", middleware.RequiredAuth(), bookHandler.AddComment)
+			book.POST("/:id/ratings", middleware.RequiredAuth(), bookHandler.AddRating)
 		}
 
 	}

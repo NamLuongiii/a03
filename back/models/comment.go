@@ -23,6 +23,8 @@ type Comment struct {
 
 type CommentRepositoryInterface interface {
 	GetByID(id int) (*Comment, error)
+	Create(comment *Comment) error
+	GetByBookID(bookID string) ([]Comment, error)
 }
 
 type CommentRepository struct {
@@ -37,4 +39,14 @@ func (r *CommentRepository) GetByID(id int) (*Comment, error) {
 	var comment Comment
 	err := r.db.First(&comment, id).Error
 	return &comment, err
+}
+
+func (r *CommentRepository) Create(comment *Comment) error {
+	return r.db.Create(comment).Error
+}
+
+func (r *CommentRepository) GetByBookID(bookID string) ([]Comment, error) {
+	var comments []Comment
+	err := r.db.Where("book_id = ?", bookID).Find(&comments).Error
+	return comments, err
 }

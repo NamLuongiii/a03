@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"net/http"
+	"quickstart/dtos"
 	"quickstart/middleware"
 	"quickstart/models"
 	"quickstart/types"
@@ -62,8 +63,15 @@ func NewBooksHandler(params BookParams) *BooksHandler {
 //	@Router		/books [get]
 //	@Success	200	{array}	models.Book	"OK"
 func (h *BooksHandler) GetBooks(c *gin.Context) {
-	books := make([]*models.Book, 0)
-	c.JSON(200, books)
+	b, e := h.bookRepository.GetAll()
+	if e != nil {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, types.CommonResponse{
+		Success: true,
+		Data:    b,
+	})
 }
 
 // GetFeaturedBooks godoc
@@ -71,8 +79,43 @@ func (h *BooksHandler) GetBooks(c *gin.Context) {
 //	@Summary	Get featured books
 //	@Tags		books
 //	@Router		/books/featured [get]
+//	@Param		recommender	query	string		true	"recommender"
+//	@Success	200			{array}	models.Book	"OK"
 func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
-	return
+	recommender := c.Query("recommender")
+
+	if recommender == "new-books" {
+		bs, e := h.bookRepository.GetNewestBooks(10)
+		if e != nil {
+			c.Error(middleware.NewServerInternalError(e.Error()))
+			return
+		}
+		c.JSON(http.StatusOK, types.CommonResponse{
+			Success: true,
+			Data:    bs,
+		})
+	} else if recommender == "popular-books" {
+		bs, e := h.bookRepository.GetPopularBooks(10)
+		if e != nil {
+			c.Error(middleware.NewServerInternalError(e.Error()))
+			return
+		}
+		c.JSON(http.StatusOK, types.CommonResponse{
+			Success: true,
+			Data:    bs,
+		})
+	} else if recommender == "books-other-users-liked" {
+		bs, e := h.bookRepository.GetBooksOtherUserRead(10)
+		if e != nil {
+			c.Error(middleware.NewServerInternalError(e.Error()))
+			return
+		}
+		c.JSON(http.StatusOK, types.CommonResponse{
+			Success: true,
+			Data:    bs,
+		})
+	}
+
 }
 
 // GetBookByID godoc
@@ -80,9 +123,21 @@ func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
 //	@Summary	Get a book by ID
 //	@Tags		books
 //	@Router		/books/{id} [get]
-//	@Param		id	path	int	true	"Book ID"
+//	@Param		id	path	string	true	"Book ID"
 func (h *BooksHandler) GetBookByID(c *gin.Context) {
-	return
+	id := c.Param("id")
+
+	b, e := h.bookRepository.GetByID(id)
+
+	if e != nil {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, types.CommonResponse{
+		Success: true,
+		Data:    b,
+	})
+
 }
 
 // GetCategories godoc
@@ -90,26 +145,36 @@ func (h *BooksHandler) GetBookByID(c *gin.Context) {
 //	@Summary	Get all categories
 //	@Tags		books
 //	@Router		/books/categories [get]
+//	@Success	200	{array}	models.Category	"OK"
 func (h *BooksHandler) GetCategories(c *gin.Context) {
-	return
-}
-
-// GetPopularBooks godoc
-//
-//	@Summary	Get popular books
-//	@Tags		books
-//	@Router		/books/popular [get]
-func (h *BooksHandler) GetPopularBooks(c *gin.Context) {
-	return
+	cs, e := h.categoryRepository.GetAll()
+	if e != nil {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, types.CommonResponse{
+		Success: true,
+		Data:    cs,
+	})
 }
 
 // GetAuthors godoc
 //
-//	@Summary	Get all authors
+//	@Summary	Get an author by ID
 //	@Tags		books
 //	@Router		/books/authors/{authorID} [get]
+//	@Param		authorID	path	string	true	"Author ID"
 func (h *BooksHandler) GetAuthors(c *gin.Context) {
-	return
+	id := c.Param("authorID")
+	author, e := h.authorRepository.GetByID(id)
+	if e != nil {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, types.CommonResponse{
+		Success: true,
+		Data:    author,
+	})
 }
 
 // AddComment godoc
@@ -117,8 +182,34 @@ func (h *BooksHandler) GetAuthors(c *gin.Context) {
 //	@Summary	Add a comment to a book
 //	@Tags		books
 //	@Router		/books/{bookID}/comments [post]
+//	@Param		bookID	path	string			true	"Book ID"
+//	@Param		comment	body	dtos.CommentDto	true	"Comment"
+//	@Sucesss	200 {object} types.CommonResponse {data=models.Comment}
 func (h *BooksHandler) AddComment(c *gin.Context) {
-	return
+	bID := c.Param("bookID")
+	uID := c.MustGet(types.ContextKeyTokenClaims).(*types.AuthClaims).ID
+
+	var body dtos.CommentDto
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.Error(middleware.NewBadRequestError(err.Error()))
+		return
+	}
+
+	comment := &models.Comment{
+		BookID:    bID,
+		AccountID: uID,
+		Content:   body.Text,
+		Title:     body.Title,
+	}
+	er := h.commentRepository.Create(comment)
+	if er != nil {
+		c.Error(middleware.NewServerInternalError(er.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, types.CommonResponse{
+		Success: true,
+		Data:    comment,
+	})
 }
 
 // AddRating godoc
@@ -126,17 +217,51 @@ func (h *BooksHandler) AddComment(c *gin.Context) {
 //	@Summary	Add a rating to a book
 //	@Tags		books
 //	@Router		/books/{bookID}/ratings [post]
+//	@Param		bookID	path	string			true	"Book ID"
+//	@Param		rating	body	dtos.RatingDto	true	"Rating"
+//	@Sucesss	200 {object} types.CommonResponse {data=models.Rating}
 func (h *BooksHandler) AddRating(c *gin.Context) {
-	return
-}
+	bID := c.Param("bookID")
 
-// GetBooksInSeries godoc
-//
-//	@Summary	Get books in a series
-//	@Tags		books
-//	@Router		/books/{bookId}/get-by-series [get]
-func (h *BooksHandler) GetBooksInSeries(c *gin.Context) {
-	return
+	b, e := h.bookRepository.GetByID(bID)
+	if e != nil {
+		c.Error(middleware.NewBadRequestError(e.Error()))
+		return
+	}
+
+	var body dtos.RatingDto
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.Error(middleware.NewBadRequestError(err.Error()))
+		return
+	}
+	uID := c.MustGet(types.ContextKeyTokenClaims).(*types.AuthClaims).ID
+
+	br := &models.BookRating{
+		AccountID: uID,
+		BookID:    bID,
+		Rating:    body.Rating,
+	}
+
+	er := h.bookRatingRepository.Create(br)
+	if er != nil {
+		c.Error(middleware.NewServerInternalError(er.Error()))
+		return
+	}
+
+	// update book rating
+	b.RatingAvg = (float64(b.RatingCount)*b.RatingAvg + float64(br.Rating)) / float64(b.RatingCount)
+	b.RatingCount += 1
+	e = h.bookRepository.Update(b)
+	if e != nil {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, types.CommonResponse{
+		Success: true,
+		Data:    br,
+	})
+
 }
 
 // CreateBook godoc
@@ -161,12 +286,6 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 	book := &models.Book{
 		ID:   slug.Make(name),
 		Name: name,
-	}
-
-	e := h.bookRepository.Create(book)
-	if e != nil {
-		c.Error(middleware.NewServerInternalError(e.Error()))
-		return
 	}
 
 	cover, e := c.FormFile("cover")
@@ -205,7 +324,12 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 		}
 
 		book.CoverID = &dbImg.ID
+	}
 
+	e = h.bookRepository.Create(book)
+	if e != nil {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
 	}
 
 	// Get multipart form

@@ -26,16 +26,22 @@ type Book struct {
 	DeletedAt    gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index:idx_books_deleted_at;index:idx_books_is_hidden_deleted_at,priority:2" swaggerignore:"true"`
 
 	// Relationships
-	Category *Category   `json:"category,omitempty" gorm:"foreignKey:CategoryID"`
-	Author   *Author     `json:"author,omitempty" gorm:"foreignKey:AuthorID"`
-	Series   *BookSeries `json:"series,omitempty" gorm:"foreignKey:SeriesID"`
-	Creator  *Account    `json:"creator,omitempty" gorm:"foreignKey:CreatedBy"`
-	Cover    *Image      `json:"cover,omitempty" gorm:"foreignKey:CoverID"`
+	Category     *Category     `json:"category,omitempty" gorm:"foreignKey:CategoryID"`
+	Author       *Author       `json:"author,omitempty" gorm:"foreignKey:AuthorID"`
+	Series       *BookSeries   `json:"series,omitempty" gorm:"foreignKey:SeriesID"`
+	Creator      *Account      `json:"creator,omitempty" gorm:"foreignKey:CreatedBy"`
+	Cover        *Image        `json:"cover,omitempty" gorm:"foreignKey:CoverID"`
+	DigitalBooks []DigitalBook `json:"digital_books,omitempty" gorm:"foreignKey:BookID"`
 }
 
 type BookRepositoryInterface interface {
 	GetByID(id string) (*Book, error)
 	Create(book *Book) error
+	GetAll() ([]Book, error)
+	GetNewestBooks(limit int) ([]Book, error)
+	GetPopularBooks(limit int) ([]Book, error)
+	GetBooksOtherUserRead(limit int) ([]Book, error)
+	Update(book *Book) error
 }
 
 type BookRepository struct {
@@ -48,10 +54,57 @@ func NewBookRepository(db *gorm.DB) BookRepositoryInterface {
 
 func (r *BookRepository) GetByID(id string) (*Book, error) {
 	var book Book
-	err := r.db.Where("id = ?", id).First(&book).Error
+	err := r.db.
+		Preload("Cover").
+		Preload("DigitalBooks").
+		Where("id = ?", id).
+		First(&book).Error
 	return &book, err
 }
 
 func (r *BookRepository) Create(book *Book) error {
 	return r.db.Create(book).Error
+}
+
+func (r *BookRepository) GetAll() ([]Book, error) {
+	var books []Book
+	err := r.db.Preload("Cover").Preload("DigitalBooks").Find(&books).Error
+	return books, err
+}
+
+func (r *BookRepository) GetNewestBooks(limit int) ([]Book, error) {
+	var books []Book
+	err := r.db.
+		Preload("Cover").
+		Preload("DigitalBooks").
+		Order("created_at desc").
+		Limit(limit).
+		Find(&books).Error
+	return books, err
+}
+
+func (r *BookRepository) GetPopularBooks(limit int) ([]Book, error) {
+	var books []Book
+	err := r.db.
+		Preload("Cover").
+		Preload("DigitalBooks").
+		Order("created_at desc").
+		Limit(limit).
+		Find(&books).Error
+	return books, err
+}
+
+func (r *BookRepository) GetBooksOtherUserRead(limit int) ([]Book, error) {
+	var books []Book
+	err := r.db.
+		Preload("Cover").
+		Preload("DigitalBooks").
+		Order("created_at desc").
+		Limit(limit).
+		Find(&books).Error
+	return books, err
+}
+
+func (r *BookRepository) Update(book *Book) error {
+	return r.db.Save(book).Error
 }

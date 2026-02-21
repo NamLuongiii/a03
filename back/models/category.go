@@ -16,6 +16,7 @@ type Category struct {
 
 type CategoryRepositoryInterface interface {
 	GetByName(name string) (*Category, error)
+	GetAll() ([]Category, error)
 }
 
 type CategoryRepository struct {
@@ -30,4 +31,10 @@ func (r *CategoryRepository) GetByName(name string) (*Category, error) {
 	var category Category
 	err := r.db.Where("name = ?", name).First(&category).Error
 	return &category, err
+}
+
+func (r *CategoryRepository) GetAll() ([]Category, error) {
+	var categories []Category
+	err := r.db.Find(&categories).Error
+	return categories, err
 }

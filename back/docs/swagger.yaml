@@ -1,5 +1,17 @@
 basePath: /api/v1
 definitions:
+  dtos.CommentDto:
+    properties:
+      text:
+        type: string
+      title:
+        type: string
+    type: object
+  dtos.RatingDto:
+    properties:
+      rating:
+        type: integer
+    type: object
   dtos.RequestChangePassword:
     properties:
       email:
@@ -75,6 +87,10 @@ definitions:
         $ref: '#/definitions/models.Account'
       description:
         type: string
+      digital_books:
+        items:
+          $ref: '#/definitions/models.DigitalBook'
+        type: array
       download_nums:
         type: integer
       id:
@@ -118,6 +134,29 @@ definitions:
       name:
         type: string
       updated_at:
+        type: string
+    type: object
+  models.DigitalBook:
+    properties:
+      book:
+        allOf:
+        - $ref: '#/definitions/models.Book'
+        description: Relationships
+      book_id:
+        type: string
+      created_at:
+        type: string
+      file_size:
+        type: integer
+      file_type:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+      url:
         type: string
     type: object
   models.Image:
@@ -331,20 +370,38 @@ paths:
       - books
   /books/{bookID}/comments:
     post:
+      parameters:
+      - description: Book ID
+        in: path
+        name: bookID
+        required: true
+        type: string
+      - description: Comment
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CommentDto'
       responses: {}
       summary: Add a comment to a book
       tags:
       - books
   /books/{bookID}/ratings:
     post:
+      parameters:
+      - description: Book ID
+        in: path
+        name: bookID
+        required: true
+        type: string
+      - description: Rating
+        in: body
+        name: rating
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.RatingDto'
       responses: {}
       summary: Add a rating to a book
-      tags:
-      - books
-  /books/{bookId}/get-by-series:
-    get:
-      responses: {}
-      summary: Get books in a series
       tags:
       - books
   /books/{id}:
@@ -354,33 +411,51 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       responses: {}
       summary: Get a book by ID
       tags:
       - books
   /books/authors/{authorID}:
     get:
+      parameters:
+      - description: Author ID
+        in: path
+        name: authorID
+        required: true
+        type: string
       responses: {}
-      summary: Get all authors
+      summary: Get an author by ID
       tags:
       - books
   /books/categories:
     get:
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Category'
+            type: array
       summary: Get all categories
       tags:
       - books
   /books/featured:
     get:
-      responses: {}
+      parameters:
+      - description: recommender
+        in: query
+        name: recommender
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Book'
+            type: array
       summary: Get featured books
-      tags:
-      - books
-  /books/popular:
-    get:
-      responses: {}
-      summary: Get popular books
       tags:
       - books
 securityDefinitions:

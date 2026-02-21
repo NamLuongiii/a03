@@ -51,5 +51,9 @@ func runManualMigrations(db *gorm.DB) error {
 }
 
 func runSeeding(db *gorm.DB) error {
+	e := seeding.AccountSeeding(db)
+	if e != nil {
+		return e
+	}
 	return seeding.CategoriesSeeding(db)
 }

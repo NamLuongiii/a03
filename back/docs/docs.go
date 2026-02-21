@@ -255,7 +255,16 @@ const docTemplate = `{
                 "tags": [
                     "books"
                 ],
-                "summary": "Get all authors",
+                "summary": "Get an author by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Author ID",
+                        "name": "authorID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {}
             }
         },
@@ -265,7 +274,17 @@ const docTemplate = `{
                     "books"
                 ],
                 "summary": "Get all categories",
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Category"
+                            }
+                        }
+                    }
+                }
             }
         },
         "/books/featured": {
@@ -274,16 +293,26 @@ const docTemplate = `{
                     "books"
                 ],
                 "summary": "Get featured books",
-                "responses": {}
-            }
-        },
-        "/books/popular": {
-            "get": {
-                "tags": [
-                    "books"
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "recommender",
+                        "name": "recommender",
+                        "in": "query",
+                        "required": true
+                    }
                 ],
-                "summary": "Get popular books",
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Book"
+                            }
+                        }
+                    }
+                }
             }
         },
         "/books/{bookID}/comments": {
@@ -292,6 +321,24 @@ const docTemplate = `{
                     "books"
                 ],
                 "summary": "Add a comment to a book",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Book ID",
+                        "name": "bookID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Comment",
+                        "name": "comment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.CommentDto"
+                        }
+                    }
+                ],
                 "responses": {}
             }
         },
@@ -301,15 +348,24 @@ const docTemplate = `{
                     "books"
                 ],
                 "summary": "Add a rating to a book",
-                "responses": {}
-            }
-        },
-        "/books/{bookId}/get-by-series": {
-            "get": {
-                "tags": [
-                    "books"
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Book ID",
+                        "name": "bookID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Rating",
+                        "name": "rating",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.RatingDto"
+                        }
+                    }
                 ],
-                "summary": "Get books in a series",
                 "responses": {}
             }
         },
@@ -321,7 +377,7 @@ const docTemplate = `{
                 "summary": "Get a book by ID",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Book ID",
                         "name": "id",
                         "in": "path",
@@ -333,6 +389,25 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dtos.CommentDto": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.RatingDto": {
+            "type": "object",
+            "properties": {
+                "rating": {
+                    "type": "integer"
+                }
+            }
+        },
         "dtos.RequestChangePassword": {
             "type": "object",
             "properties": {
@@ -450,6 +525,12 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "digital_books": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DigitalBook"
+                    }
+                },
                 "download_nums": {
                     "type": "integer"
                 },
@@ -515,6 +596,43 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DigitalBook": {
+            "type": "object",
+            "properties": {
+                "book": {
+                    "description": "Relationships",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.Book"
+                        }
+                    ]
+                },
+                "book_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "file_size": {
+                    "type": "integer"
+                },
+                "file_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 }
             }

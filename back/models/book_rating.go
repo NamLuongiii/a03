@@ -22,6 +22,7 @@ type BookRating struct {
 
 type BookRatingRepositoryInterface interface {
 	GetByID(id int) (*BookRating, error)
+	Create(bookRating *BookRating) error
 }
 
 type BookRatingRepository struct {
@@ -36,4 +37,8 @@ func (r *BookRatingRepository) GetByID(id int) (*BookRating, error) {
 	var bookRating BookRating
 	err := r.db.First(&bookRating, id).Error
 	return &bookRating, err
+}
+
+func (r *BookRatingRepository) Create(bookRating *BookRating) error {
+	return r.db.Create(bookRating).Error
 }
