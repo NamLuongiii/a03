@@ -1,103 +1,116 @@
-import { useState } from 'react';
 import styled from 'styled-components';
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {apiBooks} from "../services/ApiGenerate.ts";
+import {useForm} from "react-hook-form";
+import {Button} from "@components/ui/Button.tsx";
+import type {ModelsAccount, ModelsComment} from "../api/data-contracts.ts";
+import Avatar from "boring-avatars";
+import {useAuth} from "../auth.tsx";
 
 const Container = styled.div`
-  padding: 1.5rem 1rem;
+    position: relative;
 `;
 
 const Title = styled.h2`
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
 `;
 
 const Subtitle = styled.p`
-  color: #4b5563;
-  margin-bottom: 1rem;
+    color: #4b5563;
+    margin-bottom: 1rem;
 `;
 
-const InputContainer = styled.div`
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-`;
-
-const Avatar = styled.div`
-  font-size: 1.875rem;
-`;
-
-const Input = styled.input`
-  flex: 1;
-  padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  outline: none;
-
-  &:focus {
-    ring: 2px;
-    ring-color: #3b82f6;
-  }
+const FormContainer = styled.form`
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
 `;
 
 const MessageList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 `;
 
 const Message = styled.div`
-  display: flex;
-  gap: 0.75rem;
-`;
-
-const MessageAvatar = styled.div`
-  font-size: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
 `;
 
 const MessageContent = styled.div``;
 
 const Author = styled.p`
-  font-weight: 600;
+    font-weight: 600;
 `;
 
 const Text = styled.p`
-  color: #374151;
+    color: #374151;
 `;
 
-export const Comments = () => {
-  const [comment, setComment] = useState('');
-  const messages = [
-    { avatar: '👤', text: 'Great product!', author: 'User 1' },
-    { avatar: '👤', text: 'I love it!', author: 'User 2' },
-    { avatar: '👤', text: 'Highly recommended', author: 'User 3' },
-  ];
+type TForm = {
+    text: string;
+     title: string;
+}
 
-  return (
-    <Container>
-      <Title>Comments</Title>
-      <Subtitle>Share your thoughts</Subtitle>
+type Props = {
+    bookID: string
+}
 
-      <InputContainer>
-        <Avatar>👤</Avatar>
-        <Input
-          type="text"
-          placeholder="Add a comment..."
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-        />
-      </InputContainer>
+export const Comments = ({bookID}: Props) => {
+    const { register, handleSubmit } = useForm<TForm>()
+    const queryClient = useQueryClient();
+    const { me } = useAuth()
 
-      <MessageList>
-        {messages.map((message, index) => (
-          <Message key={index}>
-            <MessageAvatar>{message.avatar}</MessageAvatar>
-            <MessageContent>
-              <Author>{message.author}</Author>
-              <Text>{message.text}</Text>
-            </MessageContent>
-          </Message>
-        ))}
-      </MessageList>
-    </Container>
-  );
+    const { mutateAsync, isPending } = useMutation({
+        mutationKey: ['comments'],
+        mutationFn: (data: TForm) => apiBooks.commentsCreate({ bookId: bookID}, data),
+        onSuccess: res => {
+            const cmt = res.data.data as ModelsComment;
+            cmt.account = me as ModelsAccount
+            console.log(cmt);
+            // push new comment to the list
+            queryClient.setQueryData(['get-comments', bookID], (old: ModelsComment[]) => [cmt, ...old])
+        }
+    })
+
+    const { data } = useQuery({
+        queryKey: ['get-comments', bookID],
+        queryFn: async () => {
+            const res = await  apiBooks.commentsList({ id: bookID })
+            return res.data.data as ModelsComment[]
+        }
+    })
+
+    const onSubmit = handleSubmit(d => mutateAsync(d))
+
+    const comments = (data || []) as ModelsComment[]
+
+    return (
+        <Container>
+            <Title>Bình luận</Title>
+            <Subtitle>Chia sẻ suy nghĩ của bạn về sách</Subtitle>
+
+            <FormContainer onSubmit={onSubmit} >
+                <Avatar>👤</Avatar>
+                <input type="text" placeholder="tiêu đề..." {...register('title')}/>
+                <input type="text" placeholder="Để lại cảm nhận..." {...register('text')}/>
+                <Button type="submit" isLoading={isPending}>Gửi</Button>
+            </FormContainer>
+
+            <MessageList>
+                {comments.map((cmt) => (
+                    <Message key={cmt.id}>
+                        <Avatar></Avatar>
+                        <MessageContent>
+                            <Author>{cmt.account?.name}</Author>
+                            <Text>{cmt.title}</Text>
+                            <Text>{cmt.content}</Text>
+                        </MessageContent>
+                    </Message>
+                ))}
+            </MessageList>
+        </Container>
+    );
 };

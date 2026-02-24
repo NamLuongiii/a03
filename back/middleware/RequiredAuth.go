@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"quickstart/env"
 	"quickstart/types"
@@ -15,7 +14,6 @@ func RequiredAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Get token from the header
 		tokenString := c.GetHeader("Authorization")
-		fmt.Println("Secret", env.GetEnv(env.JWTSecret))
 		parseAndValidateToken := func(tokenString string) (*types.AuthClaims, error) {
 			t, e := jwt.ParseWithClaims(tokenString, &types.AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
 				return []byte(env.GetEnv(env.JWTSecret)), nil

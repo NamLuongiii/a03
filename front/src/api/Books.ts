@@ -17,8 +17,11 @@ import type {
     BooksDetailData,
     BooksDetailParams,
     BooksListData,
+    BooksListParams,
     CategoriesListData,
     CommentsCreateParams,
+    CommentsListData,
+    CommentsListParams,
     DtoCommentDto,
     DtoRatingDto,
     FeaturedListData,
@@ -42,10 +45,11 @@ export class Books<SecurityDataType = unknown> {
    * @summary Get all books
    * @request GET:/books
    */
-  booksList = (params: RequestParams = {}) =>
+  booksList = (query: BooksListParams, params: RequestParams = {}) =>
     this.http.request<BooksListData, any>({
       path: `/books`,
       method: "GET",
+      query: query,
       ...params,
     });
   /**
@@ -140,6 +144,7 @@ export class Books<SecurityDataType = unknown> {
    * @name CommentsCreate
    * @summary Add a comment to a book
    * @request POST:/books/{bookID}/comments
+   * @secure
    */
   commentsCreate = (
     { bookId, ...query }: CommentsCreateParams,
@@ -150,6 +155,7 @@ export class Books<SecurityDataType = unknown> {
       path: `/books/${bookId}/comments`,
       method: "POST",
       body: comment,
+      secure: true,
       type: ContentType.Json,
       ...params,
     });
@@ -160,6 +166,7 @@ export class Books<SecurityDataType = unknown> {
    * @name RatingsCreate
    * @summary Add a rating to a book
    * @request POST:/books/{bookID}/ratings
+   * @secure
    */
   ratingsCreate = (
     { bookId, ...query }: RatingsCreateParams,
@@ -170,6 +177,7 @@ export class Books<SecurityDataType = unknown> {
       path: `/books/${bookId}/ratings`,
       method: "POST",
       body: rating,
+      secure: true,
       type: ContentType.Json,
       ...params,
     });
@@ -187,6 +195,23 @@ export class Books<SecurityDataType = unknown> {
   ) =>
     this.http.request<BooksDetailData, any>({
       path: `/books/${id}`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags books
+   * @name CommentsList
+   * @summary Get comments of a book
+   * @request GET:/books/{id}/comments
+   */
+  commentsList = (
+    { id, ...query }: CommentsListParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<CommentsListData, any>({
+      path: `/books/${id}/comments`,
       method: "GET",
       ...params,
     });

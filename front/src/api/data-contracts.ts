@@ -92,6 +92,19 @@ export interface ModelsCategory {
   updated_at?: string;
 }
 
+export interface ModelsComment {
+  account?: ModelsAccount;
+  account_id?: number;
+  /** Relationships */
+  book?: ModelsBook;
+  book_id?: string;
+  content?: string;
+  created_at?: string;
+  id?: number;
+  title?: string;
+  updated_at?: string;
+}
+
 export interface ModelsDigitalBook {
   /** Relationships */
   book?: ModelsBook;
@@ -133,6 +146,13 @@ export interface TypesLoginRequest {
   password: string;
 }
 
+export interface TypesPaginationData {
+  items?: any;
+  page?: number;
+  size?: number;
+  total?: number;
+}
+
 export interface TypesSignUpDto {
   email: string;
   name: string;
@@ -143,8 +163,19 @@ export type SignupCreateData = TypesCommonResponse & {
   data?: ModelsAccount;
 };
 
+export interface BooksListParams {
+  /** Page size */
+  size?: number;
+  /** Page number */
+  page?: number;
+  /** Category ID */
+  category?: string;
+  /** Search keyword */
+  search?: string;
+}
+
 export type BooksListData = TypesCommonResponse & {
-  data?: ModelsBook;
+  data?: TypesPaginationData;
 };
 
 export type BooksCreateData = TypesCommonResponse & {
@@ -190,4 +221,13 @@ export interface BooksDetailParams {
 
 export type BooksDetailData = TypesCommonResponse & {
   data?: ModelsBook;
+};
+
+export interface CommentsListParams {
+  /** Book ID */
+  id: string;
+}
+
+export type CommentsListData = TypesCommonResponse & {
+  data?: ModelsComment[];
 };

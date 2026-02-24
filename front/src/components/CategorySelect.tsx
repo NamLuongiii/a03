@@ -1,91 +1,97 @@
-import {useState} from 'react';
 import {Listbox} from '@headlessui/react';
 import styled from 'styled-components';
 import {useNavigate} from "@tanstack/react-router";
+import {useQuery} from "@tanstack/react-query";
+import {apiBooks} from "../services/ApiGenerate.ts";
+import type {ModelsCategory} from "../api/data-contracts.ts";
 
-const categories = [
-    {id: 1, name: 'All Categories'},
-    {id: 2, name: 'Fiction'},
-    {id: 3, name: 'Non-Fiction'},
-    {id: 4, name: 'Science'},
-    {id: 5, name: 'History'},
-    {id: 6, name: 'Biography'},
-];
-
-const Container = styled.div`
-    position: relative;
-    width: 100%;
-    max-width: 200px;
+const Wrapper = styled.div`
+  position: relative;
+  width: 200px;
 `;
 
-const Button = styled(Listbox.Button)`
-    width: 100%;
-    padding: 0.5rem 1rem;
-    background: white;
-    border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    &:hover {
-        border-color: #9ca3af;
-    }
+const StyledButton = styled(Listbox.Button)`
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  font-size: 0.9rem;
+  &:hover { border-color: #3b82f6; }
 `;
 
-const Options = styled(Listbox.Options)`
-    position: absolute;
-    margin-top: 0.5rem;
-    width: 100%;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    max-height: 300px;
-    overflow-y: auto;
-    z-index: 10;
+const StyledOptions = styled(Listbox.Options)`
+  position: absolute;
+  width: 100%;
+  margin-top: 0.4rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 20;
+
+  /* Giới hạn chiều cao và cho phép cuộn */
+  max-height: 250px; 
+  overflow-y: auto;
+
+  /* Tùy chỉnh thanh cuộn (scrollbar) cho tinh tế hơn */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 `;
 
-const Option = styled(Listbox.Option)<{ $active?: boolean }>`
-    padding: 0.75rem 1rem;
-    cursor: pointer;
-    background-color: ${props => props.$active ? '#f3f4f6' : 'white'};
-
-    &:hover {
-        background-color: #f3f4f6;
-    }
+const StyledOption = styled(Listbox.Option)`
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  &[data-active] { background-color: #f3f4f6; color: #3b82f6; }
+  &[data-selected] { font-weight: bold; background-color: #eff6ff; }
 `;
 
 export const CategorySelect = () => {
-    const [selected, setSelected] = useState(categories[0]);
-    const navigate = useNavigate()
-    const handleClick = () => {
-        navigate({to: `/books`}).then()
-    }
+    const navigate = useNavigate();
+
+    const { data } = useQuery({
+        queryKey: ['categories'],
+        queryFn: () => apiBooks.categoriesList(),
+        staleTime: Infinity
+    });
+
+    const categories = data?.data?.data || [];
+
+    const handleSelect = (category: ModelsCategory) => {
+        navigate({
+            to: '/books',
+            search: { category: category.id, page: 1, size: 12 } // Redirect với query param
+        });
+    };
+
     return (
-        <Container>
-            <Listbox value={selected} onChange={() => {
-                setSelected(categories[0])
-                handleClick()
-            }}>
-                <Button>
-                    <span>{selected.name}</span>
-                    <span>▼</span>
-                </Button>
-                <Options>
-                    {categories.map((category) => (
-                        <Option
-                            key={category.id}
-                            value={category}
-                            $active={selected.id === category.id}
-                        >
-                            {category.name}
-                        </Option>
+        <Wrapper>
+            <Listbox onChange={handleSelect}>
+                <StyledButton>
+                    <span>Thể loại sách</span>
+                    <span style={{ fontSize: '0.7rem', opacity: 0.5 }}>▼</span>
+                </StyledButton>
+                <StyledOptions>
+                    {categories.map((cat: ModelsCategory) => (
+                        <StyledOption key={cat.id} value={cat}>
+                            {cat.name}
+                        </StyledOption>
                     ))}
-                </Options>
+                </StyledOptions>
             </Listbox>
-        </Container>
+        </Wrapper>
     );
 };

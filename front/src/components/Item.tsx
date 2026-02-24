@@ -3,9 +3,6 @@ import {useNavigate} from "@tanstack/react-router";
 import type {ModelsBook} from "../api/data-contracts.ts";
 
 const Card = styled.div`
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 1rem;
     transition: box-shadow 0.3s;
 
     &:hover {
@@ -17,6 +14,12 @@ const Name = styled.h3`
     font-size: 1.125rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
+    lineclamp: 2;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 `;
 
 interface ItemProps {
@@ -25,11 +28,11 @@ interface ItemProps {
 
 export const Item = ({book}: ItemProps) => {
     const navigate = useNavigate()
-    const handleClick = (id: number) => {
+    const handleClick = (id: string) => {
         navigate({to: `/book/${id}`}).then()
     }
     return (
-        <Card onClick={() => handleClick(1)}>
+        <Card onClick={() => handleClick(book.id as string)}>
             {/*Cover */}
             <img src={book.cover?.xs} alt="cover" style={{width: '100%'}}/>
 

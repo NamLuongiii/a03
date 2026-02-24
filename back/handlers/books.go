@@ -7,6 +7,7 @@ import (
 	"quickstart/middleware"
 	"quickstart/models"
 	"quickstart/types"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
@@ -61,16 +62,34 @@ func NewBooksHandler(params BookParams) *BooksHandler {
 //	@Summary	Get all books
 //	@Tags		books
 //	@Router		/books [get]
-//	@Success	200	{object}	types.CommonResponse{data=models.Book[]}
+//	@Param		size		query		int		false	"Page size"
+//	@Param		page		query		int		false	"Page number"
+//	@Param		category	query		string	false	"Category ID"
+//	@Param		search		query		string	false	"Search keyword"
+//	@Success	200			{object}	types.CommonResponse{data=types.PaginationData}
 func (h *BooksHandler) GetBooks(c *gin.Context) {
-	b, e := h.bookRepository.GetAll()
+	size, e := strconv.Atoi(c.Query("size"))
+	page, e := strconv.Atoi(c.Query("page"))
+	if e != nil {
+		size = 10
+		page = 1
+	}
+
+	params := types.PaginationParams{
+		Size:     size,
+		Page:     page,
+		Category: c.Query("category"),
+		Search:   c.Query("search"),
+	}
+
+	pd, e := h.bookRepository.GetAll(params)
 	if e != nil {
 		c.Error(middleware.NewServerInternalError(e.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, types.CommonResponse{
 		Success: true,
-		Data:    b,
+		Data:    pd,
 	})
 }
 
@@ -186,9 +205,10 @@ func (h *BooksHandler) GetAuthors(c *gin.Context) {
 //	@Router		/books/{bookID}/comments [post]
 //	@Param		bookID	path	string			true	"Book ID"
 //	@Param		comment	body	dto.CommentDto	true	"Comment"
-//	@Sucesss	200 {object} types.CommonResponse {data=models.Comment}
+//	@Sucesss	200 {object} types.CommonResponse {data=[]models.Comment}
+//	@Security	BearerAuth
 func (h *BooksHandler) AddComment(c *gin.Context) {
-	bID := c.Param("bookID")
+	bID := c.Param("id")
 	uID := c.MustGet(types.ContextKeyTokenClaims).(*types.AuthClaims).ID
 
 	var body dto.CommentDto
@@ -222,8 +242,9 @@ func (h *BooksHandler) AddComment(c *gin.Context) {
 //	@Param		bookID	path	string			true	"Book ID"
 //	@Param		rating	body	dto.RatingDto	true	"Rating"
 //	@Sucesss	200 {object} types.CommonResponse {data=models.Rating}
+//	@Security	BearerAuth
 func (h *BooksHandler) AddRating(c *gin.Context) {
-	bID := c.Param("bookID")
+	bID := c.Param("id")
 
 	b, e := h.bookRepository.GetByID(bID)
 	if e != nil {
@@ -375,6 +396,29 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 		Data:    book,
 		Success: true,
 		Message: "Book created",
+	})
+
+}
+
+// Get-comment godoc
+//
+//	@Summary	Get comments of a book
+//	@Tags		books
+//	@Router		/books/{id}/comments [get]
+//	@Param		id	path		string	true	"Book ID"
+//	@Success	200	{object}	types.CommonResponse{data=[]models.Comment}
+func (h *BooksHandler) GetComments(c *gin.Context) {
+	id := c.Param("id")
+
+	cms, e := h.commentRepository.GetByBookID(id)
+	if e != nil {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, types.CommonResponse{
+		Success: true,
+		Data:    cms,
 	})
 
 }

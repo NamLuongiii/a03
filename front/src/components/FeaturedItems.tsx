@@ -3,7 +3,7 @@ import {Item} from './Item';
 import type {ModelsBook} from "../api/data-contracts.ts";
 
 const Container = styled.div`
-    padding: 2rem 1rem;
+    padding: 0 1rem;
 `;
 
 const Title = styled.h2`
@@ -38,8 +38,8 @@ type Props = {
 export const FeaturedItems = ({books}: Props) => {
     return (
         <Container>
-            <Title>Featured Items</Title>
-            <Subtitle>Check out our most popular products</Subtitle>
+            <Title>Sách mới</Title>
+            <Subtitle>Khám phá top sách mới được upload</Subtitle>
             <Grid>
                 {books.map((item, index) => (
                     <Item key={index} book={item}/>

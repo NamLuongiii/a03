@@ -6,7 +6,6 @@ import {AuthService} from "../../services";
 import {toast} from "react-toastify";
 import {z} from "zod";
 import styled from "styled-components";
-import {Input} from "../../components/ui/Input.tsx";
 import {Button} from "../../components/ui/Button.tsx";
 import {useAuth} from "../../auth.tsx";
 
@@ -42,6 +41,7 @@ function RouteComponent() {
 
     return <div>
         <LoginForm className="auth" onSubmit={handleSubmit((data: FormLogin) => {
+            console.log(data)
             mutateAsync(data).then(login).then(() => {
                 navigate({to: '/'}).then()
             })
@@ -49,15 +49,19 @@ function RouteComponent() {
             <h1>Welcome Back!</h1>
             <div>Sign in to continue your learning journey</div>
 
-            <Input id='email' icon={<span/>} label="Email"
-                   {...register('email')}
+            <input id='email'
+                   // icon={<span/>}
+                   // label="Email"
                    placeholder="Enter your email"
                    type="email"
+                   {...register('email')}
             />
-            <Input id='password' icon={<span/>} label="Password"
-                   {...register('password')}
+            <input id='password'
+                   // icon={<span/>}
+                   // label="Password"
                    placeholder="Enter your password"
                    type="password"
+                   {...register('password')}
             />
             <Button type="submit" disabled={isPending} fullWidth>Login</Button>
 

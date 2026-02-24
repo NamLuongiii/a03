@@ -1,6 +1,7 @@
 package models
 
 import (
+	"quickstart/types"
 	"time"
 
 	"gorm.io/gorm"
@@ -37,7 +38,7 @@ type Book struct {
 type BookRepositoryInterface interface {
 	GetByID(id string) (*Book, error)
 	Create(book *Book) error
-	GetAll() ([]Book, error)
+	GetAll(params types.PaginationParams) (types.PaginationData, error)
 	GetNewestBooks(limit int) ([]Book, error)
 	GetPopularBooks(limit int) ([]Book, error)
 	GetBooksOtherUserRead(limit int) ([]Book, error)
@@ -66,10 +67,40 @@ func (r *BookRepository) Create(book *Book) error {
 	return r.db.Create(book).Error
 }
 
-func (r *BookRepository) GetAll() ([]Book, error) {
+func (r *BookRepository) GetAll(params types.PaginationParams) (types.PaginationData, error) {
 	var books []Book
-	err := r.db.Preload("Cover").Preload("DigitalBooks").Find(&books).Error
-	return books, err
+	query := r.db.Model(&Book{}).Preload("Cover").Preload("DigitalBooks")
+
+	// 1. Filtering by Category
+	if params.Category != "" {
+		query = query.Where("category_id = ?", params.Category)
+	}
+
+	// 2. Searching (Title or Description)
+	if params.Search != "" {
+		searchTerm := "%" + params.Search + "%"
+		query = query.Where("name LIKE ? OR description LIKE ?", searchTerm, searchTerm)
+	}
+
+	// 3. Pagination
+	// Calculate offset: (page - 1) * size
+	offset := (params.Page - 1) * params.Size
+
+	// 4. Total count
+	var total int64
+	r.db.Model(&Book{}).Count(&total)
+
+	// 5. Order by created_at desc
+	query = query.Order("created_at DESC")
+
+	err := query.Limit(params.Size).Offset(offset).Find(&books).Error
+
+	return types.PaginationData{
+		Page:  params.Page,
+		Size:  params.Size,
+		Total: total,
+		Items: books,
+	}, err
 }
 
 func (r *BookRepository) GetNewestBooks(limit int) ([]Book, error) {

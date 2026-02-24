@@ -1,11 +1,14 @@
 import styled from 'styled-components';
-import {Link} from "@tanstack/react-router";
+import type {ModelsBook} from "../api/data-contracts.ts";
+import {Button} from "@components/ui/Button.tsx";
+import {saveAs} from 'file-saver';
+import prettyBytes from "pretty-bytes";
+import {useState} from "react";
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    padding: 1.5rem;
 
     @media (min-width: 768px) {
         flex-direction: row;
@@ -22,22 +25,15 @@ const LeftSection = styled.div`
     }
 `;
 
-const ImagePlaceholder = styled.div`
+const Image = styled.img`
     width: 100%;
-    aspect-ratio: 3 / 4;
-    background-color: #e5e7eb;
-    border-radius: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #6b7280;
-    font-size: 1.125rem;
 `;
 
 const RightSection = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
 `;
 
@@ -62,27 +58,45 @@ const DetailText = styled.p`
     color: #6b7280;
     line-height: 1.5;
 `;
-const slug = 'book-slug';
 
-export const ItemDetail = () => {
+type Props = {
+    book: ModelsBook
+}
+
+export const ItemDetail = ({book}: Props) => {
+    const [showFiles, setShowFiles] = useState(false);
 
     return (
         <Container>
             <LeftSection>
-                <ImagePlaceholder>📖 Image</ImagePlaceholder>
+                <Image src={book.cover?.md} alt=""/>
             </LeftSection>
             <RightSection>
-                <Title>Book Title</Title>
+                <Title>{book.name}</Title>
                 <Description>
-                    This is a detailed description of the book. It provides an overview of the content,
-                    themes, and what readers can expect from this amazing piece of literature.
+                    {book.description}
                 </Description>
                 <DetailText>
-                    Author: <Link to={`/author/${slug}`}>John Doe</Link><br/>
-                    Publisher: Example Press<br/>
-                    Year: 2024<br/>
-                    Pages: 320
+                    {/*Author: <Link to={`/author/${book.author_id}`}>John Doe</Link><br/>*/}
+                    {/*Publisher: Example Press<br/>*/}
+                    {/*Year: 2024<br/>*/}
+                    {/*Pages: 320*/}
                 </DetailText>
+
+                <Button type="button" onClick={() => setShowFiles(!showFiles)}>Tải về</Button>
+                {showFiles && (
+                    <div>
+                        {book.digital_books?.map(file =>
+                            <Button
+                                type="button"
+                                onClick={() => {
+                                    if (file.url) {
+                                        saveAs(file.url, file.name)
+                                    }
+                                }}
+                                key={file.id}>{file.file_type} ({prettyBytes(file.file_size || 0)})</Button>)}
+                    </div>
+                )}
             </RightSection>
         </Container>
     );

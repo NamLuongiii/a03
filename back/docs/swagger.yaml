@@ -136,6 +136,29 @@ definitions:
       updated_at:
         type: string
     type: object
+  models.Comment:
+    properties:
+      account:
+        $ref: '#/definitions/models.Account'
+      account_id:
+        type: integer
+      book:
+        allOf:
+        - $ref: '#/definitions/models.Book'
+        description: Relationships
+      book_id:
+        type: string
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
   models.DigitalBook:
     properties:
       book:
@@ -204,6 +227,16 @@ definitions:
     required:
     - email
     - password
+    type: object
+  types.PaginationData:
+    properties:
+      items: {}
+      page:
+        type: integer
+      size:
+        type: integer
+      total:
+        type: integer
     type: object
   types.SignUpDto:
     properties:
@@ -307,6 +340,23 @@ paths:
       - auth
   /books:
     get:
+      parameters:
+      - description: Page size
+        in: query
+        name: size
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Category ID
+        in: query
+        name: category
+        type: string
+      - description: Search keyword
+        in: query
+        name: search
+        type: string
       responses:
         "200":
           description: OK
@@ -315,7 +365,7 @@ paths:
             - $ref: '#/definitions/types.CommonResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Book'
+                  $ref: '#/definitions/types.PaginationData'
               type: object
       summary: Get all books
       tags:
@@ -386,6 +436,8 @@ paths:
         schema:
           $ref: '#/definitions/dto.CommentDto'
       responses: {}
+      security:
+      - BearerAuth: []
       summary: Add a comment to a book
       tags:
       - books
@@ -404,6 +456,8 @@ paths:
         schema:
           $ref: '#/definitions/dto.RatingDto'
       responses: {}
+      security:
+      - BearerAuth: []
       summary: Add a rating to a book
       tags:
       - books
@@ -426,6 +480,29 @@ paths:
                   $ref: '#/definitions/models.Book'
               type: object
       summary: Get a book by ID
+      tags:
+      - books
+  /books/{id}/comments:
+    get:
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Comment'
+                  type: array
+              type: object
+      summary: Get comments of a book
       tags:
       - books
   /books/authors/{authorID}:

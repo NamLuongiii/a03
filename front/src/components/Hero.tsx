@@ -6,21 +6,22 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   padding: 5rem 1rem;
+    border: 1px solid #e5e7eb;
 `;
 
 const Title = styled.h1`
-  font-size: 2.25rem;
+  font-size: 1.4rem;
   font-weight: bold;
   text-align: center;
   margin-bottom: 1rem;
 
   @media (min-width: 768px) {
-    font-size: 3.75rem;
+    font-size: 2rem;
   }
 `;
 
 const Subtitle = styled.p`
-  font-size: 1.125rem;
+  font-size: 1.1rem;
   color: #4b5563;
   text-align: center;
   max-width: 42rem;
@@ -33,8 +34,8 @@ const Subtitle = styled.p`
 export const Hero = () => {
   return (
     <Container>
-      <Title>Welcome to Our Platform</Title>
-      <Subtitle>Discover amazing products and services tailored just for you</Subtitle>
+      <Title>Đọc và tải sách online hoàn toàn miễn phí</Title>
+      <Subtitle>Tổng hợp các nguồn sách sưu tầm trên internet</Subtitle>
     </Container>
   );
 };

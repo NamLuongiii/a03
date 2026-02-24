@@ -35,3 +35,17 @@ type ActivityDto struct {
 	EarnedStars int    `json:"earned_stars"`
 	Result      string `json:"result"`
 }
+
+type PaginationParams struct {
+	Size     int
+	Page     int
+	Category string
+	Search   string
+}
+
+type PaginationData struct {
+	Size  int   `json:"size"`
+	Page  int   `json:"page"`
+	Total int64 `json:"total"`
+	Items any   `json:"items"`
+}

@@ -2,19 +2,8 @@ import {useState} from 'react';
 import {Dialog} from '@headlessui/react';
 import styled from 'styled-components';
 import {useNavigate} from "@tanstack/react-router";
+import Avatar from "boring-avatars";
 
-const OpenButton = styled.button`
-    padding: 0.5rem 1rem;
-    background-color: #3b82f6;
-    color: white;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
-
-    &:hover {
-        background-color: #2563eb;
-    }
-`;
 
 const Overlay = styled.div`
     position: fixed;
@@ -108,7 +97,7 @@ export const AuthModal = () => {
     }
     return (
         <>
-            <OpenButton onClick={() => setIsOpen(true)}>Open Auth</OpenButton>
+            <Avatar onClick={() => setIsOpen(true)}>Open Auth</Avatar>
             <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
                 <Overlay>
                     <Panel>

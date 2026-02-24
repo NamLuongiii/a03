@@ -102,17 +102,17 @@ func main() {
 	})
 
 	router := gin.Default()
-	router.Use(middleware.ErrorHandler())
 
 	// Add CORS for all ip
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"}, // cho tất cả origin
+		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: false,
+		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
+
+	router.Use(middleware.ErrorHandler())
 
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
@@ -142,6 +142,7 @@ func main() {
 			book.GET("/authors/:authorID", bookHandler.GetAuthors)
 			book.POST("/:id/comments", middleware.RequiredAuth(), bookHandler.AddComment)
 			book.POST("/:id/ratings", middleware.RequiredAuth(), bookHandler.AddRating)
+			book.GET("/:id/comments", bookHandler.GetComments)
 		}
 
 	}
