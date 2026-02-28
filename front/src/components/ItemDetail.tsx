@@ -1,9 +1,6 @@
 import styled from 'styled-components';
 import type {ModelsBook} from "../api/data-contracts.ts";
-import {Button} from "@components/ui/Button.tsx";
-import {saveAs} from 'file-saver';
-import prettyBytes from "pretty-bytes";
-import {useState} from "react";
+import {DownloadDropdown} from "@components/DownloadDropdown.tsx";
 
 const Container = styled.div`
     display: flex;
@@ -64,7 +61,6 @@ type Props = {
 }
 
 export const ItemDetail = ({book}: Props) => {
-    const [showFiles, setShowFiles] = useState(false);
 
     return (
         <Container>
@@ -83,20 +79,7 @@ export const ItemDetail = ({book}: Props) => {
                     {/*Pages: 320*/}
                 </DetailText>
 
-                <Button type="button" onClick={() => setShowFiles(!showFiles)}>Tải về</Button>
-                {showFiles && (
-                    <div>
-                        {book.digital_books?.map(file =>
-                            <Button
-                                type="button"
-                                onClick={() => {
-                                    if (file.url) {
-                                        saveAs(file.url, file.name)
-                                    }
-                                }}
-                                key={file.id}>{file.file_type} ({prettyBytes(file.file_size || 0)})</Button>)}
-                    </div>
-                )}
+                <DownloadDropdown book={book} />
             </RightSection>
         </Container>
     );

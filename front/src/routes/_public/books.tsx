@@ -46,13 +46,9 @@ function Books() {
     return (
         <Screen>
             {isLoading && <Loading/>}
-            <Filter/>
             <Container>
-                {
-                    !!paginationData && (
-                        <ItemGrid data={paginationData}/>
-                    )
-                }
+                <Filter/>
+                {!!paginationData && (<ItemGrid data={paginationData}/>)}
             </Container>
             <Footer/>
         </Screen>

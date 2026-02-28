@@ -1,81 +1,79 @@
-/* Reset */
+/* Reset & Base */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-    line-height: 1.5;
-    color: var(--text-color);
-    background-color: var(--bg-color);
-    -webkit-font-smoothing: antialiased;
-}
-
-img, picture, video, canvas, svg {
-    display: block;
-    max-width: 100%;
-}
-
-input, button, textarea, select {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-}
-
-/* CSS Variables */
 :root {
-    /* Colors */
-    --color-primary: #38BDF8;
-    --color-secondary: #4F46E5;
+    /* Industrial Palette - Zinc */
+    --zinc-50: #fafafa;
+    --zinc-100: #f4f4f5;
+    --zinc-200: #e4e4e7;
+    --zinc-300: #d4d4d8;
+    --zinc-400: #a1a1aa;
+    --zinc-500: #71717a;
+    --zinc-800: #27272a;
+    --zinc-900: #18181b;
+    --zinc-950: #09090b;
 
-    /* Background */
-    --bg-color: #F9FAFB;
-    --bg-header: #FFFFFF;
-    --surface-color: #FFFFFF;
+    /* Semantic Colors */
+    --bg-color: var(--zinc-50);
+    --surface-color: #ffffff;
+    --text-main: var(--zinc-900);
+    --text-muted: var(--zinc-500);
+    --border-color: var(--zinc-200);
+    --accent-color: var(--zinc-900);
+    --danger: #ef4444;
 
-    /* Text */
-    --text-color: #111827;
-    --text-muted: #6B7280;
-
-    /* Border */
-    --border-color: #E5E7EB;
-
-    /* Shadow */
-    --shadow-low: 0 1px 2px rgb(0 0 0 / 0.05);
-    --shadow-high: 0 8px 24px rgb(0 0 0 / 0.08);
-
-    /* Gradient */
-    --gradient-logo: linear-gradient(90deg, #38BDF8 0%, #4F46E5 100%);
-
-    /* Button */
-    --btn-primary-text: #FFFFFF;
+    /* Spacing & Sharpness */
+    --radius-none: 0;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
 }
 
 /* Dark Mode */
 html[aria-theme="dark"] {
-    --color-primary: #38BDF8;
-    --color-secondary: #6366F1;
-
-    --bg-color: #020617;
-    --bg-header: #0F172A;
-    --surface-color: #020617;
-
-    --text-color: #E5E7EB;
-    --text-muted: #94A3B8;
-
-    --border-color: #1E293B;
-
-    --shadow-low: 0 1px 2px rgb(0 0 0 / 0.4);
-    --shadow-high: 0 8px 24px rgb(0 0 0 / 0.6);
-
-    --gradient-logo: linear-gradient(90deg, #60A5FA 0%, #818CF8 100%);
-
-    --btn-primary-text: #020617;
+    --bg-color: var(--zinc-950);
+    --surface-color: var(--zinc-900);
+    --text-main: var(--zinc-100);
+    --text-muted: var(--zinc-400);
+    --border-color: var(--zinc-800);
+    --accent-color: #ffffff;
 }
 
+body {
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    line-height: 1.5;
+    color: var(--text-main);
+    background-color: var(--bg-color);
+    -webkit-font-smoothing: antialiased;
+}
 
+/* --- Global Typography Standards --- */
 
+h1, h2, h3, h4 {
+    color: var(--text-main);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+h1 { font-size: 1.5rem; letter-spacing: 0.15em; } /* Titles lớn */
+h2 { font-size: 1.25rem; } /* Subtitles */
+h3 { font-size: 1rem; }    /* Card Titles */
+
+p { font-size: 0.875rem; color: var(--text-muted); }
+
+/* Standard Inputs & Buttons inside the app will inherit these */
+input, button, textarea {
+    font-family: inherit;
+    font-size: 14px;
+    border-radius: var(--radius-none);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: 0.2s;
+}

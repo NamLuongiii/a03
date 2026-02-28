@@ -4,62 +4,81 @@ import {SearchBox} from "@components/SearchBox.tsx";
 import {HeaderUser} from "@components/HeaderUser.tsx";
 import {CategorySelect} from "@components/CategorySelect.tsx";
 
+// --- Styled Components ---
 
 const HeaderStyled = styled.header`
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     position: sticky;
     top: 0;
     z-index: 10;
-    background: var(--bg-header);
-
+    
+    /* Sử dụng biến CSS từ main.css */
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(12px); /* Tạo hiệu ứng kính mờ nhẹ nếu surface-color có opacity */
+    
+    padding: 0 2rem;
+    height: 64px; /* Fix cứng chiều cao để Header trông chắc chắn (Industrial) */
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
     @media (max-width: 768px) {
         display: none;
     }
-`
+`;
 
 const Logo = styled(Link)`
-    font-size: 1.5rem;
+    /* Kế thừa từ h1/h2 trong main.css */
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-main);
     text-decoration: none;
-    background: var(--gradient-logo);
-    background-clip: text;
-    color: transparent;
-    font-weight: bold;
-    word-spacing: 2px;
-`
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    
+    /* Hiệu ứng hover tinh tế */
+    &:hover {
+        opacity: 0.7;
+    }
+`;
 
-const Container = styled.div`
+const NavContent = styled.div`
     display: flex;
-    gap: 1rem;
     align-items: center;
-`
+    gap: 1.5rem; /* Tăng gap cho thoáng */
+    flex: 1;
+    justify-content: center; /* Đẩy cụm search vào giữa */
+    max-width: 600px;
+    margin: 0 2rem;
+`;
+
+const UserSection = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 120px;
+    justify-content: flex-end;
+`;
+
+// --- Component ---
 
 export function HeaderDesktop() {
-    // const {isAuthenticated, logout, me} = useAuth()
-    // // const [theme, setTheme] = useState<Theme>(Theme.LIGHT)
-    // const navigate = useNavigate()
-    //
-    // const onLogin = () => {
-    //     navigate({to: '/login'}).then()
-    // }
-    //
-    // const onSignup = () => {
-    //     navigate({to: '/register'}).then()
-    // }
-
     return (
         <HeaderStyled>
+            {/* Cánh trái: Logo */}
             <Logo to="/">BookOn</Logo>
 
-            <Container>
-                <CategorySelect/>
-                <SearchBox/>
-            </Container>
+            {/* Cánh giữa: Search & Categories */}
+            <NavContent>
+                <CategorySelect />
+                <SearchBox />
+            </NavContent>
 
-
-            <HeaderUser/>
+            {/* Cánh phải: User (Avatar/Login) */}
+            <UserSection>
+                <HeaderUser />
+            </UserSection>
         </HeaderStyled>
     );
 }

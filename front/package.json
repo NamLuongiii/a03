@@ -19,6 +19,7 @@
     "axios": "^1.13.2",
     "boring-avatars": "^2.0.4",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
     "i": "^0.3.7",
     "lucide-react": "^0.563.0",

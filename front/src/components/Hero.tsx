@@ -5,8 +5,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 5rem 1rem;
-    border: 1px solid #e5e7eb;
+  padding: 8rem 1rem;
 `;
 
 const Title = styled.h1`
@@ -34,8 +33,8 @@ const Subtitle = styled.p`
 export const Hero = () => {
   return (
     <Container>
-      <Title>Đọc và tải sách online hoàn toàn miễn phí</Title>
-      <Subtitle>Tổng hợp các nguồn sách sưu tầm trên internet</Subtitle>
+      <Title>Đọc sách online miễn phí</Title>
+      <Subtitle>Nguồn sưu tầm trên Internet</Subtitle>
     </Container>
   );
 };

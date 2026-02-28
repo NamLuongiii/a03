@@ -1,13 +1,13 @@
 import {createFileRoute, Link, useNavigate} from '@tanstack/react-router'
 import {useForm} from "react-hook-form";
 import {useMutation} from "@tanstack/react-query";
-import {MUTATION_KEYS} from "../../constants";
 import {AuthService} from "../../services";
 import {toast} from "react-toastify";
 import {z} from "zod";
 import styled from "styled-components";
 import {Button} from "../../components/ui/Button.tsx";
 import {useAuth} from "../../auth.tsx";
+import {InputField} from "@components/ui/Input.tsx";
 
 export const Route = createFileRoute('/_public/login')({
     component: RouteComponent,
@@ -16,81 +16,133 @@ export const Route = createFileRoute('/_public/login')({
     }),
 })
 
-type FormLogin = {
-    email: string;
-    password: string;
-}
+type FormLogin = z.infer<typeof loginSchema>;
+const loginSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(1),
+});
 
 function RouteComponent() {
-    const {register, handleSubmit} = useForm<FormLogin>({})
-    const {login} = useAuth()
-    const navigate = useNavigate()
+    const { register, handleSubmit } = useForm<FormLogin>();
+    const { login } = useAuth();
+    const navigate = useNavigate();
+    const { redirect } = Route.useSearch();
 
-    // query login
-    const {mutateAsync, isPending} = useMutation({
-        mutationKey: [MUTATION_KEYS.LOGIN],
-        mutationFn: async (data: FormLogin) => {
-            // perform login logic here
-            const result = await AuthService.login(data.email, data.password);
-            return result.data
+    const { mutate, isPending } = useMutation({
+        mutationFn: (data: FormLogin) => AuthService.login(data.email, data.password),
+        onSuccess: (res) => {
+            login(res.data);
+            navigate({ to: redirect || '/' });
         },
-        onError: (error) => {
-            toast.error(error.message);
+        onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Login failed");
         },
     });
 
-    return <div>
-        <LoginForm className="auth" onSubmit={handleSubmit((data: FormLogin) => {
-            console.log(data)
-            mutateAsync(data).then(login).then(() => {
-                navigate({to: '/'}).then()
-            })
-        })}>
-            <h1>Welcome Back!</h1>
-            <div>Sign in to continue your learning journey</div>
+    return (
+        <PageContainer>
+            <LoginForm onSubmit={handleSubmit((data) => mutate(data))}>
+                <Header>
+                    <h1>Đăng nhập</h1>
+                    <p>Tiếp tục hành trình đọc sách của bạn</p>
+                </Header>
 
-            <input id='email'
-                   // icon={<span/>}
-                   // label="Email"
-                   placeholder="Enter your email"
-                   type="email"
-                   {...register('email')}
-            />
-            <input id='password'
-                   // icon={<span/>}
-                   // label="Password"
-                   placeholder="Enter your password"
-                   type="password"
-                   {...register('password')}
-            />
-            <Button type="submit" disabled={isPending} fullWidth>Login</Button>
+                <InputGroup>
+                    <InputField
+                        type="email"
+                        placeholder="Email"
+                        {...register('email')}
+                        required
+                    />
+                    <InputField
+                        type="password"
+                        placeholder="Mật khẩu"
+                        {...register('password')}
+                        required
+                    />
+                </InputGroup>
 
-            <div>
-                Don't have an account? <StyledLink to="/register">Register</StyledLink>
-            </div>
-            <StyledLink to="/forgot-password">Forgot password</StyledLink>
-        </LoginForm>
+                <Button type="submit" isLoading={isPending} fullWidth>
+                    Xác nhận
+                </Button>
 
-    </div>
+                <Footer>
+                    <p>Chưa có tài khoản? <TextLink to="/register">Đăng ký</TextLink></p>
+                    <TextLink to="/forgot-password" style={{ fontSize: '13px', opacity: 0.7 }}>
+                        Quên mật khẩu?
+                    </TextLink>
+                </Footer>
+            </LoginForm>
+        </PageContainer>
+    )
 }
 
-const LoginForm = styled.form`
-    padding: 2rem;
-    margin: 2rem auto;
-    background-color: var(--surface-color);
-    border-radius: 1rem;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-low);
+// --- Styled Components ---
 
+const PageContainer = styled.div`
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fafafa;
+`;
+
+const LoginForm = styled.form`
+    width: 100%;
+    max-width: 400px;
+    padding: 3rem 2.5rem;
+    background: white;
+    border: 1px solid #e4e4e7;
+    /* Loại bỏ hoàn toàn border-radius để theo style modern sharp */
+    border-radius: 0; 
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    width: fit-content;
-    text-align: center;
-`
+    gap: 1.5rem;
+`;
 
-const StyledLink = styled(Link)`
-    background: var(--gradient-logo);
-    background-clip: text;
-    color: transparent;
-`
+const Header = styled.div`
+    text-align: center;
+    margin-bottom: 1rem;
+
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #18181b;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        color: #71717a;
+        font-size: 0.875rem;
+    }
+`;
+
+const InputGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+`;
+
+const Footer = styled.div`
+    margin-top: 0.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 14px;
+    color: #52525b;
+`;
+
+const TextLink = styled(Link)`
+    color: #18181b;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border 0.2s;
+
+    &:hover {
+        border-bottom: 1px solid #18181b;
+    }
+`;

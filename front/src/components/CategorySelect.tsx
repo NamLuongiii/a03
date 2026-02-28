@@ -1,63 +1,87 @@
-import {Listbox} from '@headlessui/react';
+import {Listbox, Transition} from '@headlessui/react';
 import styled from 'styled-components';
+import {Fragment} from 'react';
 import {useNavigate} from "@tanstack/react-router";
 import {useQuery} from "@tanstack/react-query";
 import {apiBooks} from "../services/ApiGenerate.ts";
 import type {ModelsCategory} from "../api/data-contracts.ts";
+import {ChevronDown} from "lucide-react";
+
+// --- Styled Components ---
 
 const Wrapper = styled.div`
   position: relative;
-  width: 200px;
+  width: 180px; /* Thu gọn một chút cho tinh tế */
 `;
 
 const StyledButton = styled(Listbox.Button)`
   width: 100%;
-  padding: 0.6rem 1rem;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  text-align: left;
+  height: 40px; /* Khớp chiều cao với các thành phần khác trên Header */
+  padding: 0 1rem;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-none); /* Sắc sảo */
+  
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-main);
   cursor: pointer;
-  font-size: 0.9rem;
-  &:hover { border-color: #3b82f6; }
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--zinc-400);
+  }
+
+  &[data-active] {
+    border-color: var(--zinc-900);
+  }
 `;
 
 const StyledOptions = styled(Listbox.Options)`
   position: absolute;
   width: 100%;
-  margin-top: 0.4rem;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  z-index: 20;
+  margin-top: -1px; /* Đè lên border dưới của button tạo khối thống nhất */
+  background: var(--surface-color);
+  border: 1px solid var(--zinc-900);
+  border-radius: var(--radius-none);
+  box-shadow: var(--shadow-high);
+  z-index: 50;
+  outline: none;
 
-  /* Giới hạn chiều cao và cho phép cuộn */
-  max-height: 250px; 
+  max-height: 300px; 
   overflow-y: auto;
 
-  /* Tùy chỉnh thanh cuộn (scrollbar) cho tinh tế hơn */
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 10px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
+  /* Scrollbar Industrial */
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: var(--zinc-300); }
 `;
 
 const StyledOption = styled(Listbox.Option)`
-  padding: 0.6rem 1rem;
+  padding: 10px 16px;
   cursor: pointer;
-  font-size: 0.9rem;
-  &[data-active] { background-color: #f3f4f6; color: #3b82f6; }
-  &[data-selected] { font-weight: bold; background-color: #eff6ff; }
+  font-size: 13px;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+
+  &[data-focus] {
+    background-color: var(--zinc-100);
+    color: var(--text-main);
+  }
+
+  &[data-selected] {
+    background-color: var(--zinc-900);
+    color: white;
+    font-weight: 600;
+  }
 `;
+
+// --- Component ---
 
 export const CategorySelect = () => {
     const navigate = useNavigate();
@@ -73,7 +97,11 @@ export const CategorySelect = () => {
     const handleSelect = (category: ModelsCategory) => {
         navigate({
             to: '/books',
-            search: { category: category.id, page: 1, size: 12 } // Redirect với query param
+            search: (prev: any) => ({
+                ...prev,
+                category: category.id,
+                page: 1
+            })
         });
     };
 
@@ -81,16 +109,27 @@ export const CategorySelect = () => {
         <Wrapper>
             <Listbox onChange={handleSelect}>
                 <StyledButton>
-                    <span>Thể loại sách</span>
-                    <span style={{ fontSize: '0.7rem', opacity: 0.5 }}>▼</span>
+                    <span>Thể loại</span>
+                    <ChevronDown size={14} style={{ opacity: 0.8 }} />
                 </StyledButton>
-                <StyledOptions>
-                    {categories.map((cat: ModelsCategory) => (
-                        <StyledOption key={cat.id} value={cat}>
-                            {cat.name}
-                        </StyledOption>
-                    ))}
-                </StyledOptions>
+
+                <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                >
+                    <StyledOptions>
+                        {categories.map((cat: ModelsCategory) => (
+                            <StyledOption key={cat.id} value={cat}>
+                                {cat.name}
+                            </StyledOption>
+                        ))}
+                    </StyledOptions>
+                </Transition>
             </Listbox>
         </Wrapper>
     );
