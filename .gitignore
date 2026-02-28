@@ -36,5 +36,6 @@ browser-automation/package-lock.json
 browser-automation/pnpm-lock.yaml
 front/package-lock.json
 front/pnpm-lock.yaml
-admin-panel/package-lock.json
-admin-panel/pnpm-lock.yaml
+admin/package-lock.json
+admin/pnpm-lock.yaml
+back/tmp
