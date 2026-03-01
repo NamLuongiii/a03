@@ -1,38 +1,5 @@
 basePath: /api/v1
 definitions:
-  dto.CommentDto:
-    properties:
-      text:
-        type: string
-      title:
-        type: string
-    type: object
-  dto.RatingDto:
-    properties:
-      rating:
-        type: integer
-    type: object
-  dto.RequestChangePassword:
-    properties:
-      email:
-        type: string
-    type: object
-  dto.ResetPassword:
-    properties:
-      email:
-        type: string
-      new_password:
-        type: string
-      token:
-        type: string
-    type: object
-  dto.VerifyOTP:
-    properties:
-      email:
-        type: string
-      otp:
-        type: string
-    type: object
   models.Account:
     properties:
       created_at:
@@ -46,151 +13,6 @@ definitions:
       profile:
         $ref: '#/definitions/models.Profile'
       updated_at:
-        type: string
-    type: object
-  models.Author:
-    properties:
-      country:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      summary:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  models.Book:
-    properties:
-      author:
-        $ref: '#/definitions/models.Author'
-      author_id:
-        type: string
-      category:
-        allOf:
-        - $ref: '#/definitions/models.Category'
-        description: Relationships
-      category_id:
-        type: string
-      cover:
-        $ref: '#/definitions/models.Image'
-      cover_id:
-        type: integer
-      created_at:
-        type: string
-      created_by:
-        type: integer
-      creator:
-        $ref: '#/definitions/models.Account'
-      description:
-        type: string
-      digital_books:
-        items:
-          $ref: '#/definitions/models.DigitalBook'
-        type: array
-      download_nums:
-        type: integer
-      id:
-        type: string
-      is_hidden:
-        type: boolean
-      name:
-        type: string
-      rating_avg:
-        type: number
-      rating_count:
-        type: integer
-      series:
-        $ref: '#/definitions/models.BookSeries'
-      series_id:
-        type: string
-      summary:
-        type: string
-      updated_at:
-        type: string
-      view_nums:
-        type: integer
-    type: object
-  models.BookSeries:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  models.Category:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  models.Comment:
-    properties:
-      account:
-        $ref: '#/definitions/models.Account'
-      account_id:
-        type: integer
-      book:
-        allOf:
-        - $ref: '#/definitions/models.Book'
-        description: Relationships
-      book_id:
-        type: string
-      content:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: integer
-      title:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  models.DigitalBook:
-    properties:
-      book:
-        allOf:
-        - $ref: '#/definitions/models.Book'
-        description: Relationships
-      book_id:
-        type: string
-      created_at:
-        type: string
-      file_size:
-        type: integer
-      file_type:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      updated_at:
-        type: string
-      url:
-        type: string
-    type: object
-  models.Image:
-    properties:
-      id:
-        type: integer
-      md:
-        type: string
-      sm:
-        type: string
-      xs:
         type: string
     type: object
   models.Profile:
@@ -228,16 +50,6 @@ definitions:
     - email
     - password
     type: object
-  types.PaginationData:
-    properties:
-      items: {}
-      page:
-        type: integer
-      size:
-        type: integer
-      total:
-        type: integer
-    type: object
   types.SignUpDto:
     properties:
       email:
@@ -256,19 +68,6 @@ info:
   title: My API
   version: "1.0"
 paths:
-  /auth/ask-reset-password:
-    post:
-      parameters:
-      - description: email
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.RequestChangePassword'
-      responses: {}
-      summary: send otp to email ask change password
-      tags:
-      - auth
   /auth/login:
     post:
       parameters:
@@ -278,29 +77,34 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/types.LoginRequest'
-      responses: {}
+      responses:
+        "200":
+          description: Thành công
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
       summary: Login user by name
       tags:
       - auth
   /auth/me:
     get:
-      responses: {}
+      responses:
+        "200":
+          description: Thành công
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Account'
+              type: object
       security:
       - BearerAuth: []
       summary: Get current user info
-      tags:
-      - auth
-  /auth/reset-password:
-    post:
-      parameters:
-      - description: new password
-        in: body
-        name: reset_password
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ResetPassword'
-      responses: {}
-      summary: change password with the singed token
       tags:
       - auth
   /auth/signup:
@@ -325,243 +129,6 @@ paths:
       summary: create a user
       tags:
       - auth
-  /auth/verify-OTP:
-    post:
-      parameters:
-      - description: OTP code
-        in: body
-        name: verifyOTP
-        required: true
-        schema:
-          $ref: '#/definitions/dto.VerifyOTP'
-      responses: {}
-      summary: Verify OTP
-      tags:
-      - auth
-  /books:
-    get:
-      parameters:
-      - description: Page size
-        in: query
-        name: size
-        type: integer
-      - description: Page number
-        in: query
-        name: page
-        type: integer
-      - description: Category ID
-        in: query
-        name: category
-        type: string
-      - description: Search keyword
-        in: query
-        name: search
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/types.CommonResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/types.PaginationData'
-              type: object
-      summary: Get all books
-      tags:
-      - books
-    post:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: Book name
-        in: formData
-        name: name
-        required: true
-        type: string
-      - description: Description
-        in: formData
-        name: description
-        type: string
-      - description: Summary
-        in: formData
-        name: summary
-        type: string
-      - description: Category ID
-        in: formData
-        name: category_id
-        type: string
-      - description: Author ID
-        in: formData
-        name: author_id
-        type: string
-      - description: Cover image
-        in: formData
-        name: cover
-        type: file
-      - collectionFormat: csv
-        description: Digital book files
-        in: formData
-        items:
-          type: file
-        name: files
-        type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/types.CommonResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.Book'
-              type: object
-      security:
-      - BearerAuth: []
-      summary: Create a new book
-      tags:
-      - books
-  /books/{bookID}/comments:
-    post:
-      parameters:
-      - description: Book ID
-        in: path
-        name: bookID
-        required: true
-        type: string
-      - description: Comment
-        in: body
-        name: comment
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CommentDto'
-      responses: {}
-      security:
-      - BearerAuth: []
-      summary: Add a comment to a book
-      tags:
-      - books
-  /books/{bookID}/ratings:
-    post:
-      parameters:
-      - description: Book ID
-        in: path
-        name: bookID
-        required: true
-        type: string
-      - description: Rating
-        in: body
-        name: rating
-        required: true
-        schema:
-          $ref: '#/definitions/dto.RatingDto'
-      responses: {}
-      security:
-      - BearerAuth: []
-      summary: Add a rating to a book
-      tags:
-      - books
-  /books/{id}:
-    get:
-      parameters:
-      - description: Book ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/types.CommonResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.Book'
-              type: object
-      summary: Get a book by ID
-      tags:
-      - books
-  /books/{id}/comments:
-    get:
-      parameters:
-      - description: Book ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/types.CommonResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/models.Comment'
-                  type: array
-              type: object
-      summary: Get comments of a book
-      tags:
-      - books
-  /books/authors/{authorID}:
-    get:
-      parameters:
-      - description: Author ID
-        in: path
-        name: authorID
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/types.CommonResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.Author'
-              type: object
-      summary: Get an author by ID
-      tags:
-      - books
-  /books/categories:
-    get:
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/types.CommonResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.Category'
-              type: object
-      summary: Get all categories
-      tags:
-      - books
-  /books/featured:
-    get:
-      parameters:
-      - description: recommender
-        in: query
-        name: recommender
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/types.CommonResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.Book'
-              type: object
-      summary: Get featured books
-      tags:
-      - books
 securityDefinitions:
   BearerAuth:
     description: Type only token (not include Bearer)

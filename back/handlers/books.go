@@ -57,16 +57,6 @@ func NewBooksHandler(params BookParams) *BooksHandler {
 	}
 }
 
-// GetBooks godoc
-//
-//	@Summary	Get all books
-//	@Tags		books
-//	@Router		/books [get]
-//	@Param		size		query		int		false	"Page size"
-//	@Param		page		query		int		false	"Page number"
-//	@Param		category	query		string	false	"Category ID"
-//	@Param		search		query		string	false	"Search keyword"
-//	@Success	200			{object}	types.CommonResponse{data=types.PaginationData}
 func (h *BooksHandler) GetBooks(c *gin.Context) {
 	size, e := strconv.Atoi(c.Query("size"))
 	page, e := strconv.Atoi(c.Query("page"))
@@ -93,13 +83,6 @@ func (h *BooksHandler) GetBooks(c *gin.Context) {
 	})
 }
 
-// GetFeaturedBooks godoc
-//
-//	@Summary	Get featured books
-//	@Tags		books
-//	@Router		/books/featured [get]
-//	@Param		recommender	query		string	true	"recommender"
-//	@Success	200			{object}	types.CommonResponse{data=models.Book[]}
 func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
 	recommender := c.Query("recommender")
 
@@ -137,13 +120,6 @@ func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
 
 }
 
-// GetBookByID godoc
-//
-//	@Summary	Get a book by ID
-//	@Tags		books
-//	@Router		/books/{id} [get]
-//	@Param		id	path		string	true	"Book ID"
-//	@Success	200	{object}	types.CommonResponse{data=models.Book}
 func (h *BooksHandler) GetBookByID(c *gin.Context) {
 	id := c.Param("id")
 
@@ -160,12 +136,6 @@ func (h *BooksHandler) GetBookByID(c *gin.Context) {
 
 }
 
-// GetCategories godoc
-//
-//	@Summary	Get all categories
-//	@Tags		books
-//	@Router		/books/categories [get]
-//	@Success	200	{object}	types.CommonResponse{data=models.Category[]}
 func (h *BooksHandler) GetCategories(c *gin.Context) {
 	cs, e := h.categoryRepository.GetAll()
 	if e != nil {
@@ -178,13 +148,6 @@ func (h *BooksHandler) GetCategories(c *gin.Context) {
 	})
 }
 
-// GetAuthors godoc
-//
-//	@Summary	Get an author by ID
-//	@Tags		books
-//	@Router		/books/authors/{authorID} [get]
-//	@Param		authorID	path		string	true	"Author ID"
-//	@Success	200			{object}	types.CommonResponse{data=models.Author}
 func (h *BooksHandler) GetAuthors(c *gin.Context) {
 	id := c.Param("authorID")
 	author, e := h.authorRepository.GetByID(id)
@@ -198,15 +161,6 @@ func (h *BooksHandler) GetAuthors(c *gin.Context) {
 	})
 }
 
-// AddComment godoc
-//
-//	@Summary	Add a comment to a book
-//	@Tags		books
-//	@Router		/books/{bookID}/comments [post]
-//	@Param		bookID	path	string			true	"Book ID"
-//	@Param		comment	body	dto.CommentDto	true	"Comment"
-//	@Sucesss	200 {object} types.CommonResponse {data=[]models.Comment}
-//	@Security	BearerAuth
 func (h *BooksHandler) AddComment(c *gin.Context) {
 	bID := c.Param("id")
 	uID := c.MustGet(types.ContextKeyTokenClaims).(*types.AuthClaims).ID
@@ -234,15 +188,6 @@ func (h *BooksHandler) AddComment(c *gin.Context) {
 	})
 }
 
-// AddRating godoc
-//
-//	@Summary	Add a rating to a book
-//	@Tags		books
-//	@Router		/books/{bookID}/ratings [post]
-//	@Param		bookID	path	string			true	"Book ID"
-//	@Param		rating	body	dto.RatingDto	true	"Rating"
-//	@Sucesss	200 {object} types.CommonResponse {data=models.Rating}
-//	@Security	BearerAuth
 func (h *BooksHandler) AddRating(c *gin.Context) {
 	bID := c.Param("id")
 
@@ -287,21 +232,6 @@ func (h *BooksHandler) AddRating(c *gin.Context) {
 
 }
 
-// CreateBook godoc
-//
-//	@Summary	Create a new book
-//	@Tags		books
-//	@Router		/books [post]
-//	@Accept		multipart/form-data
-//	@Param		name		formData	string	true	"Book name"
-//	@Param		description	formData	string	false	"Description"
-//	@Param		summary		formData	string	false	"Summary"
-//	@Param		category_id	formData	string	false	"Category ID"
-//	@Param		author_id	formData	string	false	"Author ID"
-//	@Param		cover		formData	file	false	"Cover image"
-//	@Param		files		formData	[]file	false	"Digital book files"
-//	@Success	200			{object}	types.CommonResponse{data=models.Book}
-//	@Security	BearerAuth
 func (h *BooksHandler) CreateBook(c *gin.Context) {
 	name := c.PostForm("name")
 
@@ -400,13 +330,6 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 
 }
 
-// Get-comment godoc
-//
-//	@Summary	Get comments of a book
-//	@Tags		books
-//	@Router		/books/{id}/comments [get]
-//	@Param		id	path		string	true	"Book ID"
-//	@Success	200	{object}	types.CommonResponse{data=[]models.Comment}
 func (h *BooksHandler) GetComments(c *gin.Context) {
 	id := c.Param("id")
 

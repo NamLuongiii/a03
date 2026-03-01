@@ -3,9 +3,9 @@ package types
 import "github.com/golang-jwt/jwt/v5"
 
 type CommonResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
+	Success bool        `json:"success"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data,omitempty"`
 }
 
 type LoginRequest struct {
@@ -44,8 +44,8 @@ type PaginationParams struct {
 }
 
 type PaginationData struct {
-	Size  int   `json:"size"`
-	Page  int   `json:"page"`
-	Total int64 `json:"total"`
-	Items any   `json:"items"`
+	Size  int         `json:"size"`
+	Page  int         `json:"page"`
+	Total int64       `json:"total"`
+	Items interface{} `json:"items"`
 }

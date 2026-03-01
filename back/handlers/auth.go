@@ -61,7 +61,8 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 //	@Summary	Login user by name
 //	@Tags		auth
 //	@Router		/auth/login [post]
-//	@Param		login	body	types.LoginRequest	true	"Login credentials"
+//	@Param		login	body		types.LoginRequest					true	"Login credentials"
+//	@Success	200		{object}	types.CommonResponse{data=string}	"Thành công"
 func (h *AuthHandler) Login(c *gin.Context) {
 
 	handler := func() (string, error) {
@@ -113,6 +114,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 //	@Tags		auth
 //	@Router		/auth/me [get]
 //	@Security	BearerAuth
+//	@Success	200	{object}	types.CommonResponse{data=models.Account}	"Thành công"
 func (h *AuthHandler) Me(c *gin.Context) {
 	claims := c.MustGet(types.ContextKeyTokenClaims).(*types.AuthClaims)
 
@@ -139,12 +141,6 @@ func (h *AuthHandler) Me(c *gin.Context) {
 	})
 }
 
-// RequestChangePassword godoc
-//
-//	@Summary	send otp to email ask change password
-//	@Tags		auth
-//	@Router		/auth/ask-reset-password [post]
-//	@Param		request	body	dto.RequestChangePassword	true	"email"
 func (h *AuthHandler) RequestChangePassword(c *gin.Context) {
 	exe := func() error {
 		var body dto.RequestChangePassword
@@ -188,12 +184,6 @@ func (h *AuthHandler) RequestChangePassword(c *gin.Context) {
 	}
 }
 
-// VerifyOTP godoc
-//
-//	@Summary	Verify OTP
-//	@Tags		auth
-//	@Router		/auth/verify-OTP [post]
-//	@Param		verifyOTP	body	dto.VerifyOTP	true	"OTP code"
 func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 
 	exe := func() (string, error) {
@@ -238,12 +228,6 @@ func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 
 }
 
-// ResetPassword godoc
-//
-//	@Summary	change password with the singed token
-//	@Tags		auth
-//	@Router		/auth/reset-password [post]
-//	@Param		reset_password	body	dto.ResetPassword	true	"new password"
 func (h *AuthHandler) ResetPassword(c *gin.Context) {
 	exe := func() error {
 		var body dto.ResetPassword

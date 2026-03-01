@@ -34,6 +34,9 @@ func main() {
 	// Setup Environment Variables
 	env.SetupEnv()
 
+	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+
 	// Initialize Database
 	var dbErr error
 	database, dbErr = gorm.Open(sqlite.Open("app.db"), &gorm.Config{})
