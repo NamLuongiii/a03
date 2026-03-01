@@ -4,31 +4,25 @@ import {cn} from "../ultis/cn.ts";
 import {Button} from "./ui/Button.tsx";
 import {DataTable} from "./ui/Table.tsx";
 import {Link, useNavigate} from "@tanstack/react-router";
-
-// Định nghĩa kiểu dữ liệu
-type Book = {
-    id: string;
-    title: string;
-    author: string;
-    downloads: number;
-    status: 'available' | 'hidden';
-};
+import type {ModelsBook} from "../api/model";
+import {API} from "../api";
 
 // Định nghĩa Columns bên ngoài component
-const columns: ColumnDef<Book>[] = [
+const columns: ColumnDef<ModelsBook>[] = [
     {
         accessorKey: 'title',
         header: 'Tên sách',
-        cell: ({ row }) => <span className="font-bold text-slate-900">{row.getValue('title')}</span>,
+        cell: ({ row }) => <span className="font-bold text-slate-900">{row.original.name}</span>,
     },
     {
         accessorKey: 'author',
         header: 'Tác giả',
+        cell: ({ row }) => <span className="text-slate-500">{row.original.author?.name || 'Tác giả chưa biết'}</span>,
     },
     {
         accessorKey: 'downloads',
         header: 'Lượt tải',
-        cell: ({ row }) => <span className="font-mono">{row.getValue('downloads')}</span>,
+        cell: () => <span className="font-mono">{0}</span>,
     },
     {
         accessorKey: 'status',
@@ -36,17 +30,17 @@ const columns: ColumnDef<Book>[] = [
         cell: ({ row }) => (
             <span className={cn(
                 "px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider",
-                row.getValue('status') === 'available' ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"
+                !row.original.is_hidden ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"
             )}>
-        {row.getValue('status')}
+        Visible
       </span>
         ),
     },
     {
         id: 'actions',
         header: '',
-        cell: () => (
-            <Link to='/book/$id' params={{ id: '1' }}>
+        cell: ({row}) => (
+            <Link to='/book/$id' params={{ id: row.original.id as string }}>
                 <Button variant="ghost" size="sm" className="hover:bg-white border-transparent">
                     <Edit2 size={14} className="text-slate-400" />
                 </Button>
@@ -56,18 +50,19 @@ const columns: ColumnDef<Book>[] = [
     },
 ];
 
-const mockData: Book[] = [
-    { id: '1', title: 'Lập trình Go cơ bản', author: 'Google Team', downloads: 1250, status: 'available' },
-    { id: '2', title: 'React Performance', author: 'Dan Abramov', downloads: 850, status: 'available' },
-    // ... thêm data khác
-];
-
 export default function BooksPage() {
     const navigate = useNavigate();
 
     const onCreateBook = () => {
         navigate({ to: '/book/new' }).then()
     }
+
+    const {data} = API.book.useGetBooks({
+
+    })
+
+    const bs = data?.data?.items || []
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -76,7 +71,7 @@ export default function BooksPage() {
             </div>
 
             {/* Gọi Table Component */}
-            <DataTable columns={columns} data={mockData} pageSize={5} />
+            <DataTable columns={columns} data={bs} pageSize={5} />
         </div>
     );
 }
