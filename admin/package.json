@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
+    "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-query": "^5.90.21",
     "@tanstack/react-router": "^1.163.3",
+    "@tanstack/react-table": "^8.21.3",
     "@vanilla-extract/vite-plugin": "^5.1.4",
     "axios": "^1.13.6",
     "boring-avatars": "^2.0.4",
@@ -32,6 +34,8 @@
     "react-spinners": "^0.17.0",
     "react-toastify": "^11.0.5",
     "styled-components": "^6.3.11",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.1",
     "zod": "^4.3.6",
     "zustand": "^5.0.11"
   },

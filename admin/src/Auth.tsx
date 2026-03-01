@@ -1,13 +1,7 @@
 import {createContext, type ReactNode, useContext, useState} from 'react';
 
 // Giả định ModelUser dựa trên nhu cầu quản lý sách của bạn
-export interface ModelUser {
-    id: string;
-    email: string;
-    fullName: string;
-    role: 'admin' | 'editor';
-    avatarUrl?: string;
-}
+export type ModelUser = string
 
 interface AuthContextType {
     me: ModelUser | null;

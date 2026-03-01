@@ -1,18 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  /* Đưa biến CSS vào hệ thống Tailwind để dùng: bg-main, text-main... */
+  --color-main-bg: var(--bg-main);
+  --color-card-bg: var(--bg-card);
+  --color-main-text: var(--text-main);
+  --color-muted-text: var(--text-muted);
+  --color-border: var(--border-color);
+  --color-primary: var(--primary);
+
+  --radius-bento: 1.25rem; /* 20px - Chuẩn Bento */
+}
+
 :root {
-  /* Bảng màu chuẩn Systematic */
-  --bg-main: #f9fafb;      /* Xám cực nhẹ cho nền admin */
-  --bg-card: #ffffff;      /* Trắng cho các khối nội dung */
-  --text-main: #111827;    /* Đen than cho tiêu đề/chữ chính */
-  --text-muted: #6b7280;   /* Xám cho text phụ */
-  --border-color: #e5e7eb; /* Đường kẻ mảnh */
-  --primary: #2563eb;      /* Xanh Blue làm điểm nhấn */
+  /* Bảng màu tinh tế hơn cho Bento */
+  --bg-main: #f8fafc;      /* Slate 50: Xanh xám rất nhẹ, sang hơn xám thuần */
+  --bg-card: #ffffff;
+  --text-main: #0f172a;    /* Slate 900: Đen sâu có sắc xanh */
+  --text-muted: #64748b;   /* Slate 500 */
+  --border-color: #f1f5f9; /* Slate 100: Cực kỳ mảnh */
+  --primary: #2563eb;
   --primary-hover: #1d4ed8;
 
-  /* Cấu hình Font hệ thống sắc nét */
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  line-height: 1.6;
+  line-height: 1.5;
   font-weight: 400;
-
   color: var(--text-main);
   background-color: var(--bg-main);
 
@@ -21,57 +33,59 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Reset Layout cho Admin */
+/* Scrollbar tối giản cho Admin */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
 body {
   margin: 0;
-  min-width: 320px;
   min-height: 100vh;
-  display: block; /* Admin thường dùng grid/flex ở cấp App.tsx, không dùng place-items: center */
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Typography chuyên nghiệp */
+/* Typography Bento */
 h1, h2, h3 {
   color: var(--text-main);
-  font-weight: 600;
-  margin-top: 0;
+  font-weight: 700; /* Đậm hơn để tạo độ tương phản */
+  letter-spacing: -0.02em;
 }
 
-h1 { font-size: 1.875rem; letter-spacing: -0.025em; } /* 30px */
-
-a {
-  font-weight: 500;
-  color: var(--primary);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  color: var(--primary-hover);
-}
-
-/* Button theo style "Lì" & Phẳng */
+/* Tối ưu Button - Loại bỏ cảm giác "cũ" */
 button {
-  border-radius: 6px; /* Bo nhẹ chuẩn hệ thống */
+  border-radius: 12px; /* Bo tròn hơn */
   border: 1px solid var(--border-color);
-  padding: 0.5rem 1rem;
+  padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
-  font-weight: 500;
-  font-family: inherit;
+  font-weight: 600;
   background-color: var(--bg-card);
   color: var(--text-main);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
 }
 
 button:hover {
-  background-color: #f3f4f6;
-  border-color: #d1d5db;
+  background-color: #f8fafc;
+  transform: translateY(-1px); /* Hiệu ứng nổi nhẹ */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
 }
 
-/* Primary Button class */
+button:active {
+  transform: translateY(0);
+}
+
+/* Primary Button hiện đại */
 button.primary {
   background-color: var(--text-main);
   color: white;
@@ -79,54 +93,69 @@ button.primary {
 }
 
 button.primary:hover {
-  background-color: #000000;
+  background-color: #1e293b;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
 }
 
-/* Các lớp tiện ích cho Table/Card */
+/* Class Admin Card chuẩn Bento */
 .admin-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-bento);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
   padding: 1.5rem;
+  transition: transform 0.2s ease;
 }
 
+/* Table Style Minimalist */
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate; /* Dùng separate để border-radius hoạt động nếu cần */
+  border-spacing: 0;
   font-size: 0.875rem;
 }
 
 th {
   text-align: left;
-  padding: 0.75rem 1rem;
-  background: #f3f4f6;
+  padding: 1rem;
+  background: transparent;
   color: var(--text-muted);
   font-weight: 600;
-  text-transform: uppercase;
   font-size: 0.75rem;
-}
-
-td {
-  padding: 0.75rem 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   border-bottom: 1px solid var(--border-color);
 }
 
-tr:hover td {
-  background-color: #f9fafb;
+td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-main);
 }
 
-/* Hỗ trợ Dark Mode nếu cần, nhưng Admin app nên ưu tiên Light mode cho sạch */
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* Dark Mode tối giản */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-main: #0a0a0a;
-    --bg-card: #141414;
-    --text-main: #f9fafb;
-    --text-muted: #9ca3af;
-    --border-color: #262626;
+    --bg-main: #020617;      /* Slate 950 */
+    --bg-card: #0f172a;      /* Slate 900 */
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: #1e293b; /* Slate 800 */
   }
 
-  button {
-    background-color: #1a1a1a;
+  .admin-card {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+  }
+
+  button:hover {
+    background-color: #1e293b;
   }
 }

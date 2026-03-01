@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import {tanstackRouter} from '@tanstack/router-plugin/vite'
 import {vanillaExtractPlugin} from "@vanilla-extract/vite-plugin";
 import path from "node:path";
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,7 +13,8 @@ export default defineConfig({
       autoCodeSplitting: true,
     }),
       react(),
-    vanillaExtractPlugin({})
+    vanillaExtractPlugin({}),
+      tailwindcss(),
   ],
   resolve: {
     alias: {
