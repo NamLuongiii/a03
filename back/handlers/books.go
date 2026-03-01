@@ -57,6 +57,16 @@ func NewBooksHandler(params BookParams) *BooksHandler {
 	}
 }
 
+// @Summary	Get books
+// @Tags		books
+// @Accept	json
+// @Produce	json
+// @Param	size	query	int	false	"Number of books per page"
+// @Param	page	query	int	false	"Page number"
+// @Param	category	query	string	false	"Category name"
+// @Param	search	query	string	false	"Search term"
+// @Success	200	{object}	types.CommonResponse{data=types.PaginationData{items=[]models.Book}}	"OK"
+// @Router	/books [get]
 func (h *BooksHandler) GetBooks(c *gin.Context) {
 	size, e := strconv.Atoi(c.Query("size"))
 	page, e := strconv.Atoi(c.Query("page"))
@@ -83,6 +93,13 @@ func (h *BooksHandler) GetBooks(c *gin.Context) {
 	})
 }
 
+// @Summary	Get featured books
+// @Tags		books
+// @Accept	json
+// @Produce	json
+// @Param	recommender	query	string	false	"recommender"
+// @Success	200	{object}	types.CommonResponse{data=[]models.Book}	"OK"
+// @Router	/books/featured [get]
 func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
 	recommender := c.Query("recommender")
 
@@ -120,6 +137,13 @@ func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
 
 }
 
+// @Summary	Get book by ID
+// @Tags		books
+// @Accept	json
+// @Produce	json
+// @Param	id	path	string	true	"Book ID"
+// @Success	200	{object}	types.CommonResponse{data=models.Book}	"OK"
+// @Router	/books/{id} [get]
 func (h *BooksHandler) GetBookByID(c *gin.Context) {
 	id := c.Param("id")
 
@@ -136,6 +160,12 @@ func (h *BooksHandler) GetBookByID(c *gin.Context) {
 
 }
 
+// @Summary Get book categories
+// @Tags books
+// @Accept json
+// @Produce json
+// @Success 200 {object} types.CommonResponse{data=[]models.Category} "OK"
+// @Router /books/categories [get]
 func (h *BooksHandler) GetCategories(c *gin.Context) {
 	cs, e := h.categoryRepository.GetAll()
 	if e != nil {
@@ -148,6 +178,13 @@ func (h *BooksHandler) GetCategories(c *gin.Context) {
 	})
 }
 
+// @Summary Get author by ID
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param authorID path string true "Author ID"
+// @Success 200 {object} types.CommonResponse{data=models.Author} "OK"
+// @Router /books/authors/{authorID} [get]
 func (h *BooksHandler) GetAuthors(c *gin.Context) {
 	id := c.Param("authorID")
 	author, e := h.authorRepository.GetByID(id)
@@ -161,6 +198,13 @@ func (h *BooksHandler) GetAuthors(c *gin.Context) {
 	})
 }
 
+// @Summary Add comment
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path string true "Book ID"
+// @Success 200 {object} types.CommonResponse{data=models.Comment} "OK"
+// @Router /books/{id}/comments [post]
 func (h *BooksHandler) AddComment(c *gin.Context) {
 	bID := c.Param("id")
 	uID := c.MustGet(types.ContextKeyTokenClaims).(*types.AuthClaims).ID
@@ -188,6 +232,13 @@ func (h *BooksHandler) AddComment(c *gin.Context) {
 	})
 }
 
+// @Summary Add rating
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path string true "Book ID"
+// @Success 200 {object} types.CommonResponse{data=models.BookRating} "OK"
+// @Router /books/{id}/ratings [post]
 func (h *BooksHandler) AddRating(c *gin.Context) {
 	bID := c.Param("id")
 
@@ -232,6 +283,15 @@ func (h *BooksHandler) AddRating(c *gin.Context) {
 
 }
 
+// @Summary Create a new book
+// @Tags books
+// @Accept multipart/form-data
+// @Produce json
+// @Param name formData string true "Book name"
+// @Param cover formData file false "Book cover"
+// @Param files formData []file false "Book files"
+// @Success 200 {object} types.CommonResponse{data=models.Book} "OK"
+// @Router /books [post]
 func (h *BooksHandler) CreateBook(c *gin.Context) {
 	name := c.PostForm("name")
 
@@ -330,6 +390,13 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 
 }
 
+// @Summary Get book comments
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path string true "Book ID"
+// @Success 200 {object} types.CommonResponse{data=[]models.Comment} "OK"
+// @Router /books/{id}/comments [get]
 func (h *BooksHandler) GetComments(c *gin.Context) {
 	id := c.Param("id")
 

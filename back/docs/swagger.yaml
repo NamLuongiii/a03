@@ -1,5 +1,26 @@
 basePath: /api/v1
 definitions:
+  dto.RequestChangePassword:
+    properties:
+      email:
+        type: string
+    type: object
+  dto.ResetPassword:
+    properties:
+      email:
+        type: string
+      new_password:
+        type: string
+      token:
+        type: string
+    type: object
+  dto.VerifyOTP:
+    properties:
+      email:
+        type: string
+      otp:
+        type: string
+    type: object
   models.Account:
     properties:
       created_at:
@@ -13,6 +34,172 @@ definitions:
       profile:
         $ref: '#/definitions/models.Profile'
       updated_at:
+        type: string
+    type: object
+  models.Author:
+    properties:
+      country:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      summary:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.Book:
+    properties:
+      author:
+        $ref: '#/definitions/models.Author'
+      author_id:
+        type: string
+      category:
+        allOf:
+        - $ref: '#/definitions/models.Category'
+        description: Relationships
+      category_id:
+        type: string
+      cover:
+        $ref: '#/definitions/models.Image'
+      cover_id:
+        type: integer
+      created_at:
+        type: string
+      created_by:
+        type: integer
+      creator:
+        $ref: '#/definitions/models.Account'
+      description:
+        type: string
+      digital_books:
+        items:
+          $ref: '#/definitions/models.DigitalBook'
+        type: array
+      download_nums:
+        type: integer
+      id:
+        type: string
+      is_hidden:
+        type: boolean
+      name:
+        type: string
+      rating_avg:
+        type: number
+      rating_count:
+        type: integer
+      series:
+        $ref: '#/definitions/models.BookSeries'
+      series_id:
+        type: string
+      summary:
+        type: string
+      updated_at:
+        type: string
+      view_nums:
+        type: integer
+    type: object
+  models.BookRating:
+    properties:
+      account:
+        $ref: '#/definitions/models.Account'
+      account_id:
+        type: integer
+      book:
+        allOf:
+        - $ref: '#/definitions/models.Book'
+        description: Relationships
+      book_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      rating:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.BookSeries:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.Category:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.Comment:
+    properties:
+      account:
+        $ref: '#/definitions/models.Account'
+      account_id:
+        type: integer
+      book:
+        allOf:
+        - $ref: '#/definitions/models.Book'
+        description: Relationships
+      book_id:
+        type: string
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.DigitalBook:
+    properties:
+      book:
+        allOf:
+        - $ref: '#/definitions/models.Book'
+        description: Relationships
+      book_id:
+        type: string
+      created_at:
+        type: string
+      file_size:
+        type: integer
+      file_type:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+      url:
+        type: string
+    type: object
+  models.Image:
+    properties:
+      id:
+        type: integer
+      md:
+        type: string
+      sm:
+        type: string
+      xs:
         type: string
     type: object
   models.Profile:
@@ -49,6 +236,16 @@ definitions:
     required:
     - email
     - password
+    type: object
+  types.PaginationData:
+    properties:
+      items: {}
+      page:
+        type: integer
+      size:
+        type: integer
+      total:
+        type: integer
     type: object
   types.SignUpDto:
     properties:
@@ -107,6 +304,40 @@ paths:
       summary: Get current user info
       tags:
       - auth
+  /auth/request-change-password:
+    post:
+      parameters:
+      - description: RequestChangePassword
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestChangePassword'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CommonResponse'
+      summary: Initiate a password change
+      tags:
+      - auth
+  /auth/reset-password:
+    post:
+      parameters:
+      - description: ResetPassword
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ResetPassword'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CommonResponse'
+      summary: Reset Password
+      tags:
+      - auth
   /auth/signup:
     post:
       parameters:
@@ -129,6 +360,279 @@ paths:
       summary: create a user
       tags:
       - auth
+  /auth/verify-otp:
+    post:
+      parameters:
+      - description: VerifyOTP
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VerifyOTP'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Verify OTP
+      tags:
+      - auth
+  /books:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Number of books per page
+        in: query
+        name: size
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Category name
+        in: query
+        name: category
+        type: string
+      - description: Search term
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/types.PaginationData'
+                  - properties:
+                      items:
+                        items:
+                          $ref: '#/definitions/models.Book'
+                        type: array
+                    type: object
+              type: object
+      summary: Get books
+      tags:
+      - books
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Book name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Book cover
+        in: formData
+        name: cover
+        type: file
+      - collectionFormat: csv
+        description: Book files
+        in: formData
+        items:
+          type: file
+        name: files
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Book'
+              type: object
+      summary: Create a new book
+      tags:
+      - books
+  /books/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Book'
+              type: object
+      summary: Get book by ID
+      tags:
+      - books
+  /books/{id}/comments:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Comment'
+                  type: array
+              type: object
+      summary: Get book comments
+      tags:
+      - books
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Comment'
+              type: object
+      summary: Add comment
+      tags:
+      - books
+  /books/{id}/ratings:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.BookRating'
+              type: object
+      summary: Add rating
+      tags:
+      - books
+  /books/authors/{authorID}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Author ID
+        in: path
+        name: authorID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Author'
+              type: object
+      summary: Get author by ID
+      tags:
+      - books
+  /books/categories:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Category'
+                  type: array
+              type: object
+      summary: Get book categories
+      tags:
+      - books
+  /books/featured:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: recommender
+        in: query
+        name: recommender
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Book'
+                  type: array
+              type: object
+      summary: Get featured books
+      tags:
+      - books
 securityDefinitions:
   BearerAuth:
     description: Type only token (not include Bearer)

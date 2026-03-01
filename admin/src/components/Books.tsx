@@ -4,8 +4,8 @@ import {cn} from "../ultis/cn.ts";
 import {Button} from "./ui/Button.tsx";
 import {DataTable} from "./ui/Table.tsx";
 import {Link, useNavigate} from "@tanstack/react-router";
-import type {ModelsBook} from "../api/model";
-import {API} from "../api";
+import {getBooksOptions, type ModelsBook} from "../api";
+import {useQuery} from "@tanstack/react-query";
 
 // Định nghĩa Columns bên ngoài component
 const columns: ColumnDef<ModelsBook>[] = [
@@ -57,9 +57,7 @@ export default function BooksPage() {
         navigate({ to: '/book/new' }).then()
     }
 
-    const {data} = API.book.useGetBooks({
-
-    })
+    const { data } = useQuery(getBooksOptions({ query: { page: 1, size: 24 }}))
 
     const bs = data?.data?.items || []
 
@@ -71,7 +69,7 @@ export default function BooksPage() {
             </div>
 
             {/* Gọi Table Component */}
-            <DataTable columns={columns} data={bs} pageSize={5} />
+            <DataTable columns={columns} data={bs} pageSize={24} />
         </div>
     );
 }

@@ -38,4 +38,6 @@ front/package-lock.json
 front/pnpm-lock.yaml
 admin/package-lock.json
 admin/pnpm-lock.yaml
-back/tmp
+back/tmp/
+tmp/
+*.log

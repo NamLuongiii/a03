@@ -1,21 +1,20 @@
-import { client } from './generated/client.gen';
+import {client} from './generated/client.gen.ts';
 
 // Cấu hình Base URL
 client.setConfig({
     baseURL: 'http://localhost:8080/api/v1'
 });
 
-// Gắn Token vào Header
-client.interceptors.request.use((request) => {
+client.instance.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
-        request.headers.set('Authorization', token);
+        config.headers.Authorization = token;
     }
-    return request;
+    return config;
 });
 
 // Handle 401
-client.interceptors.response.use(
+client.instance.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.status === 401) {
