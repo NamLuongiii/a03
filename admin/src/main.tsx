@@ -8,6 +8,7 @@ import './index.css'
 import {routeTree} from './routeTree.gen'
 import {ToastContainer} from "react-toastify";
 import {AuthProvider, useAuth} from "./Auth.tsx";
+import {Toaster} from "sonner";
 
 // Create a new router instance
 const router = createRouter({
@@ -54,6 +55,7 @@ if (!rootElement.innerHTML) {
                     </AuthProvider>
                     <ToastContainer/>
                 </QueryClientProvider>
+            <Toaster />
         </StrictMode>,
     )
 }

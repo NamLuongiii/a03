@@ -319,6 +319,30 @@
                         "description": "Book files",
                         "name": "files",
                         "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Book description",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Book summary",
+                        "name": "summary",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Book category",
+                        "name": "category_id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Book authors",
+                        "name": "author_id",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -506,6 +530,132 @@
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "Update book",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Book name",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "Book cover",
+                        "name": "cover",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "file"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Book files",
+                        "name": "files",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Book category",
+                        "name": "category_id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Book authors",
+                        "name": "author_id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "File IDs to remove",
+                        "name": "remove_file_ids",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Book description",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Book summary",
+                        "name": "summary",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.Book"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "Delete book",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CommonResponse"
                         }
                     }
                 }

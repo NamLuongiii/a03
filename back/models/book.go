@@ -43,6 +43,7 @@ type BookRepositoryInterface interface {
 	GetPopularBooks(limit int) ([]Book, error)
 	GetBooksOtherUserRead(limit int) ([]Book, error)
 	Update(book *Book) error
+	Delete(id string) error
 }
 
 type BookRepository struct {
@@ -138,4 +139,8 @@ func (r *BookRepository) GetBooksOtherUserRead(limit int) ([]Book, error) {
 
 func (r *BookRepository) Update(book *Book) error {
 	return r.db.Save(book).Error
+}
+
+func (r *BookRepository) Delete(id string) error {
+	return r.db.Delete(&Book{}, id).Error
 }

@@ -445,6 +445,22 @@ paths:
           type: file
         name: files
         type: array
+      - description: Book description
+        in: formData
+        name: description
+        type: string
+      - description: Book summary
+        in: formData
+        name: summary
+        type: string
+      - description: Book category
+        in: formData
+        name: category_id
+        type: string
+      - description: Book authors
+        in: formData
+        name: author_id
+        type: string
       produces:
       - application/json
       responses:
@@ -461,6 +477,25 @@ paths:
       tags:
       - books
   /books/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CommonResponse'
+      summary: Delete book
+      tags:
+      - books
     get:
       consumes:
       - application/json
@@ -483,6 +518,68 @@ paths:
                   $ref: '#/definitions/models.Book'
               type: object
       summary: Get book by ID
+      tags:
+      - books
+    put:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Book name
+        in: formData
+        name: name
+        type: string
+      - description: Book cover
+        in: formData
+        name: cover
+        type: file
+      - collectionFormat: csv
+        description: Book files
+        in: formData
+        items:
+          type: file
+        name: files
+        type: array
+      - description: Book category
+        in: formData
+        name: category_id
+        type: string
+      - description: Book authors
+        in: formData
+        name: author_id
+        type: string
+      - collectionFormat: csv
+        description: File IDs to remove
+        in: formData
+        items:
+          type: integer
+        name: remove_file_ids
+        type: array
+      - description: Book description
+        in: formData
+        name: description
+        type: string
+      - description: Book summary
+        in: formData
+        name: summary
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Book'
+              type: object
+      summary: Update book
       tags:
       - books
   /books/{id}/comments:

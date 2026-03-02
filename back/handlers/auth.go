@@ -142,11 +142,12 @@ func (h *AuthHandler) Me(c *gin.Context) {
 }
 
 // RequestChangePassword handles the process of initiating a password change by generating and sending an OTP to the user's email.
-// @Summary Initiate a password change
-// @Tags auth
-// @Router /auth/request-change-password [post]
-// @Param body body dto.RequestChangePassword true "RequestChangePassword"
-// @Success 200 {object} types.CommonResponse
+//
+//	@Summary	Initiate a password change
+//	@Tags		auth
+//	@Router		/auth/request-change-password [post]
+//	@Param		body	body		dto.RequestChangePassword	true	"RequestChangePassword"
+//	@Success	200		{object}	types.CommonResponse
 func (h *AuthHandler) RequestChangePassword(c *gin.Context) {
 	exe := func() error {
 		var body dto.RequestChangePassword
@@ -191,11 +192,12 @@ func (h *AuthHandler) RequestChangePassword(c *gin.Context) {
 }
 
 // VerifyOTP handles the process of verifying an OTP sent to the user's email.
-// @Summary Verify OTP
-// @Tags auth
-// @Router /auth/verify-otp [post]
-// @Param body body dto.VerifyOTP true "VerifyOTP"
-// @Success 200 {object} types.CommonResponse{data=string}
+//
+//	@Summary	Verify OTP
+//	@Tags		auth
+//	@Router		/auth/verify-otp [post]
+//	@Param		body	body		dto.VerifyOTP	true	"VerifyOTP"
+//	@Success	200		{object}	types.CommonResponse{data=string}
 func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 
 	exe := func() (string, error) {
@@ -241,11 +243,12 @@ func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 }
 
 // ResetPassword handles the process of resetting the user's password using an OTP.
-// @Summary Reset Password
-// @Tags auth
-// @Router /auth/reset-password [post]
-// @Param body body dto.ResetPassword true "ResetPassword"
-// @Success 200 {object} types.CommonResponse
+//
+//	@Summary	Reset Password
+//	@Tags		auth
+//	@Router		/auth/reset-password [post]
+//	@Param		body	body		dto.ResetPassword	true	"ResetPassword"
+//	@Success	200		{object}	types.CommonResponse
 func (h *AuthHandler) ResetPassword(c *gin.Context) {
 	exe := func() error {
 		var body dto.ResetPassword

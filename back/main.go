@@ -146,6 +146,8 @@ func main() {
 			book.POST("/:id/comments", middleware.RequiredAuth(), bookHandler.AddComment)
 			book.POST("/:id/ratings", middleware.RequiredAuth(), bookHandler.AddRating)
 			book.GET("/:id/comments", bookHandler.GetComments)
+			book.DELETE("/:id", bookHandler.DeleteBook)
+			book.PUT("/:id", bookHandler.UpdateBook)
 		}
 
 	}

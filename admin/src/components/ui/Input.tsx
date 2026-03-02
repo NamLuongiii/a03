@@ -1,61 +1,65 @@
 import React, {forwardRef} from 'react';
-import {Description, Field, Input as HeadlessInput, Label} from '@headlessui/react';
+import {Description, Field, Input as HeadlessInput, Label, Textarea} from '@headlessui/react';
 import {cn} from "../../ultis/cn.ts";
 
-interface BentoInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface BentoInputProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
     label?: string;
     description?: string;
     error?: string;
     icon?: React.ElementType;
+    isTextarea?: boolean;
 }
 
-export const Input = forwardRef<HTMLInputElement, BentoInputProps>(
-    ({ label, description, error, icon: Icon, className, ...props }, ref) => {
+export const Input = forwardRef<HTMLInputElement & HTMLTextAreaElement, BentoInputProps>(
+    ({ label, description, error, icon: Icon, isTextarea, className, ...props }, ref) => {
+        const InputComponent = isTextarea ? Textarea : HeadlessInput;
+
         return (
-            <Field className="flex flex-col gap-1.5 w-full">
-                {/* Label phong cách Admin: Nhỏ, Đậm, Viết hoa nhẹ */}
+            <Field className="flex flex-col gap-1 w-full">
                 {label && (
-                    <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-text ml-1">
+                    <Label className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500 ml-1 mb-0.5">
                         {label}
                     </Label>
                 )}
 
-                <div className="relative group">
-                    {/* Icon bổ trợ nếu có */}
+                <div className="relative">
                     {Icon && (
-                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors pointer-events-none">
-                            <Icon size={18} />
+                        <div className="absolute left-3.5 top-3 text-slate-400 pointer-events-none group-focus-within:text-slate-600 transition-colors">
+                            <Icon size={16} />
                         </div>
                     )}
 
-                    <HeadlessInput
-                        {...props}
+                    <InputComponent
+                        {...(props)}
                         ref={ref}
                         className={cn(
-                            // Base style: Bo góc lớn (xl), nền nhạt
-                            "block w-full rounded-xl border border-border bg-white py-2.5 text-sm text-main-text transition-all",
-                            "placeholder:text-slate-400",
-                            // Focus style: Đổ bóng nhẹ và đổi màu viền
-                            "focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary",
+                            // SỬA TẠI ĐÂY: Dùng bg-white để nổi bật trên nền xám/nhạt của App
+                            "block w-full rounded-xl border border-slate-200 bg-white py-2.5 text-sm text-slate-900 transition-all shadow-none",
+                            "placeholder:text-slate-300 focus:outline-none",
+
+                            // Focus: Viền đậm hơn một chút và đổi màu nền cực nhẹ để nhận diện vùng nhập liệu
+                            "focus:border-slate-400 focus:bg-slate-50/30",
+
                             // Trạng thái Error
-                            error ? "border-red-500 focus:ring-red-500/10 focus:border-red-500" : "",
-                            // Padding left nếu có icon
-                            Icon ? "pl-11" : "pl-4",
+                            error ? "border-red-300 focus:border-red-400 bg-red-50/20" : "",
+
+                            // Padding
+                            Icon ? "pl-10" : "pl-4",
                             "pr-4",
+                            isTextarea ? "min-h-[120px] py-3 resize-none" : "",
                             className
                         )}
                     />
                 </div>
 
-                {/* Description & Error Message */}
                 {description && !error && (
-                    <Description className="text-xs text-muted-text ml-1">
+                    <Description className="text-[11px] text-slate-400 ml-1">
                         {description}
                     </Description>
                 )}
 
                 {error && (
-                    <p className="text-xs font-medium text-red-500 ml-1 animate-in fade-in slide-in-from-top-1">
+                    <p className="text-[11px] font-medium text-red-500 ml-1">
                         {error}
                     </p>
                 )}

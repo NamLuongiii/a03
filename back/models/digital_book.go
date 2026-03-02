@@ -24,6 +24,8 @@ type DigitalBook struct {
 type DigitalBookRepositoryInterface interface {
 	GetByID(id int) (*DigitalBook, error)
 	Create(book *DigitalBook) error
+	GetByIDAndBookID(id int, bookID string) (*DigitalBook, error)
+	DeleteByID(id int) error
 }
 
 type DigitalBookRepository struct {
@@ -42,5 +44,16 @@ func (r *DigitalBookRepository) GetByID(id int) (*DigitalBook, error) {
 
 func (r *DigitalBookRepository) Create(book *DigitalBook) error {
 	err := r.db.Create(book).Error
+	return err
+}
+
+func (r *DigitalBookRepository) GetByIDAndBookID(id int, bookID string) (*DigitalBook, error) {
+	var digitalBook DigitalBook
+	err := r.db.Where("id = ? AND book_id = ?", id, bookID).First(&digitalBook).Error
+	return &digitalBook, err
+}
+
+func (r *DigitalBookRepository) DeleteByID(id int) error {
+	err := r.db.Delete(&DigitalBook{}, id).Error
 	return err
 }

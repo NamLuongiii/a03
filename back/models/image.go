@@ -12,6 +12,7 @@ type Image struct {
 type ImageRepositoryInterface interface {
 	GetByID(id int) (*Image, error)
 	Create(image *Image) error
+	DeleteByID(id int) error
 }
 
 type ImageRepository struct {
@@ -30,4 +31,8 @@ func (r *ImageRepository) GetByID(id int) (*Image, error) {
 
 func (r *ImageRepository) Create(image *Image) error {
 	return r.db.Create(image).Error
+}
+
+func (r *ImageRepository) DeleteByID(id int) error {
+	return r.db.Delete(&Image{}, id).Error
 }
