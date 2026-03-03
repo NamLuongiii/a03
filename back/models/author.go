@@ -1,6 +1,7 @@
 package models
 
 import (
+	"quickstart/types"
 	"time"
 
 	"gorm.io/gorm"
@@ -18,6 +19,8 @@ type Author struct {
 
 type AuthorRepositoryInterface interface {
 	GetByID(id string) (*Author, error)
+	GetAll(page int, size int, search string) (types.PaginationData, error)
+	Create(author *Author) error
 }
 
 type AuthorRepository struct {
@@ -32,4 +35,29 @@ func (r *AuthorRepository) GetByID(id string) (*Author, error) {
 	var author Author
 	err := r.db.Where("id = ?", id).First(&author).Error
 	return &author, err
+}
+
+func (r *AuthorRepository) GetAll(page int, size int, search string) (types.PaginationData, error) {
+	var authors []Author
+	query := r.db.Model(&Author{}).
+		Where("name LIKE ?", "%"+search+"%").
+		Order("name ASC")
+	if page != 0 && size != 0 {
+		query = query.Offset((page - 1) * size).Limit(size)
+	}
+	err := query.Find(&authors).Error
+	if err != nil {
+		return types.PaginationData{}, err
+	}
+	total := query.RowsAffected
+	return types.PaginationData{
+		Items: authors,
+		Total: total,
+		Page:  page,
+		Size:  size,
+	}, nil
+}
+
+func (r *AuthorRepository) Create(author *Author) error {
+	return r.db.Create(author).Error
 }

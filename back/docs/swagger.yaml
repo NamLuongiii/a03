@@ -382,6 +382,72 @@ paths:
       summary: Verify OTP
       tags:
       - auth
+  /authors:
+    get:
+      consumes:
+      - application/json
+      description: Get all authors
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Number of items per page
+        in: query
+        name: size
+        type: integer
+      - description: Search term
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/types.PaginationData'
+                  - properties:
+                      items:
+                        items:
+                          $ref: '#/definitions/models.Author'
+                        type: array
+                    type: object
+              type: object
+      summary: Get all authors
+      tags:
+      - Authors
+    post:
+      consumes:
+      - application/json
+      description: Create a new author
+      parameters:
+      - description: Author object
+        in: body
+        name: author
+        required: true
+        schema:
+          $ref: '#/definitions/models.Author'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Author'
+              type: object
+      summary: Create a new author
+      tags:
+      - Authors
   /books:
     get:
       consumes:

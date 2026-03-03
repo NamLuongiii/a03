@@ -10,10 +10,14 @@ import {
 import type { AxiosError } from "axios";
 
 import { client } from "../client.gen";
-import { Auth, Books, type Options } from "../sdk.gen";
+import { Auth, Authors, Books, type Options } from "../sdk.gen";
 import type {
+  DeleteBooksByIdData,
+  DeleteBooksByIdResponse,
   GetAuthMeData,
   GetAuthMeResponse,
+  GetAuthorsData,
+  GetAuthorsResponse,
   GetBooksAuthorsByAuthorIdData,
   GetBooksAuthorsByAuthorIdResponse,
   GetBooksByIdCommentsData,
@@ -28,6 +32,8 @@ import type {
   GetBooksResponse,
   PostAuthLoginData,
   PostAuthLoginResponse,
+  PostAuthorsData,
+  PostAuthorsResponse,
   PostAuthRequestChangePasswordData,
   PostAuthRequestChangePasswordResponse,
   PostAuthResetPasswordData,
@@ -42,6 +48,8 @@ import type {
   PostBooksByIdRatingsResponse,
   PostBooksData,
   PostBooksResponse,
+  PutBooksByIdData,
+  PutBooksByIdResponse,
 } from "../types.gen";
 
 /**
@@ -244,21 +252,23 @@ export const postAuthVerifyOtpMutation = (
   return mutationOptions;
 };
 
-export const getBooksQueryKey = (options?: Options<GetBooksData>) =>
-  createQueryKey("getBooks", options);
+export const getAuthorsQueryKey = (options?: Options<GetAuthorsData>) =>
+  createQueryKey("getAuthors", options);
 
 /**
- * Get books
+ * Get all authors
+ *
+ * Get all authors
  */
-export const getBooksOptions = (options?: Options<GetBooksData>) =>
+export const getAuthorsOptions = (options?: Options<GetAuthorsData>) =>
   queryOptions<
-    GetBooksResponse,
+    GetAuthorsResponse,
     AxiosError<DefaultError>,
-    GetBooksResponse,
-    ReturnType<typeof getBooksQueryKey>
+    GetAuthorsResponse,
+    ReturnType<typeof getAuthorsQueryKey>
   >({
     queryFn: async ({ queryKey, signal }) => {
-      const { data } = await Books.getBooks({
+      const { data } = await Authors.getAuthors({
         ...options,
         ...queryKey[0],
         signal,
@@ -266,7 +276,7 @@ export const getBooksOptions = (options?: Options<GetBooksData>) =>
       });
       return data;
     },
-    queryKey: getBooksQueryKey(options),
+    queryKey: getAuthorsQueryKey(options),
   });
 
 const createInfiniteParams = <
@@ -302,6 +312,110 @@ const createInfiniteParams = <
   }
   return params as unknown as typeof page;
 };
+
+export const getAuthorsInfiniteQueryKey = (
+  options?: Options<GetAuthorsData>,
+): QueryKey<Options<GetAuthorsData>> =>
+  createQueryKey("getAuthors", options, true);
+
+/**
+ * Get all authors
+ *
+ * Get all authors
+ */
+export const getAuthorsInfiniteOptions = (options?: Options<GetAuthorsData>) =>
+  infiniteQueryOptions<
+    GetAuthorsResponse,
+    AxiosError<DefaultError>,
+    InfiniteData<GetAuthorsResponse>,
+    QueryKey<Options<GetAuthorsData>>,
+    | number
+    | Pick<
+        QueryKey<Options<GetAuthorsData>>[0],
+        "body" | "headers" | "path" | "query"
+      >
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetAuthorsData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  page: pageParam,
+                },
+              };
+        const params = createInfiniteParams(queryKey, page);
+        const { data } = await Authors.getAuthors({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        });
+        return data;
+      },
+      queryKey: getAuthorsInfiniteQueryKey(options),
+    },
+  );
+
+/**
+ * Create a new author
+ *
+ * Create a new author
+ */
+export const postAuthorsMutation = (
+  options?: Partial<Options<PostAuthorsData>>,
+): UseMutationOptions<
+  PostAuthorsResponse,
+  AxiosError<DefaultError>,
+  Options<PostAuthorsData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostAuthorsResponse,
+    AxiosError<DefaultError>,
+    Options<PostAuthorsData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await Authors.postAuthors({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const getBooksQueryKey = (options?: Options<GetBooksData>) =>
+  createQueryKey("getBooks", options);
+
+/**
+ * Get books
+ */
+export const getBooksOptions = (options?: Options<GetBooksData>) =>
+  queryOptions<
+    GetBooksResponse,
+    AxiosError<DefaultError>,
+    GetBooksResponse,
+    ReturnType<typeof getBooksQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await Books.getBooks({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getBooksQueryKey(options),
+  });
 
 export const getBooksInfiniteQueryKey = (
   options?: Options<GetBooksData>,
@@ -461,6 +575,33 @@ export const getBooksFeaturedOptions = (
     queryKey: getBooksFeaturedQueryKey(options),
   });
 
+/**
+ * Delete book
+ */
+export const deleteBooksByIdMutation = (
+  options?: Partial<Options<DeleteBooksByIdData>>,
+): UseMutationOptions<
+  DeleteBooksByIdResponse,
+  AxiosError<DefaultError>,
+  Options<DeleteBooksByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteBooksByIdResponse,
+    AxiosError<DefaultError>,
+    Options<DeleteBooksByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await Books.deleteBooksById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
 export const getBooksByIdQueryKey = (options: Options<GetBooksByIdData>) =>
   createQueryKey("getBooksById", options);
 
@@ -485,6 +626,33 @@ export const getBooksByIdOptions = (options: Options<GetBooksByIdData>) =>
     },
     queryKey: getBooksByIdQueryKey(options),
   });
+
+/**
+ * Update book
+ */
+export const putBooksByIdMutation = (
+  options?: Partial<Options<PutBooksByIdData>>,
+): UseMutationOptions<
+  PutBooksByIdResponse,
+  AxiosError<DefaultError>,
+  Options<PutBooksByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutBooksByIdResponse,
+    AxiosError<DefaultError>,
+    Options<PutBooksByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await Books.putBooksById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
 
 export const getBooksByIdCommentsQueryKey = (
   options: Options<GetBooksByIdCommentsData>,

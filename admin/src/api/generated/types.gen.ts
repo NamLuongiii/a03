@@ -288,6 +288,61 @@ export type PostAuthVerifyOtpResponses = {
 export type PostAuthVerifyOtpResponse =
   PostAuthVerifyOtpResponses[keyof PostAuthVerifyOtpResponses];
 
+export type GetAuthorsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Page number
+     */
+    page?: number;
+    /**
+     * Number of items per page
+     */
+    size?: number;
+    /**
+     * Search term
+     */
+    search?: string;
+  };
+  url: "/authors";
+};
+
+export type GetAuthorsResponses = {
+  /**
+   * OK
+   */
+  200: TypesCommonResponse & {
+    data?: TypesPaginationData & {
+      items?: Array<ModelsAuthor>;
+    };
+  };
+};
+
+export type GetAuthorsResponse = GetAuthorsResponses[keyof GetAuthorsResponses];
+
+export type PostAuthorsData = {
+  /**
+   * Author object
+   */
+  body: ModelsAuthor;
+  path?: never;
+  query?: never;
+  url: "/authors";
+};
+
+export type PostAuthorsResponses = {
+  /**
+   * OK
+   */
+  200: TypesCommonResponse & {
+    data?: ModelsAuthor;
+  };
+};
+
+export type PostAuthorsResponse =
+  PostAuthorsResponses[keyof PostAuthorsResponses];
+
 export type GetBooksData = {
   body?: never;
   path?: never;
@@ -339,6 +394,22 @@ export type PostBooksData = {
      * Book files
      */
     files?: Array<unknown>;
+    /**
+     * Book description
+     */
+    description?: string;
+    /**
+     * Book summary
+     */
+    summary?: string;
+    /**
+     * Book category
+     */
+    category_id?: string;
+    /**
+     * Book authors
+     */
+    author_id?: string;
   };
   path?: never;
   query?: never;
@@ -423,6 +494,28 @@ export type GetBooksFeaturedResponses = {
 export type GetBooksFeaturedResponse =
   GetBooksFeaturedResponses[keyof GetBooksFeaturedResponses];
 
+export type DeleteBooksByIdData = {
+  body?: never;
+  path: {
+    /**
+     * Book ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: "/books/{id}";
+};
+
+export type DeleteBooksByIdResponses = {
+  /**
+   * OK
+   */
+  200: TypesCommonResponse;
+};
+
+export type DeleteBooksByIdResponse =
+  DeleteBooksByIdResponses[keyof DeleteBooksByIdResponses];
+
 export type GetBooksByIdData = {
   body?: never;
   path: {
@@ -446,6 +539,63 @@ export type GetBooksByIdResponses = {
 
 export type GetBooksByIdResponse =
   GetBooksByIdResponses[keyof GetBooksByIdResponses];
+
+export type PutBooksByIdData = {
+  body?: {
+    /**
+     * Book name
+     */
+    name?: string;
+    /**
+     * Book cover
+     */
+    cover?: Blob | File;
+    /**
+     * Book files
+     */
+    files?: Array<unknown>;
+    /**
+     * Book category
+     */
+    category_id?: string;
+    /**
+     * Book authors
+     */
+    author_id?: string;
+    /**
+     * File IDs to remove
+     */
+    remove_file_ids?: Array<number>;
+    /**
+     * Book description
+     */
+    description?: string;
+    /**
+     * Book summary
+     */
+    summary?: string;
+  };
+  path: {
+    /**
+     * Book ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: "/books/{id}";
+};
+
+export type PutBooksByIdResponses = {
+  /**
+   * OK
+   */
+  200: TypesCommonResponse & {
+    data?: ModelsBook;
+  };
+};
+
+export type PutBooksByIdResponse =
+  PutBooksByIdResponses[keyof PutBooksByIdResponses];
 
 export type GetBooksByIdCommentsData = {
   body?: never;

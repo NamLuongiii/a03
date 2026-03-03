@@ -8,8 +8,12 @@ import {
 } from "./client";
 import { client } from "./client.gen";
 import type {
+  DeleteBooksByIdData,
+  DeleteBooksByIdResponses,
   GetAuthMeData,
   GetAuthMeResponses,
+  GetAuthorsData,
+  GetAuthorsResponses,
   GetBooksAuthorsByAuthorIdData,
   GetBooksAuthorsByAuthorIdResponses,
   GetBooksByIdCommentsData,
@@ -24,6 +28,8 @@ import type {
   GetBooksResponses,
   PostAuthLoginData,
   PostAuthLoginResponses,
+  PostAuthorsData,
+  PostAuthorsResponses,
   PostAuthRequestChangePasswordData,
   PostAuthRequestChangePasswordResponses,
   PostAuthResetPasswordData,
@@ -38,6 +44,8 @@ import type {
   PostBooksByIdRatingsResponses,
   PostBooksData,
   PostBooksResponses,
+  PutBooksByIdData,
+  PutBooksByIdResponses,
 } from "./types.gen";
 
 export type Options<
@@ -182,6 +190,50 @@ export class Auth {
   }
 }
 
+export class Authors {
+  /**
+   * Get all authors
+   *
+   * Get all authors
+   */
+  public static getAuthors<ThrowOnError extends boolean = false>(
+    options?: Options<GetAuthorsData, ThrowOnError>,
+  ) {
+    return (options?.client ?? client).get<
+      GetAuthorsResponses,
+      unknown,
+      ThrowOnError
+    >({
+      responseType: "json",
+      url: "/authors",
+      ...options,
+    });
+  }
+
+  /**
+   * Create a new author
+   *
+   * Create a new author
+   */
+  public static postAuthors<ThrowOnError extends boolean = false>(
+    options: Options<PostAuthorsData, ThrowOnError>,
+  ) {
+    return (options.client ?? client).post<
+      PostAuthorsResponses,
+      unknown,
+      ThrowOnError
+    >({
+      responseType: "json",
+      url: "/authors",
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    });
+  }
+}
+
 export class Books {
   /**
    * Get books
@@ -274,6 +326,23 @@ export class Books {
   }
 
   /**
+   * Delete book
+   */
+  public static deleteBooksById<ThrowOnError extends boolean = false>(
+    options: Options<DeleteBooksByIdData, ThrowOnError>,
+  ) {
+    return (options.client ?? client).delete<
+      DeleteBooksByIdResponses,
+      unknown,
+      ThrowOnError
+    >({
+      responseType: "json",
+      url: "/books/{id}",
+      ...options,
+    });
+  }
+
+  /**
    * Get book by ID
    */
   public static getBooksById<ThrowOnError extends boolean = false>(
@@ -287,6 +356,28 @@ export class Books {
       responseType: "json",
       url: "/books/{id}",
       ...options,
+    });
+  }
+
+  /**
+   * Update book
+   */
+  public static putBooksById<ThrowOnError extends boolean = false>(
+    options: Options<PutBooksByIdData, ThrowOnError>,
+  ) {
+    return (options.client ?? client).put<
+      PutBooksByIdResponses,
+      unknown,
+      ThrowOnError
+    >({
+      ...formDataBodySerializer,
+      responseType: "json",
+      url: "/books/{id}",
+      ...options,
+      headers: {
+        "Content-Type": null,
+        ...options.headers,
+      },
     });
   }
 

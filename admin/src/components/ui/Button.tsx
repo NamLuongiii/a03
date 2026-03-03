@@ -1,17 +1,19 @@
+import React from 'react';
 import {Button as HeadlessButton} from '@headlessui/react';
 import {type ClassValue, clsx} from 'clsx';
 import {twMerge} from 'tailwind-merge';
+import {Loader2} from 'lucide-react';
 
-/** * Utility để merge class Tailwind sạch sẽ
- * Cần cài: npm i clsx tailwind-merge
+/**
+ * Utility để merge class Tailwind sạch sẽ
  */
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
 interface BentoButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-    size?: 'sm' | 'md' | 'lg';
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+    size?: 'sm' | 'md' | 'lg' | 'icon';
     isLoading?: boolean;
 }
 
@@ -25,16 +27,24 @@ export const Button = ({
                        }: BentoButtonProps) => {
 
     const variants = {
-        primary: 'bg-main-text text-white border-transparent hover:bg-slate-800 shadow-sm',
-        secondary: 'bg-card-bg text-main-text border-border hover:bg-slate-50',
-        outline: 'bg-transparent border-border text-main-text hover:border-slate-400',
-        ghost: 'bg-transparent border-transparent text-muted-text hover:text-main-text hover:bg-slate-100',
+        // Nền tối, chữ trắng hoàn toàn để Icon sáng rõ
+        primary: 'bg-slate-900 text-white border-transparent hover:bg-black shadow-sm',
+        // Nền trắng, viền mảnh, chữ xám đậm
+        secondary: 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900',
+        // Trong suốt, viền mảnh, icon/chữ xám
+        outline: 'bg-transparent border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900',
+        // Không nền, không viền, dùng cho các nút phụ trong Table
+        ghost: 'bg-transparent border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-100',
+        // Biến thể cho nút Xóa
+        danger: 'bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white hover:border-transparent',
     };
 
     const sizes = {
-        sm: 'px-3 py-1.5 text-xs rounded-lg',
-        md: 'px-5 py-2.5 text-sm rounded-xl', // Khớp với radius bento
-        lg: 'px-6 py-3 text-base rounded-2xl',
+        sm: 'px-3 py-1.5 text-xs rounded-lg gap-1.5',
+        md: 'px-4 py-2 text-sm rounded-xl gap-2',
+        lg: 'px-6 py-3 text-base rounded-2xl gap-2.5',
+        // Size dành riêng cho các nút icon trong bảng (Edit/Delete)
+        icon: 'h-8 w-8 p-0 rounded-lg',
     };
 
     return (
@@ -42,19 +52,27 @@ export const Button = ({
             {...props}
             disabled={isLoading || props.disabled}
             className={cn(
-                'inline-flex items-center justify-center font-semibold transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+                // Base: Flexbox để căn giữa Icon và Text
+                'inline-flex items-center justify-center font-semibold transition-all duration-200',
+                'active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border outline-none',
+                'focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2',
+                // Quan trọng: Ép Icon thừa hưởng màu chữ của Button
+                '[&>svg]:shrink-0 [&>svg]:text-current',
                 variants[variant],
                 sizes[size],
                 className
             )}
         >
             {isLoading ? (
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-            ) : null}
-            {children}
+                <Loader2 className={cn(
+                    "animate-spin",
+                    size === 'sm' ? "h-3.5 w-3.5" : "h-4 w-4"
+                )} />
+            ) : (
+                children
+            )}
         </HeadlessButton>
     );
 };
+
+Button.displayName = 'Button';

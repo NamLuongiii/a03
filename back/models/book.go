@@ -59,6 +59,9 @@ func (r *BookRepository) GetByID(id string) (*Book, error) {
 	err := r.db.
 		Preload("Cover").
 		Preload("DigitalBooks").
+		Preload("Category").
+		Preload("Author").
+		Preload("Series").
 		Where("id = ?", id).
 		First(&book).Error
 	return &book, err
@@ -70,7 +73,12 @@ func (r *BookRepository) Create(book *Book) error {
 
 func (r *BookRepository) GetAll(params types.PaginationParams) (types.PaginationData, error) {
 	var books []Book
-	query := r.db.Model(&Book{}).Preload("Cover").Preload("DigitalBooks")
+	query := r.db.Model(&Book{}).
+		Preload("Cover").
+		Preload("DigitalBooks").
+		Preload("Category").
+		Preload("Author").
+		Preload("Series")
 
 	// 1. Filtering by Category
 	if params.Category != "" {
@@ -89,7 +97,7 @@ func (r *BookRepository) GetAll(params types.PaginationParams) (types.Pagination
 
 	// 4. Total count
 	var total int64
-	r.db.Model(&Book{}).Count(&total)
+	query.Count(&total)
 
 	// 5. Order by created_at desc
 	query = query.Order("created_at DESC")
@@ -138,7 +146,7 @@ func (r *BookRepository) GetBooksOtherUserRead(limit int) ([]Book, error) {
 }
 
 func (r *BookRepository) Update(book *Book) error {
-	return r.db.Save(book).Error
+	return r.db.Model(book).Select("*").Updates(book).Error
 }
 
 func (r *BookRepository) Delete(id string) error {

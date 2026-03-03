@@ -88,6 +88,8 @@ func main() {
 		env.GetEnv(env.DOSpaceEndpoint),
 	)
 
+	authorHandler := handlers.NewAuthorHandler(authorRepo)
+
 	imageProcessor := handlers.NewImageProcessor()
 
 	bookHandler := handlers.NewBooksHandler(handlers.BookParams{
@@ -148,6 +150,13 @@ func main() {
 			book.GET("/:id/comments", bookHandler.GetComments)
 			book.DELETE("/:id", bookHandler.DeleteBook)
 			book.PUT("/:id", bookHandler.UpdateBook)
+		}
+
+		// Author routes
+		author := v1.Group("/authors")
+		{
+			author.GET("", authorHandler.GetAll)
+			author.POST("", authorHandler.Create)
 		}
 
 	}

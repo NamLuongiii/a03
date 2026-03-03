@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"quickstart/dto"
@@ -349,6 +350,11 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 	description := c.PostForm("description")
 	summary := c.PostForm("summary")
 
+	if name == "" {
+		c.Error(middleware.NewBadRequestError("name is required"))
+		return
+	}
+
 	// create a book
 	book := &models.Book{
 		ID:          slug.Make(name),
@@ -451,25 +457,29 @@ func (h *BooksHandler) UpdateBook(c *gin.Context) {
 	book.Name = name
 	book.Description = description
 	book.Summary = summary
-	book.CategoryID = &categoryID
-	book.AuthorID = &authorID
-
-	e = h.bookRepository.Update(book)
-	if e != nil {
-		c.Error(middleware.NewServerInternalError(e.Error()))
-		return
+	if categoryID != "" {
+		book.CategoryID = &categoryID
+	} else {
+		book.CategoryID = nil
+	}
+	if authorID != "" {
+		book.AuthorID = &authorID
+	} else {
+		book.AuthorID = nil
 	}
 
 	// if cover is provided, update cover
 	cover, e := c.FormFile("cover")
 	if e != nil {
+		fmt.Println(e)
 		if errors.Is(e, http.ErrMissingFile) {
 			cover = nil
 		} else {
 			c.Error(middleware.NewBadRequestError(e.Error()))
+			return
 		}
-		return
 	}
+
 	if cover != nil {
 		// delete old cover
 		if book.CoverID != nil {
@@ -512,6 +522,12 @@ func (h *BooksHandler) UpdateBook(c *gin.Context) {
 			c.Error(middleware.NewServerInternalError(e.Error()))
 			return
 		}
+	}
+
+	e = h.bookRepository.Update(book)
+	if e != nil {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
 	}
 
 	c.JSON(http.StatusOK, types.CommonResponse{
