@@ -67,7 +67,7 @@ export function HeaderDesktop() {
     return (
         <HeaderStyled>
             {/* Cánh trái: Logo */}
-            <Logo to="/">BookOn</Logo>
+            <Logo to="/">ĐọcLuôn</Logo>
 
             {/* Cánh giữa: Search & Categories */}
             <NavContent>

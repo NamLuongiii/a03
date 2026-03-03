@@ -17,7 +17,7 @@ const FileList = styled(Menu.Items)`
   top: 100%;
   left: 0;
   margin-top: 6px;
-  min-width: 180px;
+  min-width: 240px;
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 8px;

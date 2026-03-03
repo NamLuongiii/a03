@@ -35,13 +35,9 @@ const RightSection = styled.div`
 `;
 
 const Title = styled.h1`
-    font-size: 1.875rem;
+    font-size: 1.6rem;
     font-weight: bold;
     color: #111827;
-
-    @media (min-width: 768px) {
-        font-size: 2.25rem;
-    }
 `;
 
 const Description = styled.p`
@@ -73,10 +69,10 @@ export const ItemDetail = ({book}: Props) => {
                     {book.description}
                 </Description>
                 <DetailText>
-                    {/*Author: <Link to={`/author/${book.author_id}`}>John Doe</Link><br/>*/}
-                    {/*Publisher: Example Press<br/>*/}
-                    {/*Year: 2024<br/>*/}
-                    {/*Pages: 320*/}
+                    Tác giả: {book.author?.name}<br/>
+                    {/*Nhà xuất bản: Example Press<br/>*/}
+                    {/*Năm xuất bản: 2024<br/>*/}
+                    {/*Số trang: 320*/}
                 </DetailText>
 
                 <DownloadDropdown book={book} />

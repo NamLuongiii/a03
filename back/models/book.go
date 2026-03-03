@@ -117,6 +117,8 @@ func (r *BookRepository) GetNewestBooks(limit int) ([]Book, error) {
 	err := r.db.
 		Preload("Cover").
 		Preload("DigitalBooks").
+		Preload("Category").
+		Preload("Author").
 		Order("created_at desc").
 		Limit(limit).
 		Find(&books).Error
@@ -128,6 +130,8 @@ func (r *BookRepository) GetPopularBooks(limit int) ([]Book, error) {
 	err := r.db.
 		Preload("Cover").
 		Preload("DigitalBooks").
+		Preload("Category").
+		Preload("Author").
 		Order("created_at desc").
 		Limit(limit).
 		Find(&books).Error
@@ -139,6 +143,8 @@ func (r *BookRepository) GetBooksOtherUserRead(limit int) ([]Book, error) {
 	err := r.db.
 		Preload("Cover").
 		Preload("DigitalBooks").
+		Preload("Category").
+		Preload("Author").
 		Order("created_at desc").
 		Limit(limit).
 		Find(&books).Error

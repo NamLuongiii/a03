@@ -93,7 +93,7 @@ export const Item = ({ book }: ItemProps) => {
         <Card onClick={handleNavigate}>
             <CoverWrapper>
                 <CoverImg
-                    src={book.cover?.md || book.cover?.xs}
+                    src={book.cover?.sm || book.cover?.xs}
                     alt={book.name || "Book Cover"}
                     loading="lazy"
                 />

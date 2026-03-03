@@ -31,7 +31,9 @@ function BookDetail() {
                         <ItemDetail book={book}/>
                     )}
 
-                    <div>
+                    <div style={{
+                        whiteSpace: 'pre-wrap'
+                    }}>
                         <h2>Lời tựa</h2>
                         <div>
                             {book?.summary}

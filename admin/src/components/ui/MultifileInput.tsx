@@ -20,7 +20,14 @@ export function MultiFileInput({
                                    onChange,
                                    maxSize = 10,
                                    maxFiles = 5,
-                                   accept = { 'application/pdf': ['.pdf'], 'application/epub+zip': ['.epub'] },
+                                   // Cập nhật mặc định để hỗ trợ Kindle formats
+                                   accept = {
+                                       'application/pdf': ['.pdf'],
+                                       'application/epub+zip': ['.epub'],
+                                       'application/x-mobipocket-ebook': ['.mobi'],
+                                       'application/vnd.amazon.ebook': ['.azw3'],
+                                       'application/octet-stream': ['.mobi', '.azw3'] // Dự phòng cho trình duyệt không nhận diện được MIME
+                                   },
                                    description
                                }: MultiFileInputProps) {
 
@@ -31,13 +38,12 @@ export function MultiFileInput({
                 if (errors[0].code === 'file-too-large') {
                     toast.error(`${file.name} quá lớn. Tối đa ${maxSize}MB`);
                 } else {
-                    toast.error(`${file.name} không đúng định dạng`);
+                    toast.error(`${file.name} không đúng định dạng hỗ trợ`);
                 }
             });
             return;
         }
 
-        // Hợp nhất file cũ và file mới, giới hạn số lượng
         const newFiles = [...value, ...acceptedFiles].slice(0, maxFiles);
         onChange(newFiles);
     }, [value, onChange, maxSize, maxFiles]);
@@ -59,10 +65,9 @@ export function MultiFileInput({
             {label && (
                 <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500 ml-1 mb-0.5">
                     {label}
-                    </span>
+                </span>
             )}
 
-            {/* Dropzone Area */}
             <div
                 {...getRootProps()}
                 className={cn(
@@ -80,11 +85,10 @@ export function MultiFileInput({
                     {isDragActive ? 'Thả file ngay' : 'Tải tài liệu lên'}
                 </p>
                 <p className="text-[11px] text-slate-400 mt-1">
-                    {description || `Tối đa ${maxFiles} file. Định dạng PDF, EPUB (Max ${maxSize}MB)`}
+                    {description || `Định dạng: PDF, EPUB, MOBI, AZW3 (Tối đa ${maxSize}MB)`}
                 </p>
             </div>
 
-            {/* File List - Danh sách file đã chọn */}
             {value.length > 0 && (
                 <div className="mt-3 space-y-2">
                     {value.map((file, index) => (
