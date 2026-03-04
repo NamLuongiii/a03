@@ -614,6 +614,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/books/unzip": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "Unzip a book",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Book file",
+                        "name": "file",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CommonResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/books/{id}": {
             "get": {
                 "consumes": [

@@ -142,6 +142,7 @@ func main() {
 			book.GET("", bookHandler.GetBooks)
 			book.GET("/:id", bookHandler.GetBookByID)
 			book.POST("", bookHandler.CreateBook)
+			book.POST("/unzip", bookHandler.UnzipBook)
 			book.GET("/featured", bookHandler.GetFeaturedBooks)
 			book.GET("/categories", bookHandler.GetCategories)
 			book.GET("/authors/:authorID", bookHandler.GetAuthors)

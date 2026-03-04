@@ -13,6 +13,7 @@ import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
+import { Route as PublicReadRouteImport } from './routes/_public/read'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as PublicForgotPasswordRouteImport } from './routes/_public/forgot-password'
 import { Route as PublicBooksRouteImport } from './routes/_public/books'
@@ -37,6 +38,11 @@ const PublicIndexRoute = PublicIndexRouteImport.update({
 const PublicRegisterRoute = PublicRegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicReadRoute = PublicReadRouteImport.update({
+  id: '/read',
+  path: '/read',
   getParentRoute: () => PublicRoute,
 } as any)
 const PublicLoginRoute = PublicLoginRouteImport.update({
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/books': typeof PublicBooksRoute
   '/forgot-password': typeof PublicForgotPasswordRoute
   '/login': typeof PublicLoginRoute
+  '/read': typeof PublicReadRoute
   '/register': typeof PublicRegisterRoute
   '/': typeof PublicIndexRoute
   '/dashboard': typeof AuthAuthDashboardRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/books': typeof PublicBooksRoute
   '/forgot-password': typeof PublicForgotPasswordRoute
   '/login': typeof PublicLoginRoute
+  '/read': typeof PublicReadRoute
   '/register': typeof PublicRegisterRoute
   '/': typeof PublicIndexRoute
   '/dashboard': typeof AuthAuthDashboardRoute
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/_public/books': typeof PublicBooksRoute
   '/_public/forgot-password': typeof PublicForgotPasswordRoute
   '/_public/login': typeof PublicLoginRoute
+  '/_public/read': typeof PublicReadRoute
   '/_public/register': typeof PublicRegisterRoute
   '/_public/': typeof PublicIndexRoute
   '/_auth/_auth/dashboard': typeof AuthAuthDashboardRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/books'
     | '/forgot-password'
     | '/login'
+    | '/read'
     | '/register'
     | '/'
     | '/dashboard'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/books'
     | '/forgot-password'
     | '/login'
+    | '/read'
     | '/register'
     | '/'
     | '/dashboard'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/_public/books'
     | '/_public/forgot-password'
     | '/_public/login'
+    | '/_public/read'
     | '/_public/register'
     | '/_public/'
     | '/_auth/_auth/dashboard'
@@ -182,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof PublicRegisterRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/read': {
+      id: '/_public/read'
+      path: '/read'
+      fullPath: '/read'
+      preLoaderRoute: typeof PublicReadRouteImport
       parentRoute: typeof PublicRoute
     }
     '/_public/login': {
@@ -251,6 +270,7 @@ interface PublicRouteChildren {
   PublicBooksRoute: typeof PublicBooksRoute
   PublicForgotPasswordRoute: typeof PublicForgotPasswordRoute
   PublicLoginRoute: typeof PublicLoginRoute
+  PublicReadRoute: typeof PublicReadRoute
   PublicRegisterRoute: typeof PublicRegisterRoute
   PublicIndexRoute: typeof PublicIndexRoute
   PublicAuthorSlugRoute: typeof PublicAuthorSlugRoute
@@ -262,6 +282,7 @@ const PublicRouteChildren: PublicRouteChildren = {
   PublicBooksRoute: PublicBooksRoute,
   PublicForgotPasswordRoute: PublicForgotPasswordRoute,
   PublicLoginRoute: PublicLoginRoute,
+  PublicReadRoute: PublicReadRoute,
   PublicRegisterRoute: PublicRegisterRoute,
   PublicIndexRoute: PublicIndexRoute,
   PublicAuthorSlugRoute: PublicAuthorSlugRoute,

@@ -1,15 +1,21 @@
 package handlers
 
 import (
+	"archive/zip"
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 	"quickstart/dto"
 	"quickstart/middleware"
 	"quickstart/models"
 	"quickstart/types"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
@@ -615,4 +621,155 @@ func (h *BooksHandler) deleteDigitalBook(id int, bookID string) error {
 	e = h.fileStorage.DeleteFile(db.URL, FolderBookFiles)
 	e = h.digitalBookRepository.DeleteByID(id)
 	return e
+}
+
+// UnzipBook godoc
+//
+//	@Summary	Unzip a book
+//	@Tags		books
+//	@Accept		multipart/form-data
+//	@Param		file	formData	file					false	"Book file"
+//	@Param		id		formData	string					false	"Book ID"
+//	@Success	200		{object}	types.CommonResponse	"OK"
+//	@Router		/books/unzip [post]
+func (h *BooksHandler) UnzipBook(c *gin.Context) {
+	file, e := c.FormFile("file")
+	id := c.PostForm("id")
+
+	if id == "" {
+		c.Error(middleware.NewBadRequestError("Book ID is required"))
+		return
+	}
+
+	if e != nil {
+		c.Error(middleware.NewBadRequestError("File is required"))
+		return
+	}
+
+	// 1. Mở file ZIP
+	src, err := file.Open()
+	if err != nil {
+		c.Error(middleware.NewServerInternalError(err.Error()))
+		return
+	}
+	defer src.Close()
+
+	// zip.NewReader cần ReaderAt, nên ta đọc vào buffer
+	body, err := io.ReadAll(src)
+	if err != nil {
+		c.Error(middleware.NewServerInternalError(err.Error()))
+		return
+	}
+
+	zipReader, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
+	if err != nil {
+		c.Error(middleware.NewBadRequestError("Invalid EPUB/ZIP format"))
+		return
+	}
+
+	var uploadedFiles []string
+
+	// 2. Duyệt từng file bên trong EPUB
+	for _, f := range zipReader.File {
+		// Bỏ qua nếu là thư mục
+		if f.FileInfo().IsDir() {
+			continue
+		}
+
+		// Mở file con bên trong zip
+		rc, err := f.Open()
+		if err != nil {
+			continue
+		}
+
+		// Đọc dữ liệu file con vào bytes.Reader (để thỏa mãn giao diện io.ReadSeeker)
+		content, err := io.ReadAll(rc)
+		rc.Close()
+		if err != nil {
+			continue
+		}
+		reader := bytes.NewReader(content)
+
+		// 3. Định nghĩa đường dẫn lưu trên Object Storage
+		// Ví dụ: UnzipBooks/123/OEBPS/content.opf
+		remotePath := fmt.Sprintf("UnzipBooks/%s/%s", id, f.Name)
+
+		// Gọi hàm UploadFile của bạn
+		// Lưu ý: folder truyền vào tùy thuộc vào cách bạn định nghĩa StorageFolder (ở đây giả sử là "books" hoặc tương đương)
+		_, err = h.fileStorage.UploadFileNoUUID(reader, remotePath, "books")
+		if err != nil {
+			fmt.Printf("Failed to upload %s: %v\n", f.Name, err)
+			continue
+		}
+
+		uploadedFiles = append(uploadedFiles, f.Name)
+	}
+
+	c.JSON(http.StatusOK, types.CommonResponse{
+		Success: true,
+		Data:    uploadedFiles,
+		Message: fmt.Sprintf("Unzipped and uploaded %d files to Object Storage", len(uploadedFiles)),
+	})
+}
+func (h *BooksHandler) unzipEPUB(file *multipart.FileHeader, destDir string) ([]string, error) {
+	var filenames []string
+
+	// Mở file multipart
+	src, err := file.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer src.Close()
+
+	// Đọc nội dung vào Buffer để zip.NewReader có thể sử dụng (vì zip cần ReaderAt)
+	// Hoặc lưu tạm ra file nếu file quá lớn
+	body, err := io.ReadAll(src)
+	if err != nil {
+		return nil, err
+	}
+
+	r, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
+	if err != nil {
+		return nil, err
+	}
+
+	for _, f := range r.File {
+		// Bảo mật: Kiểm tra ZipSlip (tránh file có tên ../../../etc/passwd)
+		fpath := filepath.Join(destDir, f.Name)
+		if !strings.HasPrefix(fpath, filepath.Clean(destDir)+string(os.PathSeparator)) {
+			continue
+		}
+
+		filenames = append(filenames, f.Name)
+
+		if f.FileInfo().IsDir() {
+			os.MkdirAll(fpath, os.ModePerm)
+			continue
+		}
+
+		if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
+			return nil, err
+		}
+
+		outFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+		if err != nil {
+			return nil, err
+		}
+
+		rc, err := f.Open()
+		if err != nil {
+			outFile.Close()
+			return nil, err
+		}
+
+		_, err = io.Copy(outFile, rc)
+		outFile.Close()
+		rc.Close()
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return filenames, nil
 }

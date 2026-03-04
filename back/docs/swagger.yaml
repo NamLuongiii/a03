@@ -796,6 +796,27 @@ paths:
       summary: Get featured books
       tags:
       - books
+  /books/unzip:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Book file
+        in: formData
+        name: file
+        type: file
+      - description: Book ID
+        in: formData
+        name: id
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CommonResponse'
+      summary: Unzip a book
+      tags:
+      - books
 securityDefinitions:
   BearerAuth:
     description: Type only token (not include Bearer)
