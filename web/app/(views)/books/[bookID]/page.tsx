@@ -3,6 +3,7 @@ import Link from "next/link";
 import {Breadcrumbs, Button, Chip} from "@heroui/react";
 import {getBooksById} from "@/app/api";
 import {DownloadBook} from "@/app/components/DownloadBook";
+import {Comments} from "@/app/components/Comments";
 // Import file cấu hình API của bạn vào đây
 // import { getBookDetail } from "@/services/book-service"; 
 // import { ModelsBook } from "@/types";
@@ -136,6 +137,8 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
                     {book.summary}
                 </div>
             </div>
+
+            <Comments bookID={bookID}/>
         </div>
     );
 }

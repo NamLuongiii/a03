@@ -52,11 +52,12 @@ export default async function RootLayout({children}: { children: React.ReactNode
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <div className="relative flex flex-col min-h-screen">
                     <Navbar/>
-                    <main className="grow container mx-auto max-w-7xl px-4 pt-6">
+                    <main className="grow container mx-auto max-w-7xl px-4 py-6">
                         {children}
                     </main>
                     <footer className="w-full flex items-center justify-center py-3 border-t">
-                        <p className="text-small text-default-400">© 2026 BookLab</p>
+                        <small className="text-small text-default-400">© 2026 Toàn bộ sách được sưu tập trên không gian
+                            mạng</small>
                     </footer>
                 </div>
             </HydrationBoundary>

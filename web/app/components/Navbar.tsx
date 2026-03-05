@@ -76,8 +76,19 @@ export default function Navbar() {
                     {/* Ô Search chính */}
                     <Input
                         fullWidth
-                        placeholder="Tìm kiếm sách, tác giả..."
+                        placeholder="Tìm kiếm sách"
                         type="search"
+                        onKeyDown={e => {
+                            if (e.key === 'Enter') {
+                                const searchTerm = e.currentTarget.value;
+                                if (searchTerm) {
+                                    router.push(`/books?search=${searchTerm}`);
+                                }
+                                e.currentTarget.value = '';
+                                e.currentTarget.blur()
+                                return
+                            }
+                        }}
                     />
                 </div>
 
