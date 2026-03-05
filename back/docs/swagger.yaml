@@ -1,5 +1,12 @@
 basePath: /api/v1
 definitions:
+  dto.CommentDto:
+    properties:
+      text:
+        type: string
+      title:
+        type: string
+    type: object
   dto.RequestChangePassword:
     properties:
       email:
@@ -96,6 +103,8 @@ definitions:
       series_id:
         type: string
       summary:
+        type: string
+      unzip_root_url:
         type: string
       updated_at:
         type: string
@@ -527,6 +536,14 @@ paths:
         in: formData
         name: author_id
         type: string
+      - description: file to unzip services
+        in: formData
+        name: readingFile
+        type: file
+      - description: 'Auto find services file in file list: 1 / 0'
+        in: formData
+        name: autoFindReadingFile
+        type: string
       produces:
       - application/json
       responses:
@@ -633,6 +650,14 @@ paths:
         in: formData
         name: summary
         type: string
+      - description: file to unzip services
+        in: formData
+        name: readingFile
+        type: file
+      - description: 'Auto find services file in file list: 1 / 0'
+        in: formData
+        name: autoFindReadingFile
+        type: string
       produces:
       - application/json
       responses:
@@ -684,6 +709,12 @@ paths:
         name: id
         required: true
         type: string
+      - description: Comment body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CommentDto'
       produces:
       - application/json
       responses:

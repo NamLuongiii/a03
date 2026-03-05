@@ -48,6 +48,8 @@ import type {
   PostBooksByIdRatingsResponse,
   PostBooksData,
   PostBooksResponse,
+  PostBooksUnzipData,
+  PostBooksUnzipResponse,
   PutBooksByIdData,
   PutBooksByIdResponse,
 } from "../types.gen";
@@ -574,6 +576,33 @@ export const getBooksFeaturedOptions = (
     },
     queryKey: getBooksFeaturedQueryKey(options),
   });
+
+/**
+ * Unzip a book
+ */
+export const postBooksUnzipMutation = (
+  options?: Partial<Options<PostBooksUnzipData>>,
+): UseMutationOptions<
+  PostBooksUnzipResponse,
+  AxiosError<DefaultError>,
+  Options<PostBooksUnzipData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostBooksUnzipResponse,
+    AxiosError<DefaultError>,
+    Options<PostBooksUnzipData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await Books.postBooksUnzip({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
 
 /**
  * Delete book

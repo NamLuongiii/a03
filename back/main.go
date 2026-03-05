@@ -8,6 +8,7 @@ import (
 	"quickstart/handlers"
 	"quickstart/middleware"
 	"quickstart/models"
+	"quickstart/services"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -77,6 +78,9 @@ func main() {
 	authorRepo := models.NewAuthorRepository(database)
 	imageRepo := models.NewImageRepository(database)
 
+	// Init services
+	epubService := services.NewEpubService()
+
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(mailHandler, accountRepo, OTPRepo)
 
@@ -104,6 +108,7 @@ func main() {
 		FileStorage:             storage,
 		ImageProcessor:          imageProcessor,
 		ImageRepository:         imageRepo,
+		EpubService:             epubService,
 	})
 
 	router := gin.Default()

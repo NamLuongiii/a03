@@ -185,7 +185,14 @@ export const getBooksByIdComments = <ThrowOnError extends boolean = false>(optio
 /**
  * Add comment
  */
-export const postBooksByIdComments = <ThrowOnError extends boolean = false>(options: Options<PostBooksByIdCommentsData, ThrowOnError>) => (options.client ?? client).post<PostBooksByIdCommentsResponses, unknown, ThrowOnError>({ url: '/books/{id}/comments', ...options });
+export const postBooksByIdComments = <ThrowOnError extends boolean = false>(options: Options<PostBooksByIdCommentsData, ThrowOnError>) => (options.client ?? client).post<PostBooksByIdCommentsResponses, unknown, ThrowOnError>({
+    url: '/books/{id}/comments',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Add rating

@@ -11,6 +11,7 @@ import {FileItem} from "@components/ui/FileItem.tsx";
 import {MultiFileInput} from "@components/ui/MultifileInput.tsx";
 import {useNavigate} from "@tanstack/react-router";
 import {AuthorSelect} from "@components/AuthorSelect.tsx";
+import {Alert, Label, Surface, Input as HeroInput} from "@heroui/react"
 
 type Props = {
     id: string;
@@ -30,7 +31,8 @@ export function UpdateBook({id, book}: Props): JSX.Element {
             summary: book.summary,
             category_id: book.category_id,
             author_id: book.author_id,
-            remove_file_ids: []
+            remove_file_ids: [],
+            readingFile: undefined,
         }
     });
 
@@ -152,6 +154,26 @@ export function UpdateBook({id, book}: Props): JSX.Element {
                             })}
                         </div>
                     </div>
+
+                    <Surface className='space-y-3 p-4'>
+                        <Label>Chức năng đọc sách online</Label>
+                        <Alert status={book.unzip_root_url ? 'success' : 'warning'}>
+                            <Alert.Indicator/>
+                            <Alert.Content>
+                                {book.unzip_root_url ? (<Alert.Title>Sách này đã hỗ trợ đọc Online</Alert.Title>) : (<Alert.Title>Sách này chưa hỗ trợ đọc Online</Alert.Title>)}
+                                <Alert.Description>Tải file epub lên để đọc Online</Alert.Description>
+                            </Alert.Content>
+                        </Alert>
+
+                        <Controller control={control} render={({field}) => (
+                            <HeroInput type='file' placeholder='Tải file epub lên để đọc Online' onChange={(e) => {
+                                const files = e.target.files
+                                if (files && files.length > 0) {
+                                    field.onChange(files[0])
+                                }
+                            }} />
+                        )} name={'readingFile'}/>
+                    </Surface>
                 </div>
             </div>
 

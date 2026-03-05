@@ -4,6 +4,11 @@ export type ClientOptions = {
   baseURL: `${string}://${string}/api/v1` | (string & {});
 };
 
+export type DtoCommentDto = {
+  text?: string;
+  title?: string;
+};
+
 export type DtoRequestChangePassword = {
   email?: string;
 };
@@ -61,6 +66,7 @@ export type ModelsBook = {
   series?: ModelsBookSeries;
   series_id?: string;
   summary?: string;
+  unzip_root_url?: string;
   updated_at?: string;
   view_nums?: number;
 };
@@ -410,6 +416,14 @@ export type PostBooksData = {
      * Book authors
      */
     author_id?: string;
+    /**
+     * file to unzip services
+     */
+    readingFile?: Blob | File;
+    /**
+     * Auto find services file in file list: 1 / 0
+     */
+    autoFindReadingFile?: string;
   };
   path?: never;
   query?: never;
@@ -494,6 +508,32 @@ export type GetBooksFeaturedResponses = {
 export type GetBooksFeaturedResponse =
   GetBooksFeaturedResponses[keyof GetBooksFeaturedResponses];
 
+export type PostBooksUnzipData = {
+  body?: {
+    /**
+     * Book file
+     */
+    file?: Blob | File;
+    /**
+     * Book ID
+     */
+    id?: string;
+  };
+  path?: never;
+  query?: never;
+  url: "/books/unzip";
+};
+
+export type PostBooksUnzipResponses = {
+  /**
+   * OK
+   */
+  200: TypesCommonResponse;
+};
+
+export type PostBooksUnzipResponse =
+  PostBooksUnzipResponses[keyof PostBooksUnzipResponses];
+
 export type DeleteBooksByIdData = {
   body?: never;
   path: {
@@ -574,6 +614,14 @@ export type PutBooksByIdData = {
      * Book summary
      */
     summary?: string;
+    /**
+     * file to unzip services
+     */
+    readingFile?: Blob | File;
+    /**
+     * Auto find services file in file list: 1 / 0
+     */
+    autoFindReadingFile?: string;
   };
   path: {
     /**
@@ -622,7 +670,10 @@ export type GetBooksByIdCommentsResponse =
   GetBooksByIdCommentsResponses[keyof GetBooksByIdCommentsResponses];
 
 export type PostBooksByIdCommentsData = {
-  body?: never;
+  /**
+   * Comment body
+   */
+  body: DtoCommentDto;
   path: {
     /**
      * Book ID

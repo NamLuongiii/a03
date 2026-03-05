@@ -22,12 +22,14 @@ const (
 	FolderAvatars      StorageFolder = "avatars"
 	FolderAuthorImages StorageFolder = "author-images"
 	FolderOthers       StorageFolder = "others"
+	FolderUnzippedBook StorageFolder = "unzipped-book"
 )
 
 type FileStorageInterface interface {
 	UploadFile(reader io.ReadSeeker, fileName string, folder StorageFolder) (string, error)
 	DeleteFile(fileURL string, folder StorageFolder) error
 	UploadFileNoUUID(reader io.ReadSeeker, fileName string, folder StorageFolder) (string, error)
+	DeleteFolder(folderPath string) error
 }
 
 type FileStorage struct {
@@ -146,6 +148,43 @@ func (f *FileStorage) DeleteFile(fileURL string, folder StorageFolder) error {
 	_, err := f.s3Client.DeleteObject(&s3.DeleteObjectInput{
 		Bucket: aws.String(f.bucketName),
 		Key:    aws.String(key),
+	})
+
+	return err
+}
+
+// DeleteFolder xóa toàn bộ object có chung prefix (dưới 1000 items)
+func (f *FileStorage) DeleteFolder(folderPath string) error {
+	if !strings.HasSuffix(folderPath, "/") {
+		folderPath += "/"
+	}
+
+	// 1. Liệt kê danh sách object
+	listOutput, err := f.s3Client.ListObjectsV2(&s3.ListObjectsV2Input{
+		Bucket: aws.String(f.bucketName),
+		Prefix: aws.String(folderPath),
+	})
+	if err != nil {
+		return err
+	}
+
+	if len(listOutput.Contents) == 0 {
+		return nil
+	}
+
+	// 2. Gom danh sách key để xóa
+	var objects []*s3.ObjectIdentifier
+	for _, item := range listOutput.Contents {
+		objects = append(objects, &s3.ObjectIdentifier{Key: item.Key})
+	}
+
+	// 3. Thực thi xóa hàng loạt
+	_, err = f.s3Client.DeleteObjects(&s3.DeleteObjectsInput{
+		Bucket: aws.String(f.bucketName),
+		Delete: &s3.Delete{
+			Objects: objects,
+			Quiet:   aws.Bool(true),
+		},
 	})
 
 	return err

@@ -4,6 +4,11 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}/api/v1` | (string & {});
 };
 
+export type DtoCommentDto = {
+    text?: string;
+    title?: string;
+};
+
 export type DtoRequestChangePassword = {
     email?: string;
 };
@@ -61,6 +66,7 @@ export type ModelsBook = {
     series?: ModelsBookSeries;
     series_id?: string;
     summary?: string;
+    unzip_root_url?: string;
     updated_at?: string;
     view_nums?: number;
 };
@@ -404,6 +410,14 @@ export type PostBooksData = {
          * Book authors
          */
         author_id?: string;
+        /**
+         * file to unzip services
+         */
+        readingFile?: Blob | File;
+        /**
+         * Auto find services file in file list: 1 / 0
+         */
+        autoFindReadingFile?: string;
     };
     path?: never;
     query?: never;
@@ -588,6 +602,14 @@ export type PutBooksByIdData = {
          * Book summary
          */
         summary?: string;
+        /**
+         * file to unzip services
+         */
+        readingFile?: Blob | File;
+        /**
+         * Auto find services file in file list: 1 / 0
+         */
+        autoFindReadingFile?: string;
     };
     path: {
         /**
@@ -634,7 +656,10 @@ export type GetBooksByIdCommentsResponses = {
 export type GetBooksByIdCommentsResponse = GetBooksByIdCommentsResponses[keyof GetBooksByIdCommentsResponses];
 
 export type PostBooksByIdCommentsData = {
-    body?: never;
+    /**
+     * Comment body
+     */
+    body: DtoCommentDto;
     path: {
         /**
          * Book ID

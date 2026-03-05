@@ -47,6 +47,10 @@ func (r *CommentRepository) Create(comment *Comment) error {
 
 func (r *CommentRepository) GetByBookID(bookID string) ([]Comment, error) {
 	var comments []Comment
-	err := r.db.Preload("Account").Where("book_id = ?", bookID).Find(&comments).Error
+	err := r.db.
+		Preload("Account").
+		Where("book_id = ?", bookID).
+		Order("created_at desc").
+		Find(&comments).Error
 	return comments, err
 }

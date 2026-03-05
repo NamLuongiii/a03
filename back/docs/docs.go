@@ -465,6 +465,18 @@ const docTemplate = `{
                         "description": "Book authors",
                         "name": "author_id",
                         "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "file to unzip services",
+                        "name": "readingFile",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Auto find services file in file list: 1 / 0",
+                        "name": "autoFindReadingFile",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -763,6 +775,18 @@ const docTemplate = `{
                         "description": "Book summary",
                         "name": "summary",
                         "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "file to unzip services",
+                        "name": "readingFile",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Auto find services file in file list: 1 / 0",
+                        "name": "autoFindReadingFile",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -879,6 +903,15 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Comment body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CommentDto"
+                        }
                     }
                 ],
                 "responses": {
@@ -948,6 +981,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CommentDto": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.RequestChangePassword": {
             "type": "object",
             "properties": {
@@ -1096,6 +1140,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "summary": {
+                    "type": "string"
+                },
+                "unzip_root_url": {
                     "type": "string"
                 },
                 "updated_at": {

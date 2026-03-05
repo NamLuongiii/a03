@@ -16,8 +16,9 @@ type Book struct {
 	DownloadNums int            `json:"download_nums" gorm:"default:0"`
 	RatingAvg    float64        `json:"rating_avg" gorm:"default:0;type:float"`
 	RatingCount  int            `json:"rating_count" gorm:"default:0"`
-	CoverID      *int           `json:"cover_id,omitempty" gorm:"type:int"`
 	IsHidden     bool           `json:"is_hidden" gorm:"default:false;index:idx_books_is_hidden;index:idx_books_is_hidden_deleted_at,priority:1"`
+	UnzipRootURL string         `json:"unzip_root_url" gorm:"type:text"`
+	CoverID      *int           `json:"cover_id,omitempty" gorm:"type:int"`
 	CategoryID   *string        `json:"category_id,omitempty" gorm:"type:varchar(255);index:idx_books_category_id"`
 	AuthorID     *string        `json:"author_id,omitempty" gorm:"type:varchar(255);index:idx_books_author_id"`
 	SeriesID     *string        `json:"series_id,omitempty" gorm:"type:varchar(255);index:idx_books_series_id"`
@@ -75,10 +76,7 @@ func (r *BookRepository) GetAll(params types.PaginationParams) (types.Pagination
 	var books []Book
 	query := r.db.Model(&Book{}).
 		Preload("Cover").
-		Preload("DigitalBooks").
-		Preload("Category").
-		Preload("Author").
-		Preload("Series")
+		Preload("Author")
 
 	// 1. Filtering by Category
 	if params.Category != "" {
@@ -116,8 +114,6 @@ func (r *BookRepository) GetNewestBooks(limit int) ([]Book, error) {
 	var books []Book
 	err := r.db.
 		Preload("Cover").
-		Preload("DigitalBooks").
-		Preload("Category").
 		Preload("Author").
 		Order("created_at desc").
 		Limit(limit).
@@ -129,8 +125,6 @@ func (r *BookRepository) GetPopularBooks(limit int) ([]Book, error) {
 	var books []Book
 	err := r.db.
 		Preload("Cover").
-		Preload("DigitalBooks").
-		Preload("Category").
 		Preload("Author").
 		Order("created_at desc").
 		Limit(limit).
@@ -142,8 +136,6 @@ func (r *BookRepository) GetBooksOtherUserRead(limit int) ([]Book, error) {
 	var books []Book
 	err := r.db.
 		Preload("Cover").
-		Preload("DigitalBooks").
-		Preload("Category").
 		Preload("Author").
 		Order("created_at desc").
 		Limit(limit).

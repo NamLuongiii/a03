@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@heroui/styles";
 
 @theme {
   /* Đưa biến CSS vào hệ thống Tailwind để dùng: bg-main, text-main... */

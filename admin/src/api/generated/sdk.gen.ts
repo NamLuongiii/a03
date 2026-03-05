@@ -44,6 +44,8 @@ import type {
   PostBooksByIdRatingsResponses,
   PostBooksData,
   PostBooksResponses,
+  PostBooksUnzipData,
+  PostBooksUnzipResponses,
   PutBooksByIdData,
   PutBooksByIdResponses,
 } from "./types.gen";
@@ -326,6 +328,28 @@ export class Books {
   }
 
   /**
+   * Unzip a book
+   */
+  public static postBooksUnzip<ThrowOnError extends boolean = false>(
+    options?: Options<PostBooksUnzipData, ThrowOnError>,
+  ) {
+    return (options?.client ?? client).post<
+      PostBooksUnzipResponses,
+      unknown,
+      ThrowOnError
+    >({
+      ...formDataBodySerializer,
+      responseType: "json",
+      url: "/books/unzip",
+      ...options,
+      headers: {
+        "Content-Type": null,
+        ...options?.headers,
+      },
+    });
+  }
+
+  /**
    * Delete book
    */
   public static deleteBooksById<ThrowOnError extends boolean = false>(
@@ -412,6 +436,10 @@ export class Books {
       responseType: "json",
       url: "/books/{id}/comments",
       ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
     });
   }
 

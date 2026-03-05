@@ -13,6 +13,7 @@ import (
 	"quickstart/dto"
 	"quickstart/middleware"
 	"quickstart/models"
+	"quickstart/services"
 	"quickstart/types"
 	"strconv"
 	"strings"
@@ -33,6 +34,7 @@ type BooksHandler struct {
 	fileStorage             FileStorageInterface
 	imageProcessor          ImageProcessorInterface
 	imageRepository         models.ImageRepositoryInterface
+	epubService             services.EpubServiceInterface
 }
 
 type BookParams struct {
@@ -47,6 +49,7 @@ type BookParams struct {
 	FileStorage             FileStorageInterface
 	ImageProcessor          ImageProcessorInterface
 	ImageRepository         models.ImageRepositoryInterface
+	EpubService             services.EpubServiceInterface
 }
 
 func NewBooksHandler(params BookParams) *BooksHandler {
@@ -62,6 +65,7 @@ func NewBooksHandler(params BookParams) *BooksHandler {
 		fileStorage:             params.FileStorage,
 		imageProcessor:          params.ImageProcessor,
 		imageRepository:         params.ImageRepository,
+		epubService:             params.EpubService,
 	}
 }
 
@@ -210,8 +214,9 @@ func (h *BooksHandler) GetAuthors(c *gin.Context) {
 // @Tags		books
 // @Accept		json
 // @Produce	json
-// @Param		id	path		string										true	"Book ID"
-// @Success	200	{object}	types.CommonResponse{data=models.Comment}	"OK"
+// @Param		id		path		string										true	"Book ID"
+// @Param		body	body		dto.CommentDto								true	"Comment body"
+// @Success	200		{object}	types.CommonResponse{data=models.Comment}	"OK"
 // @Router		/books/{id}/comments [post]
 func (h *BooksHandler) AddComment(c *gin.Context) {
 	bID := c.Param("id")
@@ -340,14 +345,16 @@ func (h *BooksHandler) DeleteBook(c *gin.Context) {
 //	@Tags		books
 //	@Accept		multipart/form-data
 //	@Produce	json
-//	@Param		name		formData	string									true	"Book name"
-//	@Param		cover		formData	file									false	"Book cover"
-//	@Param		files		formData	[]file									false	"Book files"
-//	@Param		description	formData	string									false	"Book description"
-//	@Param		summary		formData	string									false	"Book summary"
-//	@Param		category_id	formData	string									false	"Book category"
-//	@Param		author_id	formData	string									false	"Book authors"
-//	@Success	200			{object}	types.CommonResponse{data=models.Book}	"OK"
+//	@Param		name				formData	string									true	"Book name"
+//	@Param		cover				formData	file									false	"Book cover"
+//	@Param		files				formData	[]file									false	"Book files"
+//	@Param		description			formData	string									false	"Book description"
+//	@Param		summary				formData	string									false	"Book summary"
+//	@Param		category_id			formData	string									false	"Book category"
+//	@Param		author_id			formData	string									false	"Book authors"
+//	@Param		readingFile			formData	file									false	"file to unzip services"
+//	@Param		autoFindReadingFile	formData	string									false	"Auto find services file in file list: 1 / 0"
+//	@Success	200					{object}	types.CommonResponse{data=models.Book}	"OK"
 //	@Router		/books [post]
 func (h *BooksHandler) CreateBook(c *gin.Context) {
 	name := c.PostForm("name")
@@ -382,7 +389,7 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 	}
 
 	if cover != nil {
-		dbImg, e := h.createCoverImage(cover)
+		dbImg, e := h.createCoverImage(cover, book.ID)
 		if e != nil {
 			c.Error(middleware.NewServerInternalError(e.Error()))
 			return
@@ -413,6 +420,28 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 		}
 	}
 
+	// If the reading file is provided, process the file for reading online feature
+	readingFile, e := c.FormFile("readingFile")
+	if e != nil && !errors.Is(e, http.ErrMissingFile) {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
+	}
+	if readingFile != nil {
+		unzipRootUrl, e := h.setupOnlineReadingMode(readingFile, book.ID)
+		if e != nil {
+			c.Error(middleware.NewServerInternalError(e.Error()))
+			return
+		}
+
+		book.UnzipRootURL = unzipRootUrl
+
+		e = h.bookRepository.Update(book)
+		if e != nil {
+			c.Error(middleware.NewServerInternalError(e.Error()))
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, types.CommonResponse{
 		Data:    book,
 		Success: true,
@@ -427,18 +456,18 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 //	@Tags		books
 //	@Accept		multipart/form-data
 //	@Produce	json
-//	@Param		id				path		string									true	"Book ID"
-//	@Param		name			formData	string									false	"Book name"
-//	@Param		cover			formData	file									false	"Book cover"
-//	@Param		files			formData	[]file									false	"Book files"
-//	@Param		category_id		formData	string									false	"Book category"
-//	@Param		author_id		formData	string									false	"Book authors"
-//	@Param		remove_file_ids	formData	[]integer								false	"File IDs to remove"
-//	@Param		description		formData	string									false	"Book description"
-//	@Param		summary			formData	string									false	"Book summary"
-//
-//	@Success	200				{object}	types.CommonResponse{data=models.Book}	"OK"
-//
+//	@Param		id					path		string									true	"Book ID"
+//	@Param		name				formData	string									false	"Book name"
+//	@Param		cover				formData	file									false	"Book cover"
+//	@Param		files				formData	[]file									false	"Book files"
+//	@Param		category_id			formData	string									false	"Book category"
+//	@Param		author_id			formData	string									false	"Book authors"
+//	@Param		remove_file_ids		formData	[]integer								false	"File IDs to remove"
+//	@Param		description			formData	string									false	"Book description"
+//	@Param		summary				formData	string									false	"Book summary"
+//	@Param		readingFile			formData	file									false	"file to unzip services"
+//	@Param		autoFindReadingFile	formData	string									false	"Auto find services file in file list: 1 / 0"
+//	@Success	200					{object}	types.CommonResponse{data=models.Book}	"OK"
 //	@Router		/books/{id} [put]
 func (h *BooksHandler) UpdateBook(c *gin.Context) {
 	id := c.Param("id")
@@ -496,7 +525,7 @@ func (h *BooksHandler) UpdateBook(c *gin.Context) {
 			}
 		}
 
-		dbImg, e := h.createCoverImage(cover)
+		dbImg, e := h.createCoverImage(cover, book.ID)
 		if e != nil {
 			c.Error(middleware.NewServerInternalError(e.Error()))
 			return
@@ -530,6 +559,21 @@ func (h *BooksHandler) UpdateBook(c *gin.Context) {
 		}
 	}
 
+	// If the reading file is provided, process the file for reading online feature
+	readingFile, e := c.FormFile("readingFile")
+	if e != nil && !errors.Is(e, http.ErrMissingFile) {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
+	}
+	if readingFile != nil {
+		unzipRootUrl, e := h.setupOnlineReadingMode(readingFile, book.ID)
+		if e != nil {
+			c.Error(middleware.NewServerInternalError(e.Error()))
+			return
+		}
+		book.UnzipRootURL = unzipRootUrl
+	}
+
 	e = h.bookRepository.Update(book)
 	if e != nil {
 		c.Error(middleware.NewServerInternalError(e.Error()))
@@ -543,14 +587,14 @@ func (h *BooksHandler) UpdateBook(c *gin.Context) {
 	})
 }
 
-func (h *BooksHandler) createCoverImage(f *multipart.FileHeader) (*models.Image, error) {
+func (h *BooksHandler) createCoverImage(f *multipart.FileHeader, bookID string) (*models.Image, error) {
 	xs, sm, md, xsn, smn, mdn, e := h.imageProcessor.ProcessImage(f)
 	if e != nil {
 		return nil, e
 	}
-	xsUrl, e := h.fileStorage.UploadFile(xs, xsn, FolderBookCovers)
-	smUrl, e1 := h.fileStorage.UploadFile(sm, smn, FolderBookCovers)
-	mdUrl, e2 := h.fileStorage.UploadFile(md, mdn, FolderBookCovers)
+	xsUrl, e := h.fileStorage.UploadFileNoUUID(xs, fmt.Sprintf("%s/%s", bookID, xsn), FolderBookCovers)
+	smUrl, e1 := h.fileStorage.UploadFileNoUUID(sm, fmt.Sprintf("%s/%s", bookID, smn), FolderBookCovers)
+	mdUrl, e2 := h.fileStorage.UploadFileNoUUID(md, fmt.Sprintf("%s/%s", bookID, mdn), FolderBookCovers)
 	if e != nil {
 		return nil, e
 	}
@@ -579,7 +623,7 @@ func (h *BooksHandler) createDigitalBook(f *multipart.FileHeader, bookID string)
 	if err != nil {
 		return nil, err
 	}
-	url, e := h.fileStorage.UploadFile(file, f.Filename, FolderBookFiles)
+	url, e := h.fileStorage.UploadFileNoUUID(file, fmt.Sprintf("%s/%s", bookID, f.Filename), FolderBookFiles)
 	if e != nil {
 		return nil, e
 	}
@@ -772,4 +816,70 @@ func (h *BooksHandler) unzipEPUB(file *multipart.FileHeader, destDir string) ([]
 	}
 
 	return filenames, nil
+}
+
+// setupOnlineReadingMode thiết lập chế độ đọc trực tuyến cho sách
+func (h *BooksHandler) setupOnlineReadingMode(f *multipart.FileHeader, bookID string) (string, error) {
+	// 0. Validate file is services
+	e := h.epubService.Confirm(f)
+
+	// 1. If current unzip book exists delete it
+	e = h.fileStorage.DeleteFolder(fmt.Sprintf("%s/%s", FolderUnzippedBook, bookID))
+
+	// 2. Unzip current file
+	file, e := f.Open()
+	defer file.Close()
+	body, e := io.ReadAll(file)
+	zipReader, e := zip.NewReader(bytes.NewReader(body), int64(len(body)))
+	files := zipReader.File
+
+	// 3. Find the root file (container.xml or *.opf)
+	// 4. Upload unzip folder to Object Storage
+	var rootUrl string
+	for _, f := range files {
+		if f.FileInfo().IsDir() {
+			continue
+		}
+
+		// Mở file con bên trong zip
+		rc, err := f.Open()
+		if err != nil {
+			continue
+		}
+
+		// Đọc dữ liệu file con vào bytes.Reader (để thỏa mãn giao diện io.ReadSeeker)
+		content, err := io.ReadAll(rc)
+		rc.Close()
+		if err != nil {
+			continue
+		}
+		reader := bytes.NewReader(content)
+
+		// 3. Định nghĩa đường dẫn lưu trên Object Storage
+		// Ví dụ: UnzippedBooks/123/OEBPS/content.opf
+		remotePath := fmt.Sprintf("%s/%s", bookID, f.Name)
+
+		// Gọi hàm UploadFile của bạn
+		// Lưu ý: folder truyền vào tùy thuộc vào cách bạn định nghĩa StorageFolder (ở đây giả sử là "books" hoặc tương đương)
+		remoteUrl, err := h.fileStorage.UploadFileNoUUID(reader, remotePath, FolderUnzippedBook)
+		if err != nil {
+			fmt.Printf("Failed to upload %s: %v\n", f.Name, err)
+			continue
+		}
+
+		// Check root file (container.xml or *.opf)
+		if rootUrl != "" {
+			continue
+		}
+		if strings.HasSuffix(f.Name, "container.xml") || strings.HasSuffix(f.Name, ".opf") {
+			rootUrl = remoteUrl
+		}
+	}
+
+	// 5. Update book with unzip folder url
+	if e != nil {
+		return "", e
+	}
+
+	return rootUrl, e
 }
