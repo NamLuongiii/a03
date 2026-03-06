@@ -1,5 +1,5 @@
-import ReadEpub from "@/app/components/ReadEpub";
 import {getBooksById} from "@/app/api";
+import {ReadEpub} from "@/app/components/ReadEpub";
 
 export default async function ReadingPage({params}: { params: Promise<{ bookID: string }> }) {
     const {bookID} = await params;
