@@ -877,6 +877,6 @@ func (h *BooksHandler) setupOnlineReadingMode(f *multipart.FileHeader, bookID st
 	if e != nil {
 		return "", e
 	}
-
-	return h.fileStorage.GetBaseUrl(FolderUnzippedBook), e
+	url := fmt.Sprintf("%s/%s", h.fileStorage.GetBaseUrl(FolderUnzippedBook), bookID)
+	return url, e
 }
