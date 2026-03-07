@@ -2,7 +2,7 @@
 
 import React, {useEffect, useRef, useState} from "react"
 import ePub, {Book, NavItem, Rendition} from "epubjs"
-import {Button} from "@heroui/react"
+import {Button, IconChevronLeft, IconChevronRight} from "@heroui/react"
 import {useRouter} from "next/navigation"
 
 interface EpubReaderProps {
@@ -29,7 +29,7 @@ export const ReadEpub: React.FC<EpubReaderProps> = ({unzipRootURL}) => {
         if (!viewerRef.current || !unzipRootURL || !isMounted) return
 
         const root = unzipRootURL.replace("META-INF/container.xml", "")
-        const book = ePub(root)
+        const book = ePub(root + '/')
         bookRef.current = book
 
         const rendition = book.renderTo(viewerRef.current, {
@@ -56,7 +56,7 @@ export const ReadEpub: React.FC<EpubReaderProps> = ({unzipRootURL}) => {
                 "font-family": 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important',
             },
             // Ghi đè cho các thẻ text cụ thể để tránh bị font gốc của epub làm xấu
-            "p, div, span, li": {
+            "p, div, li": {
                 // "font-family": "'Inter', sans-serif !important",
                 "font-size": "18px !important",
                 "line-height": "1.6 !important", /* TĂNG KHOẢNG CÁCH DÒNG LÊN 1.8 */
@@ -65,7 +65,8 @@ export const ReadEpub: React.FC<EpubReaderProps> = ({unzipRootURL}) => {
                 "font-family": "'Inter', sans-serif !important",
                 "font-weight": "700 !important",
                 "margin-top": "1.5em !important",
-                "margin-bottom": "0.5em !important"
+                "margin-bottom": "0.5em !important",
+                "text-align": "center !important",
             },
             "img": {
                 "max-width": "100% !important",
@@ -119,7 +120,7 @@ export const ReadEpub: React.FC<EpubReaderProps> = ({unzipRootURL}) => {
       `}
             >
                 <div className="flex items-center gap-2 p-4 border-b">
-                    <Button size="sm" onClick={() => router.back()}>
+                    <Button onClick={() => router.back()} variant='outline'>
                         Quay lại
                     </Button>
                     <h2 className="text-lg font-bold">Mục lục</h2>
@@ -164,42 +165,37 @@ export const ReadEpub: React.FC<EpubReaderProps> = ({unzipRootURL}) => {
 
                 {/* Top bar mobile */}
                 <div className="md:hidden flex items-center gap-2 p-3 border-b bg-white">
-                    <Button size="sm" onClick={() => setSidebarOpen(true)}>
+                    <Button size="sm" onClick={() => router.back()}>
+                        Quay lại
+                    </Button>
+                    <Button size="sm" variant='outline' onClick={() => setSidebarOpen(true)}>
                         Mục lục
                     </Button>
-                    <Button size="sm" onClick={() => router.back()}>
-                        Back
-                    </Button>
+
                 </div>
 
                 {/* Floating controls */}
                 <div className="absolute top-4 right-4 md:right-8 z-10 flex gap-2">
 
-                    <button
+                    <Button
+                        isIconOnly
                         onClick={prevPage}
-                        className="flex items-center justify-center w-10 h-10 bg-white/80 backdrop-blur border border-slate-200 rounded-full shadow hover:bg-white transition"
                     >
-                        <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="m15 18-6-6 6-6"/>
-                        </svg>
-                    </button>
+                        <IconChevronLeft/>
+                    </Button>
 
-                    <button
+                    <Button
+                        isIconOnly
                         onClick={nextPage}
-                        className="flex items-center justify-center w-10 h-10 bg-white/80 backdrop-blur border border-slate-200 rounded-full shadow hover:bg-white transition"
                     >
-                        <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="m9 18 6-6-6-6"/>
-                        </svg>
-                    </button>
+                        <IconChevronRight/>
+                    </Button>
 
                 </div>
 
                 {/* Book content */}
-                <main className="flex-1 overflow-y-auto py-6 md:py-10 px-2 md:px-6">
-                    <div className="mx-auto w-full max-w-[850px] bg-white shadow-lg min-h-full py-10 md:py-20">
-                        <div ref={viewerRef} className="w-full h-full"/>
-                    </div>
+                <main className="flex-1 overflow-y-auto">
+                    <div ref={viewerRef} className="w-full h-full"/>
                 </main>
 
             </div>
