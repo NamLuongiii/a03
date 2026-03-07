@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="013d35c2-c119-4a8f-ad61-d46be5229e0e" name="Changes" comment="nextjs web">
+      <change afterPath="$PROJECT_DIR$/web/app/components/BookCard.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web/app/components/BookPagination.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/app/(views)/books/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/app/(views)/books/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/app/components/FeaturedBooks.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/app/components/FeaturedBooks.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/app/components/Navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/app/components/Navbar.tsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="307" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="GOROOT" url="file:///usr/local/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;NamLuongiii&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/NamLuongiii/a03.git&quot;,
+    &quot;accountId&quot;: &quot;3ad2af64-ce4a-4a02-8969-40c6bf442070&quot;
+  }
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="39cUOOY5SoLYhzWUUM48bDMilaV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginOnboardingV2&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/namluong/WebstormProjects/a03/admin&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;rearrange.code.on.save&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;actions.on.save&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/namluong/WebstormProjects/a03/browser-automation/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlite&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/admin" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/web/app/(views)" />
+      <recent name="$PROJECT_DIR$/web/app/components" />
+      <recent name="$PROJECT_DIR$/web/app/(auth)" />
+      <recent name="$PROJECT_DIR$/web" />
+      <recent name="$PROJECT_DIR$/admin/src/components/ui" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-WS-253.29346.143" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="013d35c2-c119-4a8f-ad61-d46be5229e0e" name="Changes" comment="" />
+      <created>1770994819418</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770994819418</updated>
+      <workItem from="1770994820579" duration="6048000" />
+      <workItem from="1771243621754" duration="4299000" />
+      <workItem from="1771421414540" duration="135000" />
+      <workItem from="1771615953903" duration="199000" />
+      <workItem from="1771699500641" duration="7849000" />
+      <workItem from="1771860197919" duration="3156000" />
+      <workItem from="1772251620206" duration="23278000" />
+    </task>
+    <task id="LOCAL-00001" summary="ui components">
+      <option name="closed" value="true" />
+      <created>1771001015477</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1771001015477</updated>
+    </task>
+    <task id="LOCAL-00002" summary="ui components">
+      <option name="closed" value="true" />
+      <created>1771073401468</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1771073401468</updated>
+    </task>
+    <task id="LOCAL-00003" summary="setup auto">
+      <option name="closed" value="true" />
+      <created>1771267726649</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1771267726649</updated>
+    </task>
+    <task id="LOCAL-00004" summary="save">
+      <option name="closed" value="true" />
+      <created>1771267835727</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1771267835727</updated>
+    </task>
+    <task id="LOCAL-00005" summary="git">
+      <option name="closed" value="true" />
+      <created>1771268125133</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1771268125133</updated>
+    </task>
+    <task id="LOCAL-00006" summary="front">
+      <option name="closed" value="true" />
+      <created>1771703011836</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1771703011836</updated>
+    </task>
+    <task id="LOCAL-00007" summary="front">
+      <option name="closed" value="true" />
+      <created>1771704275741</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1771704275741</updated>
+    </task>
+    <task id="LOCAL-00008" summary="ui refactor">
+      <option name="closed" value="true" />
+      <created>1772259759283</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1772259759283</updated>
+    </task>
+    <task id="LOCAL-00009" summary="admin">
+      <option name="closed" value="true" />
+      <created>1772340087886</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1772340087886</updated>
+    </task>
+    <task id="LOCAL-00010" summary="api gen">
+      <option name="closed" value="true" />
+      <created>1772342103340</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1772342103340</updated>
+    </task>
+    <task id="LOCAL-00011" summary="api gen">
+      <option name="closed" value="true" />
+      <created>1772358052744</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1772358052744</updated>
+    </task>
+    <task id="LOCAL-00012" summary="update book">
+      <option name="closed" value="true" />
+      <created>1772557375587</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1772557375587</updated>
+    </task>
+    <task id="LOCAL-00013" summary="update book">
+      <option name="closed" value="true" />
+      <created>1772630187158</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1772630187158</updated>
+    </task>
+    <task id="LOCAL-00014" summary="nextjs web">
+      <option name="closed" value="true" />
+      <created>1772646262345</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1772646262346</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="ui components" />
+    <MESSAGE value="db init" />
+    <MESSAGE value="setup auto" />
+    <MESSAGE value="save" />
+    <MESSAGE value="git" />
+    <MESSAGE value="tables" />
+    <MESSAGE value="back" />
+    <MESSAGE value="front" />
+    <MESSAGE value="ui refactor" />
+    <MESSAGE value="admin" />
+    <MESSAGE value="api gen" />
+    <MESSAGE value="api" />
+    <MESSAGE value="update book" />
+    <MESSAGE value="nextjs web" />
+    <option name="LAST_COMMIT_MESSAGE" value="nextjs web" />
+  </component>
+</project>

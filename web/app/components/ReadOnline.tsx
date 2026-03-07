@@ -77,8 +77,8 @@ export default function ReadOnline({book}: Props) {
                 isIconOnly
                 variant='secondary'
                 onClick={() => setOpen(true)}><SquareMenu/></Button>
-            <Button variant='primary' onClick={nextChapter}>
-                {book.name}<IconChevronRight/>
+            <Button variant='primary' className='max-w-4/6' onClick={nextChapter}>
+                <span className='truncate'>{book.name}</span><IconChevronRight/>
             </Button>
         </footer>
 
