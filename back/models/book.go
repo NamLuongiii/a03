@@ -45,6 +45,7 @@ type BookRepositoryInterface interface {
 	GetBooksOtherUserRead(limit int) ([]Book, error)
 	Update(book *Book) error
 	Delete(id string) error
+	GetByIDSimple(id string) (Book, error)
 }
 
 type BookRepository struct {
@@ -76,7 +77,8 @@ func (r *BookRepository) GetAll(params types.PaginationParams) (types.Pagination
 	var books []Book
 	query := r.db.Model(&Book{}).
 		Preload("Cover").
-		Preload("Author")
+		Preload("Author").
+		Preload("Category")
 
 	// 1. Filtering by Category
 	if params.Category != "" {
@@ -149,4 +151,12 @@ func (r *BookRepository) Update(book *Book) error {
 
 func (r *BookRepository) Delete(id string) error {
 	return r.db.Delete(&Book{}, id).Error
+}
+
+func (r *BookRepository) GetByIDSimple(id string) (Book, error) {
+	var book Book
+	err := r.db.
+		Where("id = ?", id).
+		First(&book).Error
+	return book, err
 }

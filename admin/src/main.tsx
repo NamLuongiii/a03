@@ -9,6 +9,7 @@ import {routeTree} from './routeTree.gen'
 import {ToastContainer} from "react-toastify";
 import {AuthProvider, useAuth} from "./Auth.tsx";
 import {Toaster} from "sonner";
+import {AlertDialogProvider} from "@/providers/AlertProvider.tsx";
 
 // Create a new router instance
 const router = createRouter({
@@ -49,13 +50,15 @@ if (!rootElement.innerHTML) {
     const root = ReactDOM.createRoot(rootElement)
     root.render(
         <StrictMode>
-                <QueryClientProvider client={queryClient}>
-                    <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+                <AuthProvider>
+                    <AlertDialogProvider>
                         <InnerApp/>
-                    </AuthProvider>
-                    <ToastContainer/>
-                </QueryClientProvider>
-            <Toaster />
+                    </AlertDialogProvider>
+                </AuthProvider>
+                <ToastContainer/>
+            </QueryClientProvider>
+            <Toaster/>
         </StrictMode>,
     )
 }

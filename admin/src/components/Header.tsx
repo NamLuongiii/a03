@@ -1,7 +1,7 @@
 import {useRouter} from '@tanstack/react-router';
 import {ChevronLeft} from 'lucide-react';
-import {Button} from "./ui/Button";
 import {cn} from "../ultis/cn.ts";
+import {Button} from "@heroui/react";
 
 interface HeaderProps {
     title: string;
@@ -21,17 +21,18 @@ export function Header({
     const router = useRouter();
 
     return (
-        <div className={cn("flex items-center justify-between mb-8 animate-in fade-in slide-in-from-left-2", className)}>
+        <div
+            className={cn("flex items-center justify-between mb-8 animate-in fade-in slide-in-from-left-2", className)}>
             <div className="flex items-center gap-4">
                 {/* Nút Back - Chỉ hiện nếu showBack = true */}
                 {showBack && (
                     <Button
-                        variant="secondary"
-                        size="sm"
-                        className="w-10 h-10 !p-0 rounded-xl bg-white border-slate-200 shadow-sm hover:border-primary/30 group"
+                        isIconOnly
+                        size={'lg'}
+                        variant='tertiary'
                         onClick={() => router.history.back()}
                     >
-                        <ChevronLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
+                        <ChevronLeft/>
                     </Button>
                 )}
 

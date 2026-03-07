@@ -8,9 +8,9 @@ import {getBooksCategoriesOptions, postBooksMutation} from "@/api";
 import {CoverInput} from "@components/CoverInput.tsx";
 import {useMemo} from "react";
 import {Select} from "@components/ui/Select.tsx";
-import {alerts} from "@/ultis/confirm.tsx";
 import {MultiFileInput} from "@components/ui/MultifileInput.tsx";
 import {AuthorSelect} from "@components/AuthorSelect.tsx";
+import {useAlerts} from "@/providers/AlertProvider.tsx";
 
 export const Route = createFileRoute('/_auth/book/new')({
     component: RouteComponent,
@@ -24,9 +24,11 @@ type IForm = {
     category_id: string;
     author_id: string;
     files: File[];
+    readingFile?: File;
 }
 
 function RouteComponent() {
+    const alerts = useAlerts()
     const navigate = useNavigate()
     const {register, handleSubmit, control} = useForm<IForm>({
         defaultValues: {
@@ -42,9 +44,14 @@ function RouteComponent() {
     const {mutateAsync, isPending} = useMutation(postBooksMutation())
 
     const onSubmit = handleSubmit(async (data: IForm) => {
-        mutateAsync({body: data})
+        const _d = {...data}
+
+        if (!data.readingFile) {
+            _d.readingFile = data.files.find(f => f.name.endsWith('.epub'))
+        }
+        mutateAsync({body: _d})
             .then(res => {
-                alerts.confirmSuccess(res.message || 'Thành công', 'Sách đã được thêm vào hệ thống', () => {
+                alerts.success(res.message || 'Thành công', 'Sách đã được thêm vào hệ thống', () => {
                     navigate({to: '/books'})
                 })
             }).catch(err => {
@@ -104,14 +111,14 @@ function RouteComponent() {
                             <Controller
                                 name="author_id"
                                 control={control}
-                                render={({ field, fieldState }) => (
+                                render={({field, fieldState}) => (
                                     <AuthorSelect
                                         value={field.value}
                                         onChange={field.onChange}
                                         error={fieldState.error?.message}
                                     />
                                 )}
-                            />                        </div>
+                            /></div>
 
                         <Input label="Mô tả ngắn" placeholder='Nhập mô tả' {...register('description')} />
                     </div>
@@ -136,13 +143,12 @@ function RouteComponent() {
                 </div>
 
 
-
                 <footer
                     className='p-4 flex mx-auto z-10'>
                     <div className="flex gap-3">
-                      <Button variant='primary' type="submit" isLoading={isPending} className="min-w-[120px]">
-                        Thêm sách
-                      </Button>
+                        <Button variant='primary' type="submit" isLoading={isPending} className="min-w-[120px]">
+                            Thêm sách
+                        </Button>
                         <Button variant='secondary' type="button" onClick={() => navigate({to: '/books'})}>
                             Hủy bỏ
                         </Button>

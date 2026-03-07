@@ -6,12 +6,12 @@ import {type JSX, useMemo} from "react";
 import {Input} from "@components/ui/Input.tsx";
 import {Select} from "@components/ui/Select.tsx";
 import {CoverInput} from "@components/CoverInput.tsx";
-import {alerts} from "@/ultis/confirm.tsx";
 import {FileItem} from "@components/ui/FileItem.tsx";
 import {MultiFileInput} from "@components/ui/MultifileInput.tsx";
 import {useNavigate} from "@tanstack/react-router";
 import {AuthorSelect} from "@components/AuthorSelect.tsx";
-import {Alert, Label, Surface, Input as HeroInput} from "@heroui/react"
+import {Alert, Input as HeroInput, Label, Surface} from "@heroui/react"
+import {useAlerts} from "@/providers/AlertProvider.tsx";
 
 type Props = {
     id: string;
@@ -21,6 +21,7 @@ type Props = {
 type TForm = NonNullable<PutBooksByIdData['body']>
 
 export function UpdateBook({id, book}: Props): JSX.Element {
+    const alerts = useAlerts()
     const {mutateAsync, isPending} = useMutation(putBooksByIdMutation());
     const navigate = useNavigate()
 
@@ -51,11 +52,9 @@ export function UpdateBook({id, book}: Props): JSX.Element {
     const onSubmit = handleSubmit(async (data) => {
         try {
             await mutateAsync({body: data, path: {id}});
-            alerts.confirmSuccess("Cập nhật thành công", "Thông tin sách đã được thay đổi.");
-
-            navigate({ to: `/books`}).then(
-
-            )
+            alerts.success("Cập nhật thành công", "Thông tin sách đã được thay đổi.", () => {
+                navigate({to: `/books`}).then()
+            });
 
         } catch (error) {
             console.error("Error updating book:", error);
@@ -104,7 +103,7 @@ export function UpdateBook({id, book}: Props): JSX.Element {
                         <Controller
                             name="author_id"
                             control={control}
-                            render={({ field, fieldState }) => (
+                            render={({field, fieldState}) => (
                                 <AuthorSelect
                                     value={field.value}
                                     onChange={field.onChange}
@@ -160,7 +159,8 @@ export function UpdateBook({id, book}: Props): JSX.Element {
                         <Alert status={book.unzip_root_url ? 'success' : 'warning'}>
                             <Alert.Indicator/>
                             <Alert.Content>
-                                {book.unzip_root_url ? (<Alert.Title>Sách này đã hỗ trợ đọc Online</Alert.Title>) : (<Alert.Title>Sách này chưa hỗ trợ đọc Online</Alert.Title>)}
+                                {book.unzip_root_url ? (<Alert.Title>Sách này đã hỗ trợ đọc Online</Alert.Title>) : (
+                                    <Alert.Title>Sách này chưa hỗ trợ đọc Online</Alert.Title>)}
                                 <Alert.Description>Tải file epub lên để đọc Online</Alert.Description>
                             </Alert.Content>
                         </Alert>
@@ -171,7 +171,7 @@ export function UpdateBook({id, book}: Props): JSX.Element {
                                 if (files && files.length > 0) {
                                     field.onChange(files[0])
                                 }
-                            }} />
+                            }}/>
                         )} name={'readingFile'}/>
                     </Surface>
                 </div>

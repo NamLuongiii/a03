@@ -367,10 +367,17 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 		c.Error(middleware.NewBadRequestError("name is required"))
 		return
 	}
+	slug := slug.Make(name)
+
+	b, _ := h.bookRepository.GetByIDSimple(slug)
+	if b.ID != "" {
+		c.Error(middleware.NewBadRequestError("Book already exists"))
+		return
+	}
 
 	// create a book
 	book := &models.Book{
-		ID:          slug.Make(name),
+		ID:          slug,
 		Name:        name,
 		Description: description,
 		Summary:     summary,
@@ -483,7 +490,7 @@ func (h *BooksHandler) UpdateBook(c *gin.Context) {
 		return
 	}
 
-	book, e := h.bookRepository.GetByID(id)
+	book, e := h.bookRepository.GetByIDSimple(id)
 	if e != nil {
 		c.Error(middleware.NewBadRequestError(e.Error()))
 		return
@@ -574,7 +581,7 @@ func (h *BooksHandler) UpdateBook(c *gin.Context) {
 		book.UnzipRootURL = unzipRootUrl
 	}
 
-	e = h.bookRepository.Update(book)
+	e = h.bookRepository.Update(&book)
 	if e != nil {
 		c.Error(middleware.NewServerInternalError(e.Error()))
 		return
@@ -833,9 +840,7 @@ func (h *BooksHandler) setupOnlineReadingMode(f *multipart.FileHeader, bookID st
 	zipReader, e := zip.NewReader(bytes.NewReader(body), int64(len(body)))
 	files := zipReader.File
 
-	// 3. Find the root file (container.xml or *.opf)
-	// 4. Upload unzip folder to Object Storage
-	var rootUrl string
+	// 3. Upload unzip folder to Object Storage
 	for _, f := range files {
 		if f.FileInfo().IsDir() {
 			continue
@@ -861,18 +866,10 @@ func (h *BooksHandler) setupOnlineReadingMode(f *multipart.FileHeader, bookID st
 
 		// Gọi hàm UploadFile của bạn
 		// Lưu ý: folder truyền vào tùy thuộc vào cách bạn định nghĩa StorageFolder (ở đây giả sử là "books" hoặc tương đương)
-		remoteUrl, err := h.fileStorage.UploadFileNoUUID(reader, remotePath, FolderUnzippedBook)
+		_, err = h.fileStorage.UploadFileNoUUID(reader, remotePath, FolderUnzippedBook)
 		if err != nil {
 			fmt.Printf("Failed to upload %s: %v\n", f.Name, err)
 			continue
-		}
-
-		// Check root file (container.xml or *.opf)
-		if rootUrl != "" {
-			continue
-		}
-		if strings.HasSuffix(f.Name, "container.xml") || strings.HasSuffix(f.Name, ".opf") {
-			rootUrl = remoteUrl
 		}
 	}
 
@@ -881,5 +878,5 @@ func (h *BooksHandler) setupOnlineReadingMode(f *multipart.FileHeader, bookID st
 		return "", e
 	}
 
-	return rootUrl, e
+	return h.fileStorage.GetBaseUrl(FolderUnzippedBook), e
 }

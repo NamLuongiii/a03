@@ -30,6 +30,7 @@ type FileStorageInterface interface {
 	DeleteFile(fileURL string, folder StorageFolder) error
 	UploadFileNoUUID(reader io.ReadSeeker, fileName string, folder StorageFolder) (string, error)
 	DeleteFolder(folderPath string) error
+	GetBaseUrl(folderName StorageFolder) string
 }
 
 type FileStorage struct {
@@ -188,4 +189,13 @@ func (f *FileStorage) DeleteFolder(folderPath string) error {
 	})
 
 	return err
+}
+
+func (f *FileStorage) GetBaseUrl(folderName StorageFolder) string {
+	return fmt.Sprintf(
+		"https://%s.%s.digitaloceanspaces.com/%s",
+		f.bucketName,
+		f.region,
+		folderName,
+	)
 }
