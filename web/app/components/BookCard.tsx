@@ -19,10 +19,10 @@ export const BookCard = ({book}: Props) => (
                     />
                 )}
             </div>
-            <div>
-                <small className='line-height-1 text-ellipsis'>{book.author?.name}</small>
+            <div className='text-center'>
+                {/*<small className='line-height-1 text-ellipsis'>{book.author?.name}</small>*/}
                 {/* Tên sách */}
-                <small className='line-clamp-2 text-justify'>
+                <small className='line-clamp-2'>
                     {book.name}
                 </small>
                 {/* Tên tác giả */}
