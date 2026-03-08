@@ -1,9 +1,11 @@
 package models
 
 import (
+	"errors"
 	"quickstart/types"
 	"time"
 
+	"github.com/gosimple/slug"
 	"gorm.io/gorm"
 )
 
@@ -70,6 +72,9 @@ func (r *BookRepository) GetByID(id string) (*Book, error) {
 }
 
 func (r *BookRepository) Create(book *Book) error {
+	if e := r.validateName(book.Name); e != nil {
+		return e
+	}
 	return r.db.Create(book).Error
 }
 
@@ -146,6 +151,9 @@ func (r *BookRepository) GetBooksOtherUserRead(limit int) ([]Book, error) {
 }
 
 func (r *BookRepository) Update(book *Book) error {
+	if e := r.validateName(book.Name); e != nil {
+		return e
+	}
 	return r.db.Model(book).Select("*").Updates(book).Error
 }
 
@@ -159,4 +167,13 @@ func (r *BookRepository) GetByIDSimple(id string) (Book, error) {
 		Where("id = ?", id).
 		First(&book).Error
 	return book, err
+}
+
+func (r *BookRepository) validateName(name string) error {
+	n := slug.Make(name)
+
+	if len(n) < 5 {
+		return errors.New("Name must be at least 5 characters long")
+	}
+	return nil
 }

@@ -39,12 +39,12 @@ export const Comments = ({bookID}: { bookID: string }) => {
     if (isLoading) return <div className="flex justify-center py-20"><Spinner color="current"/></div>;
 
     return (
-        <div className="flex flex-col gap-12 max-w-3xl mx-auto">
+        <div className="flex flex-col gap-12">
             {/* Tiêu đề & Form */}
             <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-1">
-                    <h3 className="uppercase tracking-widest text-lg font-bold">Bình luận</h3>
-                    <p className="text-default-400 text-sm">Chia sẻ cảm nhận của bạn về tác phẩm này.</p>
+                    <h3>Bình luận</h3>
+                    <p>Chia sẻ cảm nhận của bạn về tác phẩm này.</p>
                 </div>
 
                 {me ? (

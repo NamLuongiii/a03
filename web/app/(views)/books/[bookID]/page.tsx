@@ -44,11 +44,12 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
     }
 
     return (
-        <div className="max-w-6xl mx-auto py-6 space-y-8">
+        <div className="max-w-4xl mx-auto py-6 space-y-8">
 
             {/* --- BREADCRUMBS --- */}
             <Breadcrumbs>
                 <Breadcrumbs.Item href="/">Trang chủ</Breadcrumbs.Item>
+                <Breadcrumbs.Item href='/books'>Tất cả</Breadcrumbs.Item>
                 {book.category && (
                     <Breadcrumbs.Item href={`/categories/${book.category_id}`}>
                         {book.category.name}
@@ -87,13 +88,14 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
                 <div className="col-span-1 md:col-span-8 lg:col-span-9 flex flex-col gap-4">
                     {/* Header Thông tin */}
                     <div className="space-y-2">
-                        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
-                            {book.name}
-                        </h1>
+                        <h2>{book.name}</h2>
 
-                        <p className="text-lg text-default-600">
-                            Tác giả: <Link href={`/authors/${book.author_id}`}
-                                           className="text-primary hover:underline font-medium">{book.author?.name || "Đang cập nhật"}</Link>
+                        <p>Tác giả:
+                            <Link
+                                href={`/authors/${book.author_id}`}
+                                className="text-primary hover:underline font-medium">
+                                {book.author?.name || "Đang cập nhật"}
+                            </Link>
                         </p>
                     </div>
 
@@ -116,8 +118,8 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
 
                     {/* Tóm tắt & Mô tả */}
                     <div className="space-y-2">
-                        <h3 className="text-xl font-semibold">Giới thiệu</h3>
-                        <div className="text-default-700 leading-relaxed text-medium whitespace-pre-line">
+                        <h3>Giới thiệu</h3>
+                        <div className="leading-relaxed whitespace-pre-line">
                             {book.description || book.summary || "Chưa có nội dung mô tả cho cuốn sách này."}
                         </div>
                     </div>
@@ -131,9 +133,9 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
             </div>
 
             {/*Lời phê bình sách */}
-            <div className='space-y-2 max-w-3xl mx-auto'>
-                <h3 className="text-xl font-semibold">Lời tựa</h3>
-                <div className='whitespace-pre-line text-default-700 leading-relaxed'>
+            <div className='space-y-2'>
+                <h3>Lời tựa</h3>
+                <div className='whitespace-pre-line leading-relaxed'>
                     {book.summary}
                 </div>
             </div>

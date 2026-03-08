@@ -1,53 +1,18 @@
-import axios from "axios";
 import {chromium, Page} from "playwright";
-
-type BookData = {
-    name: string;
-    cover: any; // Sử dụng Blob hoặc Buffer cho Node.js
-    files: any[];
-    // readingFile: any
-}
-
-// 1. Hàm gửi dữ liệu lên Server
-export async function saveBook(data: BookData, filenames: string[]) {
-    try {
-        const formData = new FormData();
-        formData.append('name', data.name);
-
-        // Append cover (dạng Blob/File)
-        formData.append('cover', data.cover, 'cover.jpg');
-
-        // Append danh sách files
-        data.files.forEach((file, index) => {
-            formData.append('files', file, filenames[index]);
-
-            if (filenames[index].endsWith('.epub') && !formData.get('readingFile'))
-                formData.append('readingFile', file, filenames[index]);
-        });
-
-        const res = await axios.post('http://localhost:8080/api/v1/books', formData);
-        console.log('🚀 Save book success:', res.data.message);
-    } catch (error: any) {
-        console.error(error)
-        console.error('❌ Lỗi khi gọi API saveBook:', error.message);
-    }
-}
-
-// 2. Hàm hỗ trợ tải file về Buffer (để không cần lưu ổ cứng)
-async function fetchFileAsBlob(url: string): Promise<Blob> {
-    const response = await axios.get(url, {responseType: 'arraybuffer'});
-    // Xác định type dựa trên link hoặc mặc định image/jpeg
-    const contentType = response.headers['content-type'];
-    console.log('Content-Type:', contentType);
-    return new Blob([response.data], {type: contentType});
-}
+import {saveBook} from "./api-save-book";
+import {fetchFileAsBlob} from "./fns";
 
 // 3. Hàm xử lý chi tiết từng cuốn sách
-async function crawlBookDetail(page: Page, url: string) {
-    await page.goto(url, {waitUntil: 'domcontentloaded'});
+async function crawlBookDetail(page: Page, {detailUrl, downloadUrl}: { detailUrl: string, downloadUrl: string }) {
+    await page.goto(detailUrl, {waitUntil: 'domcontentloaded'});
+    // Lấy tên tác giả từ trang detail
+    const authorName = await page.locator('a[href^="https://sachmoi.net/tac-gia"]').first().innerText();
+    console.log('Author:', authorName || 'Unknown')
 
+    await page.goto(downloadUrl, {waitUntil: 'domcontentloaded'});
     // Lấy tên sách từ h1.entry-title
     const name = await page.locator('h1.entry-title').innerText();
+    console.log('Name:', name)
 
     // Lấy ảnh cover (img width=125)
     const imgLocator = page.locator('img[width="125"]').first();
@@ -106,12 +71,19 @@ async function crawlBookDetail(page: Page, url: string) {
             console.warn('No files found for this book');
             return;
         }
-        await saveBook({name, cover: coverBlob, files}, filenames);
+
+        if (files.find(file => file.type === 'application/epub+zip')) {
+            await saveBook({name, cover: coverBlob, files, author_name: authorName}, filenames);
+        } else {
+            console.warn('No EPUB file found');
+            return;
+        }
     }
 }
 
 // 4. Hàm chính quét danh sách sách
 async function getRootPages(url: string) {
+    console.log('00000 Bắt đầu xử lý list book: ', url)
     const browser = await chromium.launch({headless: true});
     const context = await browser.newContext();
     const page = await context.newPage();
@@ -121,21 +93,27 @@ async function getRootPages(url: string) {
     const locators = page.locator('a[class="post-thumbnail"]');
     const count = await locators.count();
 
-    const detailUrls: string[] = [];
+    const detailUrls: { detailUrl: string, downloadUrl: string }[] = [];
     for (let i = 0; i < count; i++) {
-        const href = await locators.nth(i).getAttribute('href');
-        if (href) {
-            detailUrls.push(href.replace('https://sachmoi.net/', 'https://sachmoi.net/download/'));
+        const detailUrl = await locators.nth(i).getAttribute('href');
+        if (detailUrl) {
+            const downloadUrl = detailUrl.replace('https://sachmoi.net/', 'https://sachmoi.net/download/');
+            detailUrls.push({detailUrl, downloadUrl});
         }
     }
 
     // Duyệt qua từng trang chi tiết để cào và upload
     for (const dUrl of detailUrls) {
-        console.log(`--- Đang xử lý: ${dUrl} ---`);
-        await crawlBookDetail(page, dUrl);
+        console.log(`--- Đang xử lý download url: ${dUrl.downloadUrl} ---`);
+
+        try {
+            await crawlBookDetail(page, dUrl);
+        } catch (error: any) {
+            console.error('❌ Lỗi khi crawl url:', dUrl.downloadUrl, error.message);
+        }
     }
 
     await browser.close();
 }
 
-getRootPages('https://sachmoi.net/trang/398#gsc.tab=0');
+getRootPages('https://sachmoi.net/trang/395#gsc.tab=0');

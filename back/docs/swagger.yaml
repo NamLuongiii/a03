@@ -801,6 +801,49 @@ paths:
       summary: Get book categories
       tags:
       - books
+  /books/create-tool:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Book name
+        in: formData
+        name: name
+        type: string
+      - description: Book cover
+        in: formData
+        name: cover
+        type: file
+      - collectionFormat: csv
+        description: Book files
+        in: formData
+        items:
+          type: file
+        name: files
+        type: array
+      - description: Book authors
+        in: formData
+        name: author_name
+        type: string
+      - description: file to unzip services
+        in: formData
+        name: readingFile
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Book'
+              type: object
+      summary: Create a new book for a tool
+      tags:
+      - books
   /books/featured:
     get:
       consumes:
@@ -825,27 +868,6 @@ paths:
                   type: array
               type: object
       summary: Get featured books
-      tags:
-      - books
-  /books/unzip:
-    post:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: Book file
-        in: formData
-        name: file
-        type: file
-      - description: Book ID
-        in: formData
-        name: id
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/types.CommonResponse'
-      summary: Unzip a book
       tags:
       - books
 securityDefinitions:

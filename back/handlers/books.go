@@ -8,7 +8,6 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
-	"os"
 	"path/filepath"
 	"quickstart/dto"
 	"quickstart/middleware"
@@ -594,14 +593,130 @@ func (h *BooksHandler) UpdateBook(c *gin.Context) {
 	})
 }
 
+// CreateBookForTool godoc
+//
+//	@Summary	Create a new book for a tool
+//	@Tags		books
+//	@Accept		multipart/form-data
+//	@Produce	json
+//	@Param		name		formData	string									false	"Book name"
+//	@Param		cover		formData	file									false	"Book cover"
+//	@Param		files		formData	[]file									false	"Book files"
+//	@Param		author_name	formData	string									false	"Book authors"
+//	@Param		readingFile	formData	file									false	"file to unzip services"
+//	@Success	200			{object}	types.CommonResponse{data=models.Book}	"OK
+//	@Router		/books/create-tool [post]
+func (h *BooksHandler) CreateBookForTool(c *gin.Context) {
+	name := c.PostForm("name")
+	authorName := c.PostForm("author_name")
+
+	// 1. Validate Cover (Ảnh bìa)
+	cover, err := c.FormFile("cover")
+	if err != nil {
+		// Trường hợp không gửi file cover
+		c.Error(middleware.NewBadRequestError("Missing cover image"))
+		return
+	}
+
+	if err := h.validateCover(cover); err != nil {
+		c.Error(err) // Trả về lỗi từ hàm validate (đã là BadRequestError)
+		return
+	}
+
+	// 2. Validate Digital Files (Danh sách file sách)
+	files := c.Request.MultipartForm.File["files"]
+	if len(files) == 0 {
+		c.Error(middleware.NewBadRequestError("At least one digital file is required"))
+		return
+	}
+
+	for _, f := range files {
+		if err := h.validateDigitalFile(f); err != nil {
+			c.Error(err)
+			return
+		}
+	}
+
+	// Nếu chạy đến đây là mọi thứ đã sạch sẽ, sẵn sàng xử lý tiếp
+	book := &models.Book{
+		ID:   slug.Make(name),
+		Name: name,
+	}
+	e := h.bookRepository.Create(book)
+	if e != nil {
+		c.Error(middleware.NewBadRequestError("Create book failed: " + e.Error()))
+		return
+	}
+
+	// cover
+	coverImg, e := h.createCoverImage(cover, book.ID)
+	if e != nil {
+		c.Error(middleware.NewBadRequestError("Create cover image failed: " + e.Error()))
+		return
+	}
+	book.CoverID = &coverImg.ID
+
+	// book files
+	for _, f := range files {
+		_, e := h.createDigitalBook(f, book.ID)
+		if e != nil {
+			c.Error(middleware.NewBadRequestError("Create digital book failed: " + e.Error()))
+			return
+		}
+	}
+
+	// unzip epub
+	readingFile, e := c.FormFile("readingFile")
+	if readingFile == nil {
+		c.Error(middleware.NewBadRequestError("Reading file is required"))
+		return
+	}
+	if h.validateDigitalFile(readingFile) != nil {
+		c.Error(middleware.NewBadRequestError("Reading file must be a valid epub file"))
+		return
+	}
+
+	unzipRootUrl, e := h.setupOnlineReadingMode(readingFile, book.ID)
+	if e != nil {
+		c.Error(middleware.NewBadRequestError("Setup online reading mode failed: " + e.Error()))
+		return
+	}
+
+	// autho
+	author, e := h.authorRepository.GetOrCreate(authorName)
+	if e != nil {
+		c.Error(middleware.NewBadRequestError("Create author failed: " + e.Error()))
+		return
+	}
+
+	// update book
+	book.AuthorID = &author.ID
+	book.CoverID = &coverImg.ID
+	book.UnzipRootURL = unzipRootUrl
+
+	e = h.bookRepository.Update(book)
+
+	if e != nil {
+		c.Error(middleware.NewBadRequestError(e.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, types.CommonResponse{
+		Success: true,
+		Data:    book,
+		Message: "Book created",
+	})
+}
+
 func (h *BooksHandler) createCoverImage(f *multipart.FileHeader, bookID string) (*models.Image, error) {
-	xs, sm, md, xsn, smn, mdn, e := h.imageProcessor.ProcessImage(f)
+	d, e := h.imageProcessor.CropImage(f)
 	if e != nil {
 		return nil, e
 	}
-	xsUrl, e := h.fileStorage.UploadFileNoUUID(xs, fmt.Sprintf("%s/%s", bookID, xsn), FolderBookCovers)
-	smUrl, e1 := h.fileStorage.UploadFileNoUUID(sm, fmt.Sprintf("%s/%s", bookID, smn), FolderBookCovers)
-	mdUrl, e2 := h.fileStorage.UploadFileNoUUID(md, fmt.Sprintf("%s/%s", bookID, mdn), FolderBookCovers)
+	fileName := h.imageProcessor.CreateFileNameJPEG(f.Filename)
+	mdUrl, e := h.fileStorage.UploadFileNoUUID(bytes.NewReader(d.Md), fmt.Sprintf("%s/%s%s", bookID, "MD_", fileName), FolderBookCovers)
+	smUrl, e1 := h.fileStorage.UploadFileNoUUID(bytes.NewReader(d.Sm), fmt.Sprintf("%s/%s%s", bookID, "SM_", fileName), FolderBookCovers)
+	xsUrl, e2 := h.fileStorage.UploadFileNoUUID(bytes.NewReader(d.Xs), fmt.Sprintf("%s/%s%s", bookID, "XS_", fileName), FolderBookCovers)
 	if e != nil {
 		return nil, e
 	}
@@ -674,164 +789,19 @@ func (h *BooksHandler) deleteDigitalBook(id int, bookID string) error {
 	return e
 }
 
-// UnzipBook godoc
-//
-//	@Summary	Unzip a book
-//	@Tags		books
-//	@Accept		multipart/form-data
-//	@Param		file	formData	file					false	"Book file"
-//	@Param		id		formData	string					false	"Book ID"
-//	@Success	200		{object}	types.CommonResponse	"OK"
-//	@Router		/books/unzip [post]
-func (h *BooksHandler) UnzipBook(c *gin.Context) {
-	file, e := c.FormFile("file")
-	id := c.PostForm("id")
-
-	if id == "" {
-		c.Error(middleware.NewBadRequestError("Book ID is required"))
-		return
-	}
-
-	if e != nil {
-		c.Error(middleware.NewBadRequestError("File is required"))
-		return
-	}
-
-	// 1. Mở file ZIP
-	src, err := file.Open()
-	if err != nil {
-		c.Error(middleware.NewServerInternalError(err.Error()))
-		return
-	}
-	defer src.Close()
-
-	// zip.NewReader cần ReaderAt, nên ta đọc vào buffer
-	body, err := io.ReadAll(src)
-	if err != nil {
-		c.Error(middleware.NewServerInternalError(err.Error()))
-		return
-	}
-
-	zipReader, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
-	if err != nil {
-		c.Error(middleware.NewBadRequestError("Invalid EPUB/ZIP format"))
-		return
-	}
-
-	var uploadedFiles []string
-
-	// 2. Duyệt từng file bên trong EPUB
-	for _, f := range zipReader.File {
-		// Bỏ qua nếu là thư mục
-		if f.FileInfo().IsDir() {
-			continue
-		}
-
-		// Mở file con bên trong zip
-		rc, err := f.Open()
-		if err != nil {
-			continue
-		}
-
-		// Đọc dữ liệu file con vào bytes.Reader (để thỏa mãn giao diện io.ReadSeeker)
-		content, err := io.ReadAll(rc)
-		rc.Close()
-		if err != nil {
-			continue
-		}
-		reader := bytes.NewReader(content)
-
-		// 3. Định nghĩa đường dẫn lưu trên Object Storage
-		// Ví dụ: UnzipBooks/123/OEBPS/content.opf
-		remotePath := fmt.Sprintf("UnzipBooks/%s/%s", id, f.Name)
-
-		// Gọi hàm UploadFile của bạn
-		// Lưu ý: folder truyền vào tùy thuộc vào cách bạn định nghĩa StorageFolder (ở đây giả sử là "books" hoặc tương đương)
-		_, err = h.fileStorage.UploadFileNoUUID(reader, remotePath, "books")
-		if err != nil {
-			fmt.Printf("Failed to upload %s: %v\n", f.Name, err)
-			continue
-		}
-
-		uploadedFiles = append(uploadedFiles, f.Name)
-	}
-
-	c.JSON(http.StatusOK, types.CommonResponse{
-		Success: true,
-		Data:    uploadedFiles,
-		Message: fmt.Sprintf("Unzipped and uploaded %d files to Object Storage", len(uploadedFiles)),
-	})
-}
-func (h *BooksHandler) unzipEPUB(file *multipart.FileHeader, destDir string) ([]string, error) {
-	var filenames []string
-
-	// Mở file multipart
-	src, err := file.Open()
-	if err != nil {
-		return nil, err
-	}
-	defer src.Close()
-
-	// Đọc nội dung vào Buffer để zip.NewReader có thể sử dụng (vì zip cần ReaderAt)
-	// Hoặc lưu tạm ra file nếu file quá lớn
-	body, err := io.ReadAll(src)
-	if err != nil {
-		return nil, err
-	}
-
-	r, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
-	if err != nil {
-		return nil, err
-	}
-
-	for _, f := range r.File {
-		// Bảo mật: Kiểm tra ZipSlip (tránh file có tên ../../../etc/passwd)
-		fpath := filepath.Join(destDir, f.Name)
-		if !strings.HasPrefix(fpath, filepath.Clean(destDir)+string(os.PathSeparator)) {
-			continue
-		}
-
-		filenames = append(filenames, f.Name)
-
-		if f.FileInfo().IsDir() {
-			os.MkdirAll(fpath, os.ModePerm)
-			continue
-		}
-
-		if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
-			return nil, err
-		}
-
-		outFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-		if err != nil {
-			return nil, err
-		}
-
-		rc, err := f.Open()
-		if err != nil {
-			outFile.Close()
-			return nil, err
-		}
-
-		_, err = io.Copy(outFile, rc)
-		outFile.Close()
-		rc.Close()
-
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return filenames, nil
-}
-
 // setupOnlineReadingMode thiết lập chế độ đọc trực tuyến cho sách
 func (h *BooksHandler) setupOnlineReadingMode(f *multipart.FileHeader, bookID string) (string, error) {
 	// 0. Validate file is services
 	e := h.epubService.Confirm(f)
+	if e != nil {
+		return "", e
+	}
 
 	// 1. If current unzip book exists delete it
 	e = h.fileStorage.DeleteFolder(fmt.Sprintf("%s/%s", FolderUnzippedBook, bookID))
+	if e != nil {
+		return "", e
+	}
 
 	// 2. Unzip current file
 	file, e := f.Open()
@@ -877,6 +847,87 @@ func (h *BooksHandler) setupOnlineReadingMode(f *multipart.FileHeader, bookID st
 	if e != nil {
 		return "", e
 	}
-	url := fmt.Sprintf("%s/%s", h.fileStorage.GetBaseUrl(FolderUnzippedBook), bookID)
+	url := fmt.Sprintf("%s/%s%s", h.fileStorage.GetBaseUrl(FolderUnzippedBook), bookID, "/")
 	return url, e
+}
+
+func (h *BooksHandler) validateCover(f *multipart.FileHeader) error {
+	// 1. Kiểm tra dung lượng (Tối đa 10MB)
+	if f.Size > 10*1024*1024 {
+		return middleware.NewBadRequestError("Kích thước ảnh vượt quá giới hạn (Tối đa 10MB)")
+	}
+
+	// 2. Kiểm tra Content-Type từ Header
+	// Một số loại phổ biến: image/jpeg, image/png, image/webp, image/gif
+	contentType := f.Header.Get("Content-Type")
+	allowedTypes := map[string]bool{
+		"image/jpeg": true,
+		"image/jpg":  true,
+		"image/png":  true,
+		"image/webp": true,
+	}
+
+	if !allowedTypes[contentType] {
+		return middleware.NewBadRequestError("Định dạng file không hợp lệ. Chỉ chấp nhận JPG, PNG, WEBP")
+	}
+
+	// 3. (Nâng cao) Kiểm tra đuôi file thực tế
+	ext := strings.ToLower(filepath.Ext(f.Filename))
+	allowedExts := map[string]bool{
+		".jpg":  true,
+		".jpeg": true,
+		".png":  true,
+		".webp": true,
+	}
+
+	if !allowedExts[ext] {
+		return middleware.NewBadRequestError("Đuôi file không hợp lệ")
+	}
+
+	return nil
+}
+
+func (h *BooksHandler) validateDigitalFile(f *multipart.FileHeader) error {
+	// 1. Kiểm tra dung lượng (Sách thường nặng hơn ảnh, ví dụ cho phép tối đa 50MB)
+	const maxFileSize = 50 * 1024 * 1024 // 50MB
+	if f.Size > maxFileSize {
+		return middleware.NewBadRequestError("File sách vượt quá giới hạn cho phép (Tối đa 50MB)")
+	}
+
+	// 2. Danh sách các định dạng sách được phép
+	// Content-Type của các loại file sách đôi khi khá phức tạp
+	allowedContentTypes := map[string]bool{
+		"application/pdf":                    true, // .pdf
+		"application/epub+zip":               true, // .epub
+		"application/x-mobipocket-ebook":     true, // .mobi hoặc .azw
+		"application/vnd.amazon.mobi8-ebook": true, // .azw3
+		"application/octet-stream":           true, // Đôi khi trình duyệt nhận nhầm file lạ là stream
+		"application/vnd.amazon.ebook":       true,
+	}
+
+	// 3. Danh sách đuôi file được phép (Double check cho chắc chắn)
+	allowedExtensions := map[string]bool{
+		".pdf":  true,
+		".epub": true,
+		".mobi": true,
+		".azw":  true,
+		".azw3": true,
+	}
+
+	// Kiểm tra Content-Type
+	contentType := f.Header.Get("Content-Type")
+	// Kiểm tra đuôi file
+	ext := strings.ToLower(filepath.Ext(f.Filename))
+
+	if !allowedExtensions[ext] {
+		return middleware.NewBadRequestError("Định dạng file ." + ext + " không được hỗ trợ. Chỉ nhận PDF, EPUB, MOBI, AZW3")
+	}
+
+	// Lưu ý: application/octet-stream là kiểu chung chung,
+	// nếu là kiểu này thì ta tin tưởng vào Extension hơn.
+	if contentType != "application/octet-stream" && !allowedContentTypes[contentType] {
+		return middleware.NewBadRequestError("Kiểu nội dung file (MIME) không hợp lệ")
+	}
+
+	return nil
 }

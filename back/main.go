@@ -145,9 +145,9 @@ func main() {
 		book := v1.Group("/books")
 		{
 			book.GET("", bookHandler.GetBooks)
+			book.POST("/create-tool", bookHandler.CreateBookForTool)
 			book.GET("/:id", bookHandler.GetBookByID)
 			book.POST("", bookHandler.CreateBook)
-			book.POST("/unzip", bookHandler.UnzipBook)
 			book.GET("/featured", bookHandler.GetFeaturedBooks)
 			book.GET("/categories", bookHandler.GetCategories)
 			book.GET("/authors/:authorID", bookHandler.GetAuthors)

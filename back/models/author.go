@@ -1,9 +1,11 @@
 package models
 
 import (
+	"errors"
 	"quickstart/types"
 	"time"
 
+	"github.com/gosimple/slug"
 	"gorm.io/gorm"
 )
 
@@ -21,6 +23,7 @@ type AuthorRepositoryInterface interface {
 	GetByID(id string) (*Author, error)
 	GetAll(page int, size int, search string) (types.PaginationData, error)
 	Create(author *Author) error
+	GetOrCreate(name string) (*Author, error)
 }
 
 type AuthorRepository struct {
@@ -60,4 +63,14 @@ func (r *AuthorRepository) GetAll(page int, size int, search string) (types.Pagi
 
 func (r *AuthorRepository) Create(author *Author) error {
 	return r.db.Create(author).Error
+}
+
+func (r *AuthorRepository) GetOrCreate(name string) (*Author, error) {
+	id := slug.Make(name)
+	if len(id) < 5 {
+		return nil, errors.New("Author name must be at least 5 characters long")
+	}
+	author := Author{ID: id, Name: name}
+	err := r.db.Where("id = ?", id).FirstOrCreate(&author).Error
+	return &author, err
 }

@@ -8,10 +8,17 @@ import (
 	"io"
 	"mime/multipart"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/disintegration/imaging"
 )
+
+type ProcessedImage struct {
+	Xs []byte
+	Sm []byte
+	Md []byte
+}
 
 type ImageProcessor struct{}
 
@@ -24,6 +31,8 @@ type ImageProcessorInterface interface {
 		string,
 		string,
 		error)
+	CropImage(fh *multipart.FileHeader) (*ProcessedImage, error)
+	CreateFileNameJPEG(filename string) string
 }
 
 func NewImageProcessor() *ImageProcessor {
@@ -111,4 +120,70 @@ func (p *ImageProcessor) ProcessImage(fh *multipart.FileHeader) (
 		"md" + "_" + n + ".jpeg",
 		nil
 
+}
+
+func (p *ImageProcessor) CropImage(fh *multipart.FileHeader) (*ProcessedImage, error) {
+	// Mở file gốc
+	srcFile, e := fh.Open()
+	if e != nil {
+		return nil, e
+	}
+	defer srcFile.Close()
+
+	// Decode ảnh
+	img, e := imaging.Decode(srcFile)
+	if e != nil {
+		return nil, e
+	}
+
+	// Cắt bỏ 8% phần bottom (ngắn gọn nhất bằng CropAnchor)
+	// Giữ lại 92% chiều cao tính từ Top
+	newHeight := int(float64(img.Bounds().Dy()) * 0.92)
+	dst := imaging.CropAnchor(img, img.Bounds().Dx(), newHeight, imaging.Top)
+
+	// resize
+	resizedMd := imaging.Fill(dst, 300, 480, imaging.Center, imaging.Lanczos)
+	resizedSm := imaging.Fill(resizedMd, 150, 240, imaging.Center, imaging.Lanczos)
+	resizedXs := imaging.Fill(resizedSm, 50, 80, imaging.Center, imaging.Lanczos)
+
+	encodeToJpeg := func(img image.Image) ([]byte, error) {
+		buf := new(bytes.Buffer)
+		e := jpeg.Encode(buf, img, &jpeg.Options{Quality: 80})
+		if e != nil {
+			return nil, e
+		}
+		return buf.Bytes(), nil
+	}
+
+	bufMd, e := encodeToJpeg(resizedMd)
+	bufSm, e := encodeToJpeg(resizedSm)
+	bufXs, e := encodeToJpeg(resizedXs)
+	if e != nil {
+		return nil, e
+	}
+
+	return &ProcessedImage{
+		Xs: bufXs,
+		Sm: bufSm,
+		Md: bufMd,
+	}, nil
+}
+
+func (p *ImageProcessor) CreateFileNameJPEG(filename string) string {
+	// 1. Lấy tên gốc và loại bỏ phần mở rộng
+	base := filepath.Base(filename)
+	ext := filepath.Ext(base)
+	name := strings.TrimSuffix(base, ext)
+
+	// 2. Làm sạch tên file:
+	// - Chuyển sang chữ thường (Lower)
+	// - Thay khoảng trắng bằng dấu gạch ngang (Slug)
+	cleanName := strings.ToLower(name)
+	cleanName = strings.ReplaceAll(cleanName, " ", "-")
+
+	// 3. Có thể dùng regex để xóa ký tự đặc biệt nếu muốn cực kỳ an toàn
+	reg, _ := regexp.Compile("[^a-z0-9-]+")
+	cleanName = reg.ReplaceAllString(cleanName, "")
+
+	return cleanName + ".jpeg"
 }
