@@ -27,6 +27,7 @@ export class EpubEngine {
             height: "100%",
             flow: "scrolled", // Dạng cuộn (scrolled) hoặc lật trang (paginated)
             manager: "default",
+            allowScriptedContent: true,
         });
 
         // Bạn có thể thiết lập style mặc định cho font chữ tiếng Việt ở đây

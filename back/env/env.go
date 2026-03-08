@@ -21,15 +21,15 @@ func SetupEnv() {
 	// Here you would typically load environment variables from a file or the system
 	// For example, using os.Setenv or a library like godotenv
 
-	err1 := os.Setenv(string(JWTSecret), "123456789abcdef") // Example secret
-	err2 := os.Setenv(string(MailAddress), "luongkhacnam222@gmail.com")
+	err1 := os.Setenv(string(JWTSecret), "uaiu aaoo reee hhug") // Example secret
+	err2 := os.Setenv(string(MailAddress), "docluonbook@gmail.com")
 	err3 := os.Setenv(string(MailPassword), "bicl ebko ohiu jmpg")
 	err4 := os.Setenv(string(MailHost), "smtp.gmail.com")
-	err5 := os.Setenv(string(OTPSecret), "123456")
-	err6 := os.Setenv(string(DOSpaceKey), "DO8019PACJFXN4ZBNJT8")
-	err7 := os.Setenv(string(DOSpaceSecret), "fRbVbq8Mda7pGFxd/v0vFRpfHFVE41hgEvBhMrKG9dQ")
+	err5 := os.Setenv(string(OTPSecret), "aauu hhuee jkke xsss")
+	err6 := os.Setenv(string(DOSpaceKey), "DO8016CVW2HN7AGJPR6E")
+	err7 := os.Setenv(string(DOSpaceSecret), "me5/MtMF3fXt1rXPhTdZSbLEDwdTBnhGerUUBezsb0U")
 	err8 := os.Setenv(string(DOSpaceRegion), "sgp1")
-	err9 := os.Setenv(string(DOSpaceBucket), "namluong")
+	err9 := os.Setenv(string(DOSpaceBucket), "docluonwebsite")
 	err10 := os.Setenv(string(DOSpaceEndpoint), "https://sgp1.digitaloceanspaces.com")
 	if err1 != nil ||
 		err2 != nil ||

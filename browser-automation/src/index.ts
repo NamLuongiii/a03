@@ -37,7 +37,7 @@ async function crawlBookDetail(page: Page, {detailUrl, downloadUrl}: { detailUrl
             await locator.click();
             const download = await downloadPromise;
             const fileName = download.suggestedFilename();
-            console.log(`Downloaded file from href ${href} as ${fileName}`);
+            console.log(`Downloaded file as ${fileName}`);
 
             let contentType = '';
 
@@ -116,4 +116,23 @@ async function getRootPages(url: string) {
     await browser.close();
 }
 
-getRootPages('https://sachmoi.net/trang/395#gsc.tab=0');
+
+async function run(pageStart: number, pageEnd: number) {
+    for (let i = pageStart; i <= pageEnd; i++) {
+        console.log(`--- 🎃📙🍑 Đang xử lý trang ${i} 🎃📙🍑---`);
+        const url = `https://sachmoi.net/trang/${i}#gsc.tab=0`;
+        await getRootPages(url);
+
+        console.log('------------------🎃📙🍑-------------------')
+    }
+}
+
+async function downloadSingleBook(urlDetail: string) {
+    const browser = await chromium.launch({headless: true});
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    const downloadUrl = urlDetail.replace('https://sachmoi.net/', 'https://sachmoi.net/download/');
+    crawlBookDetail(page, {detailUrl: urlDetail, downloadUrl})
+}
+
+run(380, 391)

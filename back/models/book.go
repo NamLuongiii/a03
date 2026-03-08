@@ -172,8 +172,8 @@ func (r *BookRepository) GetByIDSimple(id string) (Book, error) {
 func (r *BookRepository) validateName(name string) error {
 	n := slug.Make(name)
 
-	if len(n) < 5 {
-		return errors.New("Name must be at least 5 characters long")
+	if len(n) < 4 {
+		return errors.New("Name must be at least 4 characters long")
 	}
 	return nil
 }

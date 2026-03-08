@@ -67,8 +67,8 @@ func (r *AuthorRepository) Create(author *Author) error {
 
 func (r *AuthorRepository) GetOrCreate(name string) (*Author, error) {
 	id := slug.Make(name)
-	if len(id) < 5 {
-		return nil, errors.New("Author name must be at least 5 characters long")
+	if len(id) < 4 {
+		return nil, errors.New("Author name must be at least 4 characters long")
 	}
 	author := Author{ID: id, Name: name}
 	err := r.db.Where("id = ?", id).FirstOrCreate(&author).Error
