@@ -146,6 +146,9 @@ func main() {
 		{
 			book.GET("", bookHandler.GetBooks)
 			book.POST("/create-tool", bookHandler.CreateBookForTool)
+			book.POST("/test-upload", bookHandler.TestUpload)
+			book.POST("/test-delete", bookHandler.TestDelete)
+			book.DELETE("/test-delete-folder", bookHandler.TestDeleteFolder)
 			book.GET("/:id", bookHandler.GetBookByID)
 			book.POST("", bookHandler.CreateBook)
 			book.GET("/featured", bookHandler.GetFeaturedBooks)

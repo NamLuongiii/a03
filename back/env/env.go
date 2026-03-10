@@ -26,11 +26,11 @@ func SetupEnv() {
 	err3 := os.Setenv(string(MailPassword), "bicl ebko ohiu jmpg")
 	err4 := os.Setenv(string(MailHost), "smtp.gmail.com")
 	err5 := os.Setenv(string(OTPSecret), "aauu hhuee jkke xsss")
-	err6 := os.Setenv(string(DOSpaceKey), "DO8016CVW2HN7AGJPR6E")
-	err7 := os.Setenv(string(DOSpaceSecret), "me5/MtMF3fXt1rXPhTdZSbLEDwdTBnhGerUUBezsb0U")
-	err8 := os.Setenv(string(DOSpaceRegion), "sgp1")
+	err6 := os.Setenv(string(DOSpaceKey), "e1df912173ff017eb2109f671f40a08d")
+	err7 := os.Setenv(string(DOSpaceSecret), "b0120aa2588a4ca0c1aeeeaea1d0a3e7bd0ab39ef2062a8d788c1f8ef7eed8c2")
+	err8 := os.Setenv(string(DOSpaceRegion), "auto")
 	err9 := os.Setenv(string(DOSpaceBucket), "docluonwebsite")
-	err10 := os.Setenv(string(DOSpaceEndpoint), "https://sgp1.digitaloceanspaces.com")
+	err10 := os.Setenv(string(DOSpaceEndpoint), "https://6f7015a019db018548848cd16bbd9f69.r2.cloudflarestorage.com")
 	if err1 != nil ||
 		err2 != nil ||
 		err3 != nil ||

@@ -4,6 +4,7 @@ import {Button, Dropdown} from "@heroui/react";
 import {ModelsDigitalBook} from "@/app/api";
 import prettyBytes from "pretty-bytes";
 import {saveAs} from 'file-saver'
+import {getFullUrl} from "@/app/helpers";
 
 type Props = {
     db: ModelsDigitalBook[]
@@ -22,7 +23,7 @@ export function DownloadBook({db}: Props) {
                                        id={item.id}
                                        onClick={() => {
                                            if (!item.url) return;
-                                           saveAs(item.url, item.name)
+                                           saveAs(getFullUrl(item.url), item.name)
                                        }}
                         >{item.file_type}
                             <small className='ml-auto'>{prettyBytes(item.file_size || 0)}</small></Dropdown.Item>

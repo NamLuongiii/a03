@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import {ModelsBook} from "@/app/api";
+import {getFullUrl} from "@/app/helpers";
 
 type Props = {
     book: ModelsBook
@@ -14,7 +15,7 @@ export const BookCard = ({book}: Props) => (
                 {book.cover?.md && (
                     <img
                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
-                        src={book.cover?.md || "/placeholder-book.jpg"}
+                        src={getFullUrl(book.cover?.md) || "/placeholder-book.jpg"}
                         alt={book.name || "Book Cover"}
                     />
                 )}

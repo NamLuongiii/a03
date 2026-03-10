@@ -1,4 +1,5 @@
 import ePub, {Book, NavItem, Rendition} from 'epubjs';
+import {getFullUrl} from "@/app/helpers";
 
 export class EpubEngine {
     public rendition: Rendition | null = null; // Lưu lại để điều khiển sau này
@@ -8,7 +9,7 @@ export class EpubEngine {
 
     constructor(unzipRootURL: string) {
         this.baseUrl = unzipRootURL.endsWith('/') ? unzipRootURL : `${unzipRootURL}/`;
-        this.book = ePub(this.baseUrl);
+        this.book = ePub(getFullUrl(this.baseUrl));
     }
 
     async init() {

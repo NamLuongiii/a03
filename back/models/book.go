@@ -158,7 +158,16 @@ func (r *BookRepository) Update(book *Book) error {
 }
 
 func (r *BookRepository) Delete(id string) error {
-	return r.db.Delete(&Book{}, id).Error
+	// 1. Tìm thông tin sách trước để lấy ID của Cover và danh sách DigitalBooks
+	// (Cần thiết nếu bạn muốn xóa file vật lý sau đó)
+	var book Book
+	if err := r.db.Preload("DigitalBooks").First(&book, "id = ?", id).Error; err != nil {
+		return err
+	}
+
+	// 2. Thực hiện xóa Book và các quan hệ 1-n (DigitalBooks) và 1-1 (Cover)
+	// "Cover" và "DigitalBooks" phải khớp với tên trường trong struct Book của bạn
+	return r.db.Select("Cover", "DigitalBooks").Delete(&book).Error
 }
 
 func (r *BookRepository) GetByIDSimple(id string) (Book, error) {

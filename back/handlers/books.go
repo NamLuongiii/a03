@@ -328,11 +328,34 @@ func (h *BooksHandler) GetComments(c *gin.Context) {
 func (h *BooksHandler) DeleteBook(c *gin.Context) {
 	id := c.Param("id")
 
+	// delete file on s3
+	book, e := h.bookRepository.GetByID(id)
+	if e != nil {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
+	}
+	if book.CoverID != nil {
+		e := h.deleteImage(*book.CoverID)
+		if e != nil {
+			c.Error(middleware.NewServerInternalError(e.Error()))
+			return
+		}
+	}
+
+	for _, db := range book.DigitalBooks {
+		e := h.deleteDigitalBook(db.ID, id)
+		if e != nil {
+			c.Error(middleware.NewServerInternalError(e.Error()))
+			return
+		}
+	}
+
 	er := h.bookRepository.Delete(id)
 	if er != nil {
 		c.Error(middleware.NewServerInternalError(er.Error()))
 		return
 	}
+
 	c.JSON(http.StatusOK, types.CommonResponse{
 		Success: true,
 	})
@@ -714,9 +737,9 @@ func (h *BooksHandler) createCoverImage(f *multipart.FileHeader, bookID string) 
 		return nil, e
 	}
 	fileName := h.imageProcessor.CreateFileNameJPEG(f.Filename)
-	mdUrl, e := h.fileStorage.UploadFileNoUUID(bytes.NewReader(d.Md), fmt.Sprintf("%s/%s%s", bookID, "MD_", fileName), FolderBookCovers)
-	smUrl, e1 := h.fileStorage.UploadFileNoUUID(bytes.NewReader(d.Sm), fmt.Sprintf("%s/%s%s", bookID, "SM_", fileName), FolderBookCovers)
-	xsUrl, e2 := h.fileStorage.UploadFileNoUUID(bytes.NewReader(d.Xs), fmt.Sprintf("%s/%s%s", bookID, "XS_", fileName), FolderBookCovers)
+	mdUrl, e := h.fileStorage.UploadFile(bytes.NewReader(d.Md), fileName, string(FolderBookCovers), bookID)
+	smUrl, e1 := h.fileStorage.UploadFile(bytes.NewReader(d.Sm), fileName, string(FolderBookCovers), bookID)
+	xsUrl, e2 := h.fileStorage.UploadFile(bytes.NewReader(d.Xs), fileName, string(FolderBookCovers), bookID)
 	if e != nil {
 		return nil, e
 	}
@@ -745,7 +768,7 @@ func (h *BooksHandler) createDigitalBook(f *multipart.FileHeader, bookID string)
 	if err != nil {
 		return nil, err
 	}
-	url, e := h.fileStorage.UploadFileNoUUID(file, fmt.Sprintf("%s/%s", bookID, f.Filename), FolderBookFiles)
+	url, e := h.fileStorage.UploadFile(file, f.Filename, string(FolderBookFiles), bookID)
 	if e != nil {
 		return nil, e
 	}
@@ -766,15 +789,16 @@ func (h *BooksHandler) createDigitalBook(f *multipart.FileHeader, bookID string)
 	return &db, nil
 }
 
+// Delete image by id
 func (h *BooksHandler) deleteImage(id int) error {
 	img, e := h.imageRepository.GetByID(id)
 	if e != nil {
 		return e
 	}
 
-	e = h.fileStorage.DeleteFile(img.SM, FolderBookCovers)
-	e = h.fileStorage.DeleteFile(img.MD, FolderBookCovers)
-	e = h.fileStorage.DeleteFile(img.XS, FolderBookCovers)
+	e = h.fileStorage.DeleteFile(img.SM)
+	e = h.fileStorage.DeleteFile(img.MD)
+	e = h.fileStorage.DeleteFile(img.XS)
 	e = h.imageRepository.DeleteByID(id)
 	return e
 }
@@ -784,7 +808,7 @@ func (h *BooksHandler) deleteDigitalBook(id int, bookID string) error {
 	if e != nil {
 		return e
 	}
-	e = h.fileStorage.DeleteFile(db.URL, FolderBookFiles)
+	e = h.fileStorage.DeleteFile(db.URL)
 	e = h.digitalBookRepository.DeleteByID(id)
 	return e
 }
@@ -798,7 +822,7 @@ func (h *BooksHandler) setupOnlineReadingMode(f *multipart.FileHeader, bookID st
 	}
 
 	// 1. If current unzip book exists delete it
-	e = h.fileStorage.DeleteFolder(fmt.Sprintf("%s/%s", FolderUnzippedBook, bookID))
+	e = h.fileStorage.DeleteFolder(string(FolderUnzippedBook), bookID)
 	if e != nil {
 		return "", e
 	}
@@ -831,24 +855,21 @@ func (h *BooksHandler) setupOnlineReadingMode(f *multipart.FileHeader, bookID st
 		reader := bytes.NewReader(content)
 
 		// 3. Định nghĩa đường dẫn lưu trên Object Storage
-		// Ví dụ: UnzippedBooks/123/OEBPS/content.opf
-		remotePath := fmt.Sprintf("%s/%s", bookID, f.Name)
-
 		// Gọi hàm UploadFile của bạn
 		// Lưu ý: folder truyền vào tùy thuộc vào cách bạn định nghĩa StorageFolder (ở đây giả sử là "books" hoặc tương đương)
-		_, err = h.fileStorage.UploadFileNoUUID(reader, remotePath, FolderUnzippedBook)
+		_, err = h.fileStorage.UploadFile(reader, f.Name, string(FolderUnzippedBook), bookID)
 		if err != nil {
 			fmt.Printf("Failed to upload %s: %v\n", f.Name, err)
 			continue
 		}
 	}
 
-	// 5. Update book with unzip folder url
+	// 5. Update book with unzip folder uploadKey
 	if e != nil {
 		return "", e
 	}
-	url := fmt.Sprintf("%s/%s%s", h.fileStorage.GetBaseUrl(FolderUnzippedBook), bookID, "/")
-	return url, e
+	// Ví dụ: /UnzippedBooks/123/
+	return fmt.Sprintf("/%s/%s/", string(FolderUnzippedBook), bookID), e
 }
 
 func (h *BooksHandler) validateCover(f *multipart.FileHeader) error {
@@ -930,4 +951,80 @@ func (h *BooksHandler) validateDigitalFile(f *multipart.FileHeader) error {
 	}
 
 	return nil
+}
+
+// TestUpload godoc
+//
+//	@Summary	Test upload file
+//	@Tags		books
+//	@Accept		multipart/form-data
+//	@Produce	json
+//	@Param		file	formData	file								true	"File to upload"
+//	@Success	200		{object}	types.CommonResponse{data=string}	"OK"
+//	@Router		/books/test-upload [post]
+func (h *BooksHandler) TestUpload(c *gin.Context) {
+	file, e := c.FormFile("file")
+	if e != nil {
+		c.Error(middleware.NewBadRequestError(e.Error()))
+		return
+	}
+	f, e := file.Open()
+	defer f.Close()
+	if e != nil {
+		c.Error(middleware.NewBadRequestError(e.Error()))
+		return
+	}
+	path, e := h.fileStorage.UploadFile(f, file.Filename, "test")
+	if e != nil {
+		c.Error(middleware.NewBadRequestError(e.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, types.CommonResponse{Success: true, Data: path})
+}
+
+// TestDelete godoc
+// @Summary      Test delete file
+// @Description  Xóa một file dựa trên đường dẫn cung cấp
+// @Tags         books
+//
+//	@Accept		multipart/form-data
+//	@Produce	json
+//	@Param		filePath	formData	string								true	"File to delete"
+//
+// @Success      200      {object}  types.CommonResponse{data=string}
+// @Router       /books/test-delete [post]
+func (h *BooksHandler) TestDelete(c *gin.Context) {
+	filePath := c.PostForm("filePath")
+	if filePath == "" {
+		c.Error(middleware.NewBadRequestError("File path cannot be empty"))
+		return
+	}
+	err := h.fileStorage.DeleteFile(filePath)
+	if err != nil {
+		c.Error(middleware.NewBadRequestError(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, types.CommonResponse{Success: true, Data: filePath})
+}
+
+// TestDeleteFolder godoc
+// @Summary Delete folder on R1
+// @Description Delete folder on R1
+// @Tags books
+// @Accept  multipart/form-data
+// @Produce json
+// @Param   folderName formData string false "Folder name"
+// @Param   fileName formData string false "File name"
+// @Success 200       {object}  types.CommonResponse{data=string}
+// @Router   /books/test-delete-folder [delete]
+func (h *BooksHandler) TestDeleteFolder(c *gin.Context) {
+	folderName := c.PostForm("folderName")
+	fileName := c.PostForm("fileName")
+
+	e := h.fileStorage.DeleteFolder(folderName, fileName)
+	if e != nil {
+		c.Error(middleware.NewBadRequestError(e.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, types.CommonResponse{Success: true})
 }

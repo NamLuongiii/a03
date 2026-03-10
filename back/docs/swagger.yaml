@@ -870,6 +870,86 @@ paths:
       summary: Get featured books
       tags:
       - books
+  /books/test-delete:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Xóa một file dựa trên đường dẫn cung cấp
+      parameters:
+      - description: File to delete
+        in: formData
+        name: filePath
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Test delete file
+      tags:
+      - books
+  /books/test-delete-folder:
+    delete:
+      consumes:
+      - multipart/form-data
+      description: Delete folder on R1
+      parameters:
+      - description: Folder name
+        in: formData
+        name: folderName
+        type: string
+      - description: File name
+        in: formData
+        name: fileName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete folder on R1
+      tags:
+      - books
+  /books/test-upload:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: File to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Test upload file
+      tags:
+      - books
 securityDefinitions:
   BearerAuth:
     description: Type only token (not include Bearer)

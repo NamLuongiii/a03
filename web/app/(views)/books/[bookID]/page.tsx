@@ -4,6 +4,7 @@ import {Breadcrumbs, Button, Chip} from "@heroui/react";
 import {getBooksById} from "@/app/api";
 import {DownloadBook} from "@/app/components/DownloadBook";
 import {Comments} from "@/app/components/Comments";
+import {getFullUrl} from "@/app/helpers";
 // Import file cấu hình API của bạn vào đây
 // import { getBookDetail } from "@/services/book-service"; 
 // import { ModelsBook } from "@/types";
@@ -67,7 +68,7 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
                         <img
                             alt={`Bìa sách ${book.name}`}
                             className="object-cover w-full h-full"
-                            src={book.cover?.md || "/placeholder-cover.jpg"}
+                            src={getFullUrl(book.cover?.md) || "/placeholder-cover.jpg"}
                             width="100%"
                         />
                     </div>
