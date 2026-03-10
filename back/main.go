@@ -85,11 +85,11 @@ func main() {
 	authHandler := handlers.NewAuthHandler(mailHandler, accountRepo, OTPRepo)
 
 	storage := handlers.NewFileStorage(
-		env.GetEnv(env.DOSpaceKey),
-		env.GetEnv(env.DOSpaceSecret),
-		env.GetEnv(env.DOSpaceBucket),
-		env.GetEnv(env.DOSpaceRegion),
-		env.GetEnv(env.DOSpaceEndpoint),
+		env.GetEnv(env.R1Key),
+		env.GetEnv(env.R1Keypassword),
+		env.GetEnv(env.R1Bucket),
+		env.GetEnv(env.R1Region),
+		env.GetEnv(env.R1Endpoint),
 	)
 
 	authorHandler := handlers.NewAuthorHandler(authorRepo)
