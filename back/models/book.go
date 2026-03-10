@@ -25,9 +25,9 @@ type Book struct {
 	AuthorID     *string        `json:"author_id,omitempty" gorm:"type:varchar(255);index:idx_books_author_id"`
 	SeriesID     *string        `json:"series_id,omitempty" gorm:"type:varchar(255);index:idx_books_series_id"`
 	CreatedBy    *int           `json:"created_by,omitempty" gorm:"type:int;index:idx_books_created_by"`
-	CreatedAt    time.Time      `json:"created_at" gorm:"autoCreateTime"`
+	CreatedAt    time.Time      `json:"created_at" gorm:"autoCreateTime;index:idx_books_created_at"`
 	UpdatedAt    time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
-	DeletedAt    gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index:idx_books_deleted_at;index:idx_books_is_hidden_deleted_at,priority:2" swaggerignore:"true"`
+	DeletedAt    gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index:idx_books_deleted_at;index:idx_books_deleted_created,priority:1;index:idx_books_is_hidden_deleted_at,priority:2" swaggerignore:"true"`
 
 	// Relationships
 	Category     *Category     `json:"category,omitempty" gorm:"foreignKey:CategoryID"`

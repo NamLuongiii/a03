@@ -1,7 +1,10 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
+	"os"
 	dbmigrate "quickstart/db"
 	"quickstart/docs"
 	"quickstart/env"
@@ -16,12 +19,38 @@ import (
 	"github.com/glebarez/sqlite"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	"github.com/wneessen/go-mail"
 	"gorm.io/gorm"
 )
 
 // Database instance
 var database *gorm.DB
+
+func ConnectDatabase() {
+	url := os.Getenv("TURSO_DATABASE_URL")
+	token := os.Getenv("TURSO_AUTH_TOKEN")
+
+	// 1. Tạo URL đúng định dạng Turso yêu cầu
+	dbUrl := fmt.Sprintf("%s?authToken=%s", url, token)
+
+	// 2. Mở kết nối SQL thuần túy bằng driver libsql
+	db, err := sql.Open("libsql", dbUrl)
+	if err != nil {
+		log.Fatal("Lỗi khởi tạo driver libsql:", err)
+	}
+
+	// 3. Truyền kết nối đó vào GORM
+	// Dùng github.com/glebarez/sqlite thay vì gorm.io/driver/sqlite để tránh CGO
+	var dbErr error
+	database, dbErr = gorm.Open(sqlite.Dialector{Conn: db}, &gorm.Config{})
+
+	if dbErr != nil {
+		log.Fatal("Không thể kết nối GORM với Turso:", dbErr)
+	}
+
+	log.Println("--- Kết nối Turso Cloud thành công! ---")
+}
 
 //	@title		My API
 //	@version	1.0
@@ -38,13 +67,15 @@ func main() {
 	docs.SwaggerInfo.Host = "localhost:8080"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
-	// Initialize Database
-	var dbErr error
-	database, dbErr = gorm.Open(sqlite.Open("app.db"), &gorm.Config{})
-	if dbErr != nil {
-		log.Fatal("Failed to connect to database:", dbErr)
-		return
-	}
+	// 1. Lấy thông tin từ Turso
+	// URL có dạng: libsql://docluonwebsite-yourname.turso.io
+	//tursoUrl := "libsql://docluonwebsite-namluongiii.aws-ap-northeast-1.turso.io"
+	//authToken := "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJnaWQiOiI2OGFlMTRiOC05NDAxLTQ0NWUtYmU1MC01ODQwZDBkYjczN2EiLCJpYXQiOjE3NzMxNjkzODMsInJpZCI6IjcxYWFkZThjLTBmMGYtNDgwOS1iNzFjLTE0NzlkODVjMzRjNyJ9.rpSAM4yN8JJWAg5EXUH-zbwVpCGZHPLFEu99ycE1BLLcQ8r-5rBtDr6Awf-GHJVQCoV9vPIp63ZHG0W5vGXABA"
+
+	// 3. Kết nối bằng GORM
+	ConnectDatabase()
+
+	log.Println("Successfully connected to Turso!")
 
 	// Run migrations
 	if err := dbmigrate.RunMigrations(database); err != nil {
