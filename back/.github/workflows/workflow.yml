@@ -1,0 +1,35 @@
+name: Deploy WebDocSach Backend
+
+on:
+  push:
+    branches:
+      - production  # Mỗi khi bạn push code vào nhánh main, nó sẽ tự deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to DigitalOcean via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # 1. Vào thư mục gốc của dự án trên Droplet
+            cd /webdocsach
+            
+            # 2. Cập nhật code mới nhất từ GitHub về Droplet
+            git pull origin production
+            
+            # 3. Vào thư mục chứa backend
+            cd back
+            
+            # 4. Build lại Docker image mới và chạy (Dùng lệnh có gạch ngang)
+            docker-compose up -d --build
+            
+            # 5. Dọn dẹp các bản build cũ để không bị đầy ổ cứng
+            docker image prune -f
