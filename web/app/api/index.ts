@@ -3,7 +3,7 @@ import {getCookie} from 'cookies-next';
 
 // Setup base URL
 client.setConfig({
-    baseUrl: 'http://localhost:8080/api/v1'
+    baseUrl: process.env.NEXT_PUBLIC_BE,
 });
 
 // Add token to every request

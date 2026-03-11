@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - production  # Mỗi khi bạn push code vào nhánh main, nó sẽ tự deploy
+    paths:
+      - 'back/**'          # CHỈ chạy khi có thay đổi trong thư mục back
+      - 'a03/back/**'      # Thêm đường dẫn này nếu cấu hình của bạn là app/back
+      - '.github/workflows/deploy.yml' # Chạy khi sửa chính file workflow này
 
 jobs:
   deploy:
