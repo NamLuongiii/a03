@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM golang:1.23-alpine AS builder
+FROM golang:1.26-alpine AS builder
 WORKDIR /app
 # Copy go.mod và go.sum trước để tối ưu cache
 COPY go.mod go.sum ./
