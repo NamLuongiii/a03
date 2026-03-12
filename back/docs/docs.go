@@ -408,6 +408,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -583,6 +588,11 @@ const docTemplate = `{
         },
         "/books/create-tool": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -698,6 +708,11 @@ const docTemplate = `{
         },
         "/books/test-delete": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Xóa một file dựa trên đường dẫn cung cấp",
                 "consumes": [
                     "multipart/form-data"
@@ -742,6 +757,11 @@ const docTemplate = `{
         },
         "/books/test-delete-folder": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete folder on R1",
                 "consumes": [
                     "multipart/form-data"
@@ -791,6 +811,11 @@ const docTemplate = `{
         },
         "/books/test-upload": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -875,6 +900,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -984,6 +1014,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -1059,6 +1094,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -1111,6 +1151,11 @@ const docTemplate = `{
         },
         "/books/{id}/ratings": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -1215,6 +1260,9 @@ const docTemplate = `{
                 },
                 "profile": {
                     "$ref": "#/definitions/models.Profile"
+                },
+                "role": {
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"

@@ -4,12 +4,15 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="013d35c2-c119-4a8f-ad61-d46be5229e0e" name="Changes" comment="nextjs web">
-      <change afterPath="$PROJECT_DIR$/web/app/components/BookCard.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web/app/components/BookPagination.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/app/(views)/books/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/app/(views)/books/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/app/components/FeaturedBooks.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/app/components/FeaturedBooks.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/app/components/Navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/web/app/components/Navbar.tsx" afterDir="false" />
+    <list default="true" id="013d35c2-c119-4a8f-ad61-d46be5229e0e" name="Changes" comment="delete front">
+      <change afterPath="$PROJECT_DIR$/back/types/roles.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/handlers/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/back/handlers/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/back/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/middleware/RequiredAuth.go" beforeDir="false" afterPath="$PROJECT_DIR$/back/middleware/RequiredAuth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/models/account.go" beforeDir="false" afterPath="$PROJECT_DIR$/back/models/account.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back/types/types.go" beforeDir="false" afterPath="$PROJECT_DIR$/back/types/types.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,11 +30,13 @@
       </list>
     </option>
   </component>
-  <component name="FormatOnSaveOptions">
-    <option name="myRunOnSave" value="true" />
-  </component>
   <component name="GOROOT" url="file:///usr/local/go" />
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="production" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -267,6 +272,8 @@
     <MESSAGE value="api" />
     <MESSAGE value="update book" />
     <MESSAGE value="nextjs web" />
-    <option name="LAST_COMMIT_MESSAGE" value="nextjs web" />
+    <MESSAGE value="be" />
+    <MESSAGE value="delete front" />
+    <option name="LAST_COMMIT_MESSAGE" value="delete front" />
   </component>
 </project>

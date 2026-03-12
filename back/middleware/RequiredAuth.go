@@ -10,10 +10,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func RequiredAuth() gin.HandlerFunc {
+func RequiredAuth(role types.Role) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Get token from the header
 		tokenString := c.GetHeader("Authorization")
+
+		// Parse and validate the token
 		parseAndValidateToken := func(tokenString string) (*types.AuthClaims, error) {
 			t, e := jwt.ParseWithClaims(tokenString, &types.AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
 				return []byte(env.GetEnv(env.JWTSecret)), nil
@@ -30,13 +32,21 @@ func RequiredAuth() gin.HandlerFunc {
 
 			return claims, nil
 		}
-
 		claims, e := parseAndValidateToken(tokenString)
 
 		if e != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, types.CommonResponse{
 				Success: false,
 				Message: e.Error(),
+			})
+			return
+		}
+
+		// Check role
+		if claims.Role != string(role) {
+			c.AbortWithStatusJSON(http.StatusForbidden, types.CommonResponse{
+				Success: false,
+				Message: "Forbidden",
 			})
 			return
 		}
