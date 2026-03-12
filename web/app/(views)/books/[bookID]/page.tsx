@@ -15,11 +15,11 @@ export async function generateMetadata({params}: { params: Promise<{ bookID: str
     const {data} = await getBooksById({path: {id: bookID}});
     const book = data?.data;
 
-    if (!book) return {title: "Không tìm thấy sách | BookLab"};
+    if (!book) return {title: "Không tìm thấy sách | Đọc Luôn"};
 
     return {
-        title: `${book.name} - Tác giả ${book.author?.name || "Đang cập nhật"} | BookLab`,
-        description: book.summary || "Đọc sách online chất lượng cao tại BookLab.",
+        title: `${book.name} - Tác giả ${book.author?.name || "Đang cập nhật"} | Đọc Luôn`,
+        description: book.summary || "Đọc sách online chất lượng cao tại Đọc Luôn.",
         openGraph: {
             title: book.name,
             description: book.summary,

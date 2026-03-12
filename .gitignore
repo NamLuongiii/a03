@@ -41,3 +41,6 @@ admin/pnpm-lock.yaml
 back/tmp/
 tmp/
 *.log
+back/.idea/
+web/.idea
+admin/.idea
