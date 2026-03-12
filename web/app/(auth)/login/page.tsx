@@ -62,9 +62,9 @@ export default function LoginPage() {
                 className="w-full max-w-md p-8 space-y-6"
             >
                 <div className="text-center space-y-1">
-                    <h1 className="text-2xl font-semibold">Welcome back</h1>
+                    <h1 className="text-2xl font-semibold">Đọc Luôn ^^</h1>
                     <p className="text-sm text-default-500">
-                        Login to continue reading
+                        Đăng nhập để tiếp tục đọc
                     </p>
                 </div>
 
@@ -75,32 +75,35 @@ export default function LoginPage() {
                     <Input
                         type="email"
                         {...register('email', {
-                            required: 'Email is required',
+                            required: 'Trường email là bắt buộc',
                         })}
+                        placeholder="Email"
                     />
 
                     <Input
                         type="password"
                         {...register('password', {
-                            required: 'Password is required',
+                            required: 'Trường mật khẩu là bắt buộc',
                         })}
+                        placeholder="Mật khẩu"
                     />
 
                     <Button
                         type="submit"
                         className="mt-2"
+                        fullWidth
                     >
                         {isPending && <Spinner/>}
-                        Login
+                        Đăng nhập
                     </Button>
 
+                    {/*<div className="text-center text-sm text-default-500">*/}
+                    {/*    <Link href="/forgot-password" className="hover:underline">*/}
+                    {/*        Quên mật khẩu?*/}
+                    {/*    </Link>*/}
+                    {/*</div>*/}
                     <div className="text-center text-sm text-default-500">
-                        <Link href="#" className="hover:underline">
-                            Forgot password?
-                        </Link>
-                    </div>
-                    <div className="text-center text-sm text-default-500">
-                        <Link href="/signup" className="hover:underline">Don&#39;t have an account? Sign up
+                        <Link href="/signup" className="hover:underline">Chưa có tài khoản? Đăng ký
                         </Link>
                     </div>
                 </form>

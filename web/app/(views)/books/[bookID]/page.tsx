@@ -1,3 +1,5 @@
+export const revalidate = 1800;
+
 import {Metadata} from "next";
 import Link from "next/link";
 import {Breadcrumbs, Button, Chip} from "@heroui/react";
@@ -45,10 +47,10 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
     }
 
     return (
-        <div className="max-w-4xl mx-auto py-6 space-y-8">
+        <div className="max-w-4xl mx-auto py-3 md:py-6 px-4 md:px-6 space-y-4 md:space-y-8">
 
             {/* --- BREADCRUMBS --- */}
-            <Breadcrumbs>
+            <Breadcrumbs className="text-xs md:text-sm">
                 <Breadcrumbs.Item href="/">Trang chủ</Breadcrumbs.Item>
                 <Breadcrumbs.Item href='/books'>Tất cả</Breadcrumbs.Item>
                 {book.category && (
@@ -56,15 +58,16 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
                         {book.category.name}
                     </Breadcrumbs.Item>
                 )}
-                <Breadcrumbs.Item>{book.name}</Breadcrumbs.Item>
+                <Breadcrumbs.Item className="hidden md:inline">{book.name}</Breadcrumbs.Item>
             </Breadcrumbs>
 
             {/* --- 2 CỘT LAYOUT --- */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 lg:gap-12">
 
                 {/* CỘT TRÁI: Cover & Nút Đọc ngay */}
-                <div className="col-span-1 md:col-span-4 lg:col-span-3 flex flex-col gap-4">
-                    <div className="w-full aspect-[1/1.6] rounded-xl overflow-hidden shadow-lg border border-divider">
+                <div className="col-span-1 md:col-span-4 lg:col-span-3 flex flex-col gap-3 md:gap-4">
+                    <div
+                        className="w-1/2 md:w-full mx-auto aspect-[1/1.6] rounded-lg md:rounded-xl overflow-hidden shadow-lg border border-divider">
                         <img
                             alt={`Bìa sách ${book.name}`}
                             className="object-cover w-full h-full"
@@ -86,41 +89,45 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
                 </div>
 
                 {/* CỘT PHẢI: Thông tin sách & Nút Tải về */}
-                <div className="col-span-1 md:col-span-8 lg:col-span-9 flex flex-col gap-4">
+                <div className="col-span-1 md:col-span-8 lg:col-span-9 flex flex-col gap-3 md:gap-4">
                     {/* Header Thông tin */}
-                    <div className="space-y-2">
-                        <h2>{book.name}</h2>
+                    <div className="space-y-1 md:space-y-2">
+                        <h2 className="text-xl md:text-2xl lg:text-3xl">{book.name}</h2>
 
-                        <p>Tác giả:
+                        <p className="text-sm md:text-base">Tác giả:
+                            <span> </span>
                             <Link
                                 href={`/authors/${book.author_id}`}
-                                className="text-primary hover:underline font-medium">
+                                className="text-primary hover:underline font-medium ml-1">
                                 {book.author?.name || "Đang cập nhật"}
                             </Link>
                         </p>
                     </div>
 
                     {/* Các chỉ số (Rating, View, Download) */}
-                    <div className="flex flex-wrap items-center gap-4">
-                        <Chip>
+                    <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                        <Chip size="sm" className="text-xs md:text-sm">
                             <span>⭐</span>
-                            {book.rating_avg ? book.rating_avg.toFixed(1) : "Chưa có đánh giá"} ({book.rating_count || 0})
+                            {book.rating_avg ? book.rating_avg.toFixed(1) : "N/A"} <span
+                            className="hidden sm:inline">({book.rating_count || 0})</span>
                         </Chip>
-                        <Chip>
+                        <Chip size="sm" className="text-xs md:text-sm">
                             <span>👁️</span>
-                            {book.view_nums || 0} Lượt xem
+                            <span className="hidden sm:inline">{book.view_nums || 0} Lượt xem</span>
+                            <span className="sm:hidden">{book.view_nums || 0}</span>
                         </Chip>
-                        <Chip>
+                        <Chip size="sm" className="text-xs md:text-sm">
                             <span>⬇️</span>
-                            {book.download_nums || 0} Lượt tải
+                            <span className="hidden sm:inline">{book.download_nums || 0} Lượt tải</span>
+                            <span className="sm:hidden">{book.download_nums || 0}</span>
                         </Chip>
                     </div>
 
 
                     {/* Tóm tắt & Mô tả */}
                     <div className="space-y-2">
-                        <h3>Giới thiệu</h3>
-                        <div className="leading-relaxed whitespace-pre-line">
+                        <h3 className="text-lg md:text-xl">Giới thiệu</h3>
+                        <div className="text-sm md:text-base leading-relaxed whitespace-pre-line">
                             {book.description || book.summary || "Chưa có nội dung mô tả cho cuốn sách này."}
                         </div>
                     </div>
@@ -135,8 +142,8 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
 
             {/*Lời phê bình sách */}
             <div className='space-y-2'>
-                <h3>Lời tựa</h3>
-                <div className='whitespace-pre-line leading-relaxed'>
+                <h3 className="text-lg md:text-xl">Lời tựa</h3>
+                <div className='text-sm md:text-base whitespace-pre-line leading-relaxed'>
                     {book.summary}
                 </div>
             </div>

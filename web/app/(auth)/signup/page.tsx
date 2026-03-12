@@ -36,9 +36,9 @@ export default function SignupPage() {
         <div className="min-h-screen flex items-center justify-center bg-background px-4">
             <Card className="w-full max-w-md p-8 space-y-6">
                 <div className="text-center space-y-1">
-                    <h1 className="text-2xl font-semibold">Create account</h1>
+                    <h1 className="text-2xl font-semibold">Đăng ký tài khoản</h1>
                     <p className="text-sm text-default-500">
-                        Start your reading journey
+                        Bắt đầu hành trình đọc sách
                     </p>
                 </div>
 
@@ -54,20 +54,24 @@ export default function SignupPage() {
                         <Label>Email</Label>
                         <Input
                             {...register('email', {
-                                required: 'Email is required',
-                            })} />
+                                required: 'Trường email là bắt buộc',
+                            })}
+                            placeholder="Email"
+                        />
                     </TextField>
 
                     <TextField
                         isInvalid={!!errors.name}
-                        type="Tên"
+                        type="text"
 
                     >
                         <Label>Tên</Label>
                         <Input
                             {...register('name', {
                                 required: 'Tên là bắt buộc',
-                            })} />
+                            })}
+                            placeholder="Tên"
+                        />
                     </TextField>
 
                     <TextField
@@ -79,7 +83,9 @@ export default function SignupPage() {
                         <Input
                             {...register('password', {
                                 required: 'Mật khẩu là bắt buộc',
-                            })} />
+                            })}
+                            placeholder="Mật khẩu"
+                        />
                     </TextField>
 
 
@@ -87,7 +93,7 @@ export default function SignupPage() {
                         type="submit"
                     >
                         {isPending && <Spinner/>}
-                        Sign Up
+                        Đăng ký
                     </Button>
                 </form>
             </Card>

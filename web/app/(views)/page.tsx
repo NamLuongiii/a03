@@ -1,10 +1,12 @@
+export const revalidate = 1800;
+
 import {getBooksFeatured} from "@/app/api";
 import FeaturedBooks from "@/app/components/FeaturedBooks";
 
 export default async function HomePage() {
     const {data, error} = await getBooksFeatured({
         query: {
-            recommender: 'new-books'
+            recommender: 'new-books',
         }
     });
     const books = data?.data || []
@@ -20,12 +22,6 @@ export default async function HomePage() {
                 title="Sách mới nhất"
                 description="Những cuốn sách vừa cập nhật trên hệ thống."
                 books={books}
-            />
-
-            {/* Bạn có thể gọi thêm các Section khác ở đây */}
-            <FeaturedBooks
-                title="Sách xem nhiều"
-                books={books?.slice(0, 5)}
             />
         </div>
     );

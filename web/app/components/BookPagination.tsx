@@ -35,20 +35,21 @@ export default function BookPagination({totalPages, page}: { totalPages: number,
 
     return (
         <Pagination className="justify-center">
-            <Pagination.Content>
+            <Pagination.Content className="mx-auto">
                 <Pagination.Item>
                     <Pagination.Previous isDisabled={page === 1} onPress={() => setPage(page - 1)}>
                         <Pagination.PreviousIcon/>
-                        <span>Quay lại</span>
+                        <span className="hidden sm:inline">Quay lại</span>
                     </Pagination.Previous>
                 </Pagination.Item>
                 {getPageNumbers().map((p, i) =>
                     p === "ellipsis" ? (
-                        <Pagination.Item key={`ellipsis-${i}`}>
+                        <Pagination.Item key={`ellipsis-${i}`} className="hidden sm:flex">
                             <Pagination.Ellipsis/>
                         </Pagination.Item>
                     ) : (
-                        <Pagination.Item key={p}>
+                        <Pagination.Item key={p}
+                                         className={p !== 1 && p !== totalPages && p !== page ? 'hidden sm:flex' : ''}>
                             <Pagination.Link isActive={p === page} onPress={() => setPage(p)}>
                                 {p}
                             </Pagination.Link>
@@ -57,7 +58,7 @@ export default function BookPagination({totalPages, page}: { totalPages: number,
                 )}
                 <Pagination.Item>
                     <Pagination.Next isDisabled={page === totalPages} onPress={() => setPage(page + 1)}>
-                        <span>Tiếp theo</span>
+                        <span className="hidden sm:inline">Tiếp theo</span>
                         <Pagination.NextIcon/>
                     </Pagination.Next>
                 </Pagination.Item>
