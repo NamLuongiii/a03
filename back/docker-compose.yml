@@ -3,21 +3,33 @@ version: '3.8'
 services:
   backend:
     build: .
+    container_name: backend_app  # Đặt tên cố định cho dễ nhận diện
     restart: always
-    # Không cần mở port 8080 ra ngoài nữa, Caddy sẽ quản lý
+    env_file:
+      - .env  # Docker Compose sẽ đọc file .env ở ngoài rồi truyền vào cho App
     expose:
       - "8080"
+    networks:
+      - web_network
 
   caddy:
     image: caddy:latest
+    container_name: caddy_server
     restart: always
     ports:
       - "80:80"
       - "443:443"
-    command: caddy reverse-proxy --from api.docluon.com --to backend:8080
+    # Dùng tên container_name để Caddy tìm cho chính xác
+    command: caddy reverse-proxy --from api.docluon.com --to backend_app:8080
     volumes:
       - caddy_data:/data
       - caddy_config:/config
+    networks:
+      - web_network
+
+networks:
+  web_network:
+    driver: bridge
 
 volumes:
   caddy_data:
