@@ -1,8 +1,24 @@
+version: '3.8'
+
 services:
   backend:
     build: .
-    container_name: golang-api
     restart: always
-    env_file: .env
+    # Không cần mở port 8080 ra ngoài nữa, Caddy sẽ quản lý
+    expose:
+      - "8080"
+
+  caddy:
+    image: caddy:latest
+    restart: always
     ports:
-      - "8080:8080" # Đổi 8080 thành port ứng dụng của bạn
+      - "80:80"
+      - "443:443"
+    command: caddy reverse-proxy --from api.docluon.com --to backend:8080
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
