@@ -40,6 +40,8 @@ definitions:
         type: string
       profile:
         $ref: '#/definitions/models.Profile'
+      role:
+        type: string
       updated_at:
         type: string
     type: object
@@ -556,6 +558,8 @@ paths:
                 data:
                   $ref: '#/definitions/models.Book'
               type: object
+      security:
+      - BearerAuth: []
       summary: Create a new book
       tags:
       - books
@@ -576,6 +580,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/types.CommonResponse'
+      security:
+      - BearerAuth: []
       summary: Delete book
       tags:
       - books
@@ -670,6 +676,8 @@ paths:
                 data:
                   $ref: '#/definitions/models.Book'
               type: object
+      security:
+      - BearerAuth: []
       summary: Update book
       tags:
       - books
@@ -727,6 +735,8 @@ paths:
                 data:
                   $ref: '#/definitions/models.Comment'
               type: object
+      security:
+      - BearerAuth: []
       summary: Add comment
       tags:
       - books
@@ -752,6 +762,8 @@ paths:
                 data:
                   $ref: '#/definitions/models.BookRating'
               type: object
+      security:
+      - BearerAuth: []
       summary: Add rating
       tags:
       - books
@@ -841,6 +853,8 @@ paths:
                 data:
                   $ref: '#/definitions/models.Book'
               type: object
+      security:
+      - BearerAuth: []
       summary: Create a new book for a tool
       tags:
       - books
@@ -893,6 +907,8 @@ paths:
                 data:
                   type: string
               type: object
+      security:
+      - BearerAuth: []
       summary: Test delete file
       tags:
       - books
@@ -922,6 +938,8 @@ paths:
                 data:
                   type: string
               type: object
+      security:
+      - BearerAuth: []
       summary: Delete folder on R1
       tags:
       - books
@@ -947,6 +965,8 @@ paths:
                 data:
                   type: string
               type: object
+      security:
+      - BearerAuth: []
       summary: Test upload file
       tags:
       - books

@@ -22,6 +22,7 @@ type SignUpDto struct {
 type AuthClaims struct {
 	Email string `json:"Email"`
 	ID    int    `json:"ID"`
+	Role  string `json:"Role"`
 	jwt.RegisteredClaims
 }
 

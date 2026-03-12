@@ -217,6 +217,8 @@ func (h *BooksHandler) GetAuthors(c *gin.Context) {
 // @Param		body	body		dto.CommentDto								true	"Comment body"
 // @Success	200		{object}	types.CommonResponse{data=models.Comment}	"OK"
 // @Router		/books/{id}/comments [post]
+//
+// @Security	BearerAuth
 func (h *BooksHandler) AddComment(c *gin.Context) {
 	bID := c.Param("id")
 	uID := c.MustGet(types.ContextKeyTokenClaims).(*types.AuthClaims).ID
@@ -251,6 +253,8 @@ func (h *BooksHandler) AddComment(c *gin.Context) {
 // @Param		id	path		string											true	"Book ID"
 // @Success	200	{object}	types.CommonResponse{data=models.BookRating}	"OK"
 // @Router		/books/{id}/ratings [post]
+//
+// @Security	BearerAuth
 func (h *BooksHandler) AddRating(c *gin.Context) {
 	bID := c.Param("id")
 
@@ -325,6 +329,8 @@ func (h *BooksHandler) GetComments(c *gin.Context) {
 // @Param		id	path		string					true	"Book ID"
 // @Success	200	{object}	types.CommonResponse	"OK"
 // @Router		/books/{id} [delete]
+//
+// @Security	BearerAuth
 func (h *BooksHandler) DeleteBook(c *gin.Context) {
 	id := c.Param("id")
 
@@ -378,6 +384,7 @@ func (h *BooksHandler) DeleteBook(c *gin.Context) {
 //	@Param		autoFindReadingFile	formData	string									false	"Auto find services file in file list: 1 / 0"
 //	@Success	200					{object}	types.CommonResponse{data=models.Book}	"OK"
 //	@Router		/books [post]
+//	@Security	BearerAuth
 func (h *BooksHandler) CreateBook(c *gin.Context) {
 	name := c.PostForm("name")
 	categoryID := c.PostForm("category_id")
@@ -498,6 +505,7 @@ func (h *BooksHandler) CreateBook(c *gin.Context) {
 //	@Param		autoFindReadingFile	formData	string									false	"Auto find services file in file list: 1 / 0"
 //	@Success	200					{object}	types.CommonResponse{data=models.Book}	"OK"
 //	@Router		/books/{id} [put]
+//	@Security	BearerAuth
 func (h *BooksHandler) UpdateBook(c *gin.Context) {
 	id := c.Param("id")
 	name := c.PostForm("name")
@@ -629,6 +637,7 @@ func (h *BooksHandler) UpdateBook(c *gin.Context) {
 //	@Param		readingFile	formData	file									false	"file to unzip services"
 //	@Success	200			{object}	types.CommonResponse{data=models.Book}	"OK
 //	@Router		/books/create-tool [post]
+//	@Security	BearerAuth
 func (h *BooksHandler) CreateBookForTool(c *gin.Context) {
 	name := c.PostForm("name")
 	authorName := c.PostForm("author_name")
@@ -962,6 +971,7 @@ func (h *BooksHandler) validateDigitalFile(f *multipart.FileHeader) error {
 //	@Param		file	formData	file								true	"File to upload"
 //	@Success	200		{object}	types.CommonResponse{data=string}	"OK"
 //	@Router		/books/test-upload [post]
+//	@Security	BearerAuth
 func (h *BooksHandler) TestUpload(c *gin.Context) {
 	file, e := c.FormFile("file")
 	if e != nil {
@@ -983,16 +993,19 @@ func (h *BooksHandler) TestUpload(c *gin.Context) {
 }
 
 // TestDelete godoc
-// @Summary      Test delete file
-// @Description  Xóa một file dựa trên đường dẫn cung cấp
-// @Tags         books
 //
-//	@Accept		multipart/form-data
-//	@Produce	json
-//	@Param		filePath	formData	string								true	"File to delete"
+//	@Summary		Test delete file
+//	@Description	Xóa một file dựa trên đường dẫn cung cấp
+//	@Tags			books
 //
-// @Success      200      {object}  types.CommonResponse{data=string}
-// @Router       /books/test-delete [post]
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Param			filePath	formData	string	true	"File to delete"
+//
+//	@Success		200			{object}	types.CommonResponse{data=string}
+//	@Router			/books/test-delete [post]
+//
+//	@Security		BearerAuth
 func (h *BooksHandler) TestDelete(c *gin.Context) {
 	filePath := c.PostForm("filePath")
 	if filePath == "" {
@@ -1008,15 +1021,18 @@ func (h *BooksHandler) TestDelete(c *gin.Context) {
 }
 
 // TestDeleteFolder godoc
-// @Summary Delete folder on R1
-// @Description Delete folder on R1
-// @Tags books
-// @Accept  multipart/form-data
-// @Produce json
-// @Param   folderName formData string false "Folder name"
-// @Param   fileName formData string false "File name"
-// @Success 200       {object}  types.CommonResponse{data=string}
-// @Router   /books/test-delete-folder [delete]
+//
+//	@Summary		Delete folder on R1
+//	@Description	Delete folder on R1
+//	@Tags			books
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Param			folderName	formData	string	false	"Folder name"
+//	@Param			fileName	formData	string	false	"File name"
+//	@Success		200			{object}	types.CommonResponse{data=string}
+//	@Router			/books/test-delete-folder [delete]
+//
+//	@Security		BearerAuth
 func (h *BooksHandler) TestDeleteFolder(c *gin.Context) {
 	folderName := c.PostForm("folderName")
 	fileName := c.PostForm("fileName")

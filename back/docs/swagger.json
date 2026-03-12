@@ -400,6 +400,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -575,6 +580,11 @@
         },
         "/books/create-tool": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -690,6 +700,11 @@
         },
         "/books/test-delete": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Xóa một file dựa trên đường dẫn cung cấp",
                 "consumes": [
                     "multipart/form-data"
@@ -734,6 +749,11 @@
         },
         "/books/test-delete-folder": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete folder on R1",
                 "consumes": [
                     "multipart/form-data"
@@ -783,6 +803,11 @@
         },
         "/books/test-upload": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -867,6 +892,11 @@
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -976,6 +1006,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -1051,6 +1086,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -1103,6 +1143,11 @@
         },
         "/books/{id}/ratings": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -1207,6 +1252,9 @@
                 },
                 "profile": {
                     "$ref": "#/definitions/models.Profile"
+                },
+                "role": {
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"

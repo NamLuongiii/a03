@@ -12,7 +12,7 @@ const geistSans = Geist({variable: "--font-geist-sans", subsets: ["latin"]});
 const geistMono = Geist_Mono({variable: "--font-geist-mono", subsets: ["latin"]});
 
 export const metadata: Metadata = {
-    title: "BookLab - Đọc sách online",
+    title: "Đọc Luôn - Đọc sách online",
     description: "Nền tảng đọc sách trực tuyến tối ưu SEO",
 };
 

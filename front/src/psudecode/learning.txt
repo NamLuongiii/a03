@@ -1,5 +1,0 @@
-learning math
-    user finish all questions
-    call api save activity
-    show result
-

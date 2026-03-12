@@ -15,6 +15,7 @@ type Account struct {
 	Email     string         `json:"email" gorm:"type:varchar(255);not null;uniqueIndex:idx_accounts_email"`
 	HPassword string         `json:"-" gorm:"column:h_password;type:varchar(255);not null"`
 	Profile   *Profile       `json:"profile,omitempty" gorm:"foreignKey:AccountID"`
+	Role      string         `json:"role" gorm:"type:varchar(20);default:user"`
 	CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index:idx_accounts_deleted_at" swaggerignore:"true"`
@@ -47,6 +48,7 @@ func (r *AccountRepository) Create(dto *types.SignUpDto) error {
 		Name:      dto.Name,
 		Email:     dto.Email,
 		HPassword: hp,
+		Role:      string(types.RoleUser),
 	}
 	return r.db.Create(account).Error
 }

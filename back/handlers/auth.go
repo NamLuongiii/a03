@@ -82,6 +82,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		t, e := functions.JWTObject.Create(&jwt.MapClaims{
 			"ID":    a.ID,
 			"Email": a.Email,
+			"Role":  a.Role,
 		})
 		if e != nil {
 			return "", e

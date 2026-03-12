@@ -12,6 +12,7 @@ import (
 	"quickstart/middleware"
 	"quickstart/models"
 	"quickstart/services"
+	"quickstart/types"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -170,7 +171,7 @@ func main() {
 		auth := v1.Group("/auth")
 		{
 			auth.GET("/me",
-				middleware.RequiredAuth(),
+				middleware.RequiredAuth(types.RoleUser),
 				authHandler.Me)
 			auth.POST("/login", authHandler.Login)
 			auth.POST("/signup", authHandler.SignUp)
@@ -183,20 +184,20 @@ func main() {
 		book := v1.Group("/books")
 		{
 			book.GET("", bookHandler.GetBooks)
-			book.POST("/create-tool", bookHandler.CreateBookForTool)
-			book.POST("/test-upload", bookHandler.TestUpload)
-			book.POST("/test-delete", bookHandler.TestDelete)
+			book.POST("/create-tool", middleware.RequiredAuth(types.RoleAdmin), bookHandler.CreateBookForTool)
+			book.POST("/test-upload", middleware.RequiredAuth(types.RoleAdmin), bookHandler.TestUpload)
+			book.POST("/test-delete", middleware.RequiredAuth(types.RoleAdmin), bookHandler.TestDelete)
 			book.DELETE("/test-delete-folder", bookHandler.TestDeleteFolder)
 			book.GET("/:id", bookHandler.GetBookByID)
-			book.POST("", bookHandler.CreateBook)
+			book.POST("", middleware.RequiredAuth(types.RoleAdmin), bookHandler.CreateBook)
 			book.GET("/featured", bookHandler.GetFeaturedBooks)
 			book.GET("/categories", bookHandler.GetCategories)
 			book.GET("/authors/:authorID", bookHandler.GetAuthors)
-			book.POST("/:id/comments", middleware.RequiredAuth(), bookHandler.AddComment)
-			book.POST("/:id/ratings", middleware.RequiredAuth(), bookHandler.AddRating)
+			book.POST("/:id/comments", middleware.RequiredAuth(types.RoleUser), bookHandler.AddComment)
+			book.POST("/:id/ratings", middleware.RequiredAuth(types.RoleUser), bookHandler.AddRating)
 			book.GET("/:id/comments", bookHandler.GetComments)
-			book.DELETE("/:id", bookHandler.DeleteBook)
-			book.PUT("/:id", bookHandler.UpdateBook)
+			book.DELETE("/:id", middleware.RequiredAuth(types.RoleAdmin), bookHandler.DeleteBook)
+			book.PUT("/:id", middleware.RequiredAuth(types.RoleAdmin), bookHandler.UpdateBook)
 		}
 
 		// Author routes
