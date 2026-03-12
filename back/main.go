@@ -146,7 +146,13 @@ func main() {
 
 	// Add CORS for all ip - Must be before ErrorHandler
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:5174", "http://localhost:3000", "https://docluon.com", "https://www.docluon.com"},
+		AllowOrigins: []string{
+			"http://localhost:5173",
+			"http://localhost:5174",
+			"http://localhost:3000",
+			"https://docluon.com",
+			"https://www.docluon.com",
+		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Content-Length"},
 		ExposeHeaders:    []string{"Content-Length"},
