@@ -5,6 +5,7 @@ import {ModelsDigitalBook} from "@/app/api";
 import prettyBytes from "pretty-bytes";
 import {saveAs} from 'file-saver'
 import {getFullUrl} from "@/app/helpers";
+import {DownloadIcon} from "lucide-react";
 
 type Props = {
     db: ModelsDigitalBook[]
@@ -13,8 +14,8 @@ type Props = {
 export function DownloadBook({db}: Props) {
     return (
         <Dropdown>
-            <Button aria-label="Menu" variant="primary">
-                Tải về
+            <Button isIconOnly={true} aria-label="Menu" variant='tertiary'>
+                <DownloadIcon/>
             </Button>
             <Dropdown.Popover>
                 <Dropdown.Menu onAction={(key) => console.log(`Selected: ${key}`)}>

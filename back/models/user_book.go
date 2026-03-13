@@ -7,12 +7,12 @@ import (
 )
 
 type UserBook struct {
-	AccountID int       `gorm:"primary_key;index:idx_user_books_account_id"`
-	BookID    string    `gorm:"primary_key"`
-	Status    string    `gorm:"type:varchar(20)"`
+	AccountID int       `json:"account_id" gorm:"primary_key;index:idx_user_books_account_id"`
+	BookID    string    `json:"book_id" gorm:"primary_key"`
+	Status    string    `json:"status" gorm:"type:varchar(20)"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 
-	Book Book `gorm:"foreignKey:BookID"`
+	Book *Book `json:"book" gorm:"foreignKey:BookID"`
 }
 
 type UserBookRepositoryInterface interface {

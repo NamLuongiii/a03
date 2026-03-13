@@ -1693,13 +1693,16 @@ const docTemplate = `{
         "models.UserBook": {
             "type": "object",
             "properties": {
-                "accountID": {
+                "account_id": {
                     "type": "integer"
                 },
-                "bookID": {
+                "book": {
+                    "$ref": "#/definitions/models.Book"
+                },
+                "book_id": {
                     "type": "string"
                 },
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "status": {

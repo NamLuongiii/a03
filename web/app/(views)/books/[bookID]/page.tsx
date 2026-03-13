@@ -1,5 +1,3 @@
-export const revalidate = 1800;
-
 import {Metadata} from "next";
 import Link from "next/link";
 import {Breadcrumbs, Button, Chip} from "@heroui/react";
@@ -7,6 +5,10 @@ import {getBooksById} from "@/app/api";
 import {DownloadBook} from "@/app/components/DownloadBook";
 import {Comments} from "@/app/components/Comments";
 import {getFullUrl} from "@/app/helpers";
+import SaveBook from "@/app/components/SaveBook";
+
+export const revalidate = 1800;
+
 // Import file cấu hình API của bạn vào đây
 // import { getBookDetail } from "@/services/book-service"; 
 // import { ModelsBook } from "@/types";
@@ -47,7 +49,7 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
     }
 
     return (
-        <div className="max-w-4xl mx-auto py-3 md:py-6 px-4 md:px-6 space-y-4 md:space-y-8">
+        <div className="space-y-4 md:space-y-8">
 
             {/* --- BREADCRUMBS --- */}
             <Breadcrumbs className="text-xs md:text-sm">
@@ -133,9 +135,13 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
                     </div>
 
                     {/* Nút Tải Về (Chỉ hiện khi có file digital_books) */}
-                    {book.digital_books && book.digital_books.length > 0 && (
-                        <DownloadBook db={book.digital_books}/>
-                    )}
+                    <div className='flex items-center gap-2'>
+                        {book.digital_books && book.digital_books.length > 0 && (
+                            <DownloadBook db={book.digital_books}/>
+                        )}
+
+                        <SaveBook book_id={bookID}/>
+                    </div>
                 </div>
 
             </div>

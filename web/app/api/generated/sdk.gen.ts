@@ -2,7 +2,7 @@
 
 import { type Client, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteBooksByIdData, DeleteBooksByIdResponses, GetAuthMeData, GetAuthMeResponses, GetAuthorsData, GetAuthorsResponses, GetBooksAuthorsByAuthorIdData, GetBooksAuthorsByAuthorIdResponses, GetBooksByIdCommentsData, GetBooksByIdCommentsResponses, GetBooksByIdData, GetBooksByIdResponses, GetBooksCategoriesData, GetBooksCategoriesResponses, GetBooksData, GetBooksFeaturedData, GetBooksFeaturedResponses, GetBooksResponses, PostAuthLoginData, PostAuthLoginResponses, PostAuthorsData, PostAuthorsResponses, PostAuthRequestChangePasswordData, PostAuthRequestChangePasswordResponses, PostAuthResetPasswordData, PostAuthResetPasswordResponses, PostAuthSignupData, PostAuthSignupResponses, PostAuthVerifyOtpData, PostAuthVerifyOtpResponses, PostBooksByIdCommentsData, PostBooksByIdCommentsResponses, PostBooksByIdRatingsData, PostBooksByIdRatingsResponses, PostBooksData, PostBooksResponses, PostBooksUnzipData, PostBooksUnzipResponses, PutBooksByIdData, PutBooksByIdResponses } from './types.gen';
+import type { DeleteBooksByIdData, DeleteBooksByIdResponses, DeleteBooksTestDeleteFolderData, DeleteBooksTestDeleteFolderResponses, DeleteUserBooksByBookIdData, DeleteUserBooksByBookIdResponses, GetAuthMeData, GetAuthMeResponses, GetAuthorsData, GetAuthorsResponses, GetBooksAuthorsByAuthorIdData, GetBooksAuthorsByAuthorIdResponses, GetBooksByIdCommentsData, GetBooksByIdCommentsResponses, GetBooksByIdData, GetBooksByIdResponses, GetBooksCategoriesData, GetBooksCategoriesResponses, GetBooksData, GetBooksFeaturedData, GetBooksFeaturedResponses, GetBooksResponses, GetUserBooksData, GetUserBooksResponses, PostAuthLoginData, PostAuthLoginResponses, PostAuthorsData, PostAuthorsResponses, PostAuthRequestChangePasswordData, PostAuthRequestChangePasswordResponses, PostAuthResetPasswordData, PostAuthResetPasswordResponses, PostAuthSignupData, PostAuthSignupResponses, PostAuthVerifyOtpData, PostAuthVerifyOtpResponses, PostBooksByIdCommentsData, PostBooksByIdCommentsResponses, PostBooksByIdRatingsData, PostBooksByIdRatingsResponses, PostBooksCreateToolData, PostBooksCreateToolResponses, PostBooksData, PostBooksResponses, PostBooksTestDeleteData, PostBooksTestDeleteResponses, PostBooksTestUploadData, PostBooksTestUploadResponses, PostUserBooksData, PostUserBooksResponses, PutBooksByIdData, PutBooksByIdResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -118,6 +118,7 @@ export const getBooks = <ThrowOnError extends boolean = false>(options?: Options
  */
 export const postBooks = <ThrowOnError extends boolean = false>(options: Options<PostBooksData, ThrowOnError>) => (options.client ?? client).post<PostBooksResponses, unknown, ThrowOnError>({
     ...formDataBodySerializer,
+    security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/books',
     ...options,
     headers: {
@@ -137,16 +138,12 @@ export const getBooksAuthorsByAuthorId = <ThrowOnError extends boolean = false>(
 export const getBooksCategories = <ThrowOnError extends boolean = false>(options?: Options<GetBooksCategoriesData, ThrowOnError>) => (options?.client ?? client).get<GetBooksCategoriesResponses, unknown, ThrowOnError>({ url: '/books/categories', ...options });
 
 /**
- * Get featured books
+ * Create a new book for a tool
  */
-export const getBooksFeatured = <ThrowOnError extends boolean = false>(options?: Options<GetBooksFeaturedData, ThrowOnError>) => (options?.client ?? client).get<GetBooksFeaturedResponses, unknown, ThrowOnError>({ url: '/books/featured', ...options });
-
-/**
- * Unzip a book
- */
-export const postBooksUnzip = <ThrowOnError extends boolean = false>(options?: Options<PostBooksUnzipData, ThrowOnError>) => (options?.client ?? client).post<PostBooksUnzipResponses, unknown, ThrowOnError>({
+export const postBooksCreateTool = <ThrowOnError extends boolean = false>(options?: Options<PostBooksCreateToolData, ThrowOnError>) => (options?.client ?? client).post<PostBooksCreateToolResponses, unknown, ThrowOnError>({
     ...formDataBodySerializer,
-    url: '/books/unzip',
+    security: [{ name: 'Authorization', type: 'apiKey' }],
+    url: '/books/create-tool',
     ...options,
     headers: {
         'Content-Type': null,
@@ -155,9 +152,64 @@ export const postBooksUnzip = <ThrowOnError extends boolean = false>(options?: O
 });
 
 /**
+ * Get featured books
+ */
+export const getBooksFeatured = <ThrowOnError extends boolean = false>(options?: Options<GetBooksFeaturedData, ThrowOnError>) => (options?.client ?? client).get<GetBooksFeaturedResponses, unknown, ThrowOnError>({ url: '/books/featured', ...options });
+
+/**
+ * Test delete file
+ *
+ * Xóa một file dựa trên đường dẫn cung cấp
+ */
+export const postBooksTestDelete = <ThrowOnError extends boolean = false>(options: Options<PostBooksTestDeleteData, ThrowOnError>) => (options.client ?? client).post<PostBooksTestDeleteResponses, unknown, ThrowOnError>({
+    ...formDataBodySerializer,
+    security: [{ name: 'Authorization', type: 'apiKey' }],
+    url: '/books/test-delete',
+    ...options,
+    headers: {
+        'Content-Type': null,
+        ...options.headers
+    }
+});
+
+/**
+ * Delete folder on R1
+ *
+ * Delete folder on R1
+ */
+export const deleteBooksTestDeleteFolder = <ThrowOnError extends boolean = false>(options?: Options<DeleteBooksTestDeleteFolderData, ThrowOnError>) => (options?.client ?? client).delete<DeleteBooksTestDeleteFolderResponses, unknown, ThrowOnError>({
+    ...formDataBodySerializer,
+    security: [{ name: 'Authorization', type: 'apiKey' }],
+    url: '/books/test-delete-folder',
+    ...options,
+    headers: {
+        'Content-Type': null,
+        ...options?.headers
+    }
+});
+
+/**
+ * Test upload file
+ */
+export const postBooksTestUpload = <ThrowOnError extends boolean = false>(options: Options<PostBooksTestUploadData, ThrowOnError>) => (options.client ?? client).post<PostBooksTestUploadResponses, unknown, ThrowOnError>({
+    ...formDataBodySerializer,
+    security: [{ name: 'Authorization', type: 'apiKey' }],
+    url: '/books/test-upload',
+    ...options,
+    headers: {
+        'Content-Type': null,
+        ...options.headers
+    }
+});
+
+/**
  * Delete book
  */
-export const deleteBooksById = <ThrowOnError extends boolean = false>(options: Options<DeleteBooksByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteBooksByIdResponses, unknown, ThrowOnError>({ url: '/books/{id}', ...options });
+export const deleteBooksById = <ThrowOnError extends boolean = false>(options: Options<DeleteBooksByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteBooksByIdResponses, unknown, ThrowOnError>({
+    security: [{ name: 'Authorization', type: 'apiKey' }],
+    url: '/books/{id}',
+    ...options
+});
 
 /**
  * Get book by ID
@@ -169,6 +221,7 @@ export const getBooksById = <ThrowOnError extends boolean = false>(options: Opti
  */
 export const putBooksById = <ThrowOnError extends boolean = false>(options: Options<PutBooksByIdData, ThrowOnError>) => (options.client ?? client).put<PutBooksByIdResponses, unknown, ThrowOnError>({
     ...formDataBodySerializer,
+    security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/books/{id}',
     ...options,
     headers: {
@@ -186,6 +239,7 @@ export const getBooksByIdComments = <ThrowOnError extends boolean = false>(optio
  * Add comment
  */
 export const postBooksByIdComments = <ThrowOnError extends boolean = false>(options: Options<PostBooksByIdCommentsData, ThrowOnError>) => (options.client ?? client).post<PostBooksByIdCommentsResponses, unknown, ThrowOnError>({
+    security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/books/{id}/comments',
     ...options,
     headers: {
@@ -197,4 +251,45 @@ export const postBooksByIdComments = <ThrowOnError extends boolean = false>(opti
 /**
  * Add rating
  */
-export const postBooksByIdRatings = <ThrowOnError extends boolean = false>(options: Options<PostBooksByIdRatingsData, ThrowOnError>) => (options.client ?? client).post<PostBooksByIdRatingsResponses, unknown, ThrowOnError>({ url: '/books/{id}/ratings', ...options });
+export const postBooksByIdRatings = <ThrowOnError extends boolean = false>(options: Options<PostBooksByIdRatingsData, ThrowOnError>) => (options.client ?? client).post<PostBooksByIdRatingsResponses, unknown, ThrowOnError>({
+    security: [{ name: 'Authorization', type: 'apiKey' }],
+    url: '/books/{id}/ratings',
+    ...options
+});
+
+/**
+ * Get books by user
+ *
+ * Get books by user
+ */
+export const getUserBooks = <ThrowOnError extends boolean = false>(options?: Options<GetUserBooksData, ThrowOnError>) => (options?.client ?? client).get<GetUserBooksResponses, unknown, ThrowOnError>({
+    security: [{ name: 'Authorization', type: 'apiKey' }],
+    url: '/user-books',
+    ...options
+});
+
+/**
+ * Add book to user
+ *
+ * Add book to user
+ */
+export const postUserBooks = <ThrowOnError extends boolean = false>(options: Options<PostUserBooksData, ThrowOnError>) => (options.client ?? client).post<PostUserBooksResponses, unknown, ThrowOnError>({
+    security: [{ name: 'Authorization', type: 'apiKey' }],
+    url: '/user-books',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Remove book from user
+ *
+ * Remove book from user
+ */
+export const deleteUserBooksByBookId = <ThrowOnError extends boolean = false>(options: Options<DeleteUserBooksByBookIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteUserBooksByBookIdResponses, unknown, ThrowOnError>({
+    security: [{ name: 'Authorization', type: 'apiKey' }],
+    url: '/user-books/{book_id}',
+    ...options
+});

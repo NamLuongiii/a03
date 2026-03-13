@@ -24,13 +24,22 @@ export type DtoVerifyOtp = {
     otp?: string;
 };
 
+export type HandlersUserBookParams = {
+    book_id?: string;
+};
+
 export type ModelsAccount = {
     created_at?: string;
     email?: string;
     id?: number;
     name?: string;
     profile?: ModelsProfile;
+    role?: string;
     updated_at?: string;
+    /**
+     * Relations
+     */
+    user_books?: Array<ModelsUserBook>;
 };
 
 export type ModelsAuthor = {
@@ -68,6 +77,7 @@ export type ModelsBook = {
     summary?: string;
     unzip_root_url?: string;
     updated_at?: string;
+    user_books?: Array<ModelsUserBook>;
     view_nums?: number;
 };
 
@@ -144,6 +154,14 @@ export type ModelsProfile = {
     full_name?: string;
     id?: number;
     updated_at?: string;
+};
+
+export type ModelsUserBook = {
+    account_id?: number;
+    book?: ModelsBook;
+    book_id?: string;
+    created_at?: string;
+    status?: string;
 };
 
 export type TypesCommonResponse = {
@@ -476,6 +494,45 @@ export type GetBooksCategoriesResponses = {
 
 export type GetBooksCategoriesResponse = GetBooksCategoriesResponses[keyof GetBooksCategoriesResponses];
 
+export type PostBooksCreateToolData = {
+    body?: {
+        /**
+         * Book name
+         */
+        name?: string;
+        /**
+         * Book cover
+         */
+        cover?: Blob | File;
+        /**
+         * Book files
+         */
+        files?: Array<unknown>;
+        /**
+         * Book authors
+         */
+        author_name?: string;
+        /**
+         * file to unzip services
+         */
+        readingFile?: Blob | File;
+    };
+    path?: never;
+    query?: never;
+    url: '/books/create-tool';
+};
+
+export type PostBooksCreateToolResponses = {
+    /**
+     * OK
+     */
+    200: TypesCommonResponse & {
+        data?: ModelsBook;
+    };
+};
+
+export type PostBooksCreateToolResponse = PostBooksCreateToolResponses[keyof PostBooksCreateToolResponses];
+
 export type GetBooksFeaturedData = {
     body?: never;
     path?: never;
@@ -499,30 +556,78 @@ export type GetBooksFeaturedResponses = {
 
 export type GetBooksFeaturedResponse = GetBooksFeaturedResponses[keyof GetBooksFeaturedResponses];
 
-export type PostBooksUnzipData = {
-    body?: {
+export type PostBooksTestDeleteData = {
+    body: {
         /**
-         * Book file
+         * File to delete
          */
-        file?: Blob | File;
-        /**
-         * Book ID
-         */
-        id?: string;
+        filePath: string;
     };
     path?: never;
     query?: never;
-    url: '/books/unzip';
+    url: '/books/test-delete';
 };
 
-export type PostBooksUnzipResponses = {
+export type PostBooksTestDeleteResponses = {
     /**
      * OK
      */
-    200: TypesCommonResponse;
+    200: TypesCommonResponse & {
+        data?: string;
+    };
 };
 
-export type PostBooksUnzipResponse = PostBooksUnzipResponses[keyof PostBooksUnzipResponses];
+export type PostBooksTestDeleteResponse = PostBooksTestDeleteResponses[keyof PostBooksTestDeleteResponses];
+
+export type DeleteBooksTestDeleteFolderData = {
+    body?: {
+        /**
+         * Folder name
+         */
+        folderName?: string;
+        /**
+         * File name
+         */
+        fileName?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/books/test-delete-folder';
+};
+
+export type DeleteBooksTestDeleteFolderResponses = {
+    /**
+     * OK
+     */
+    200: TypesCommonResponse & {
+        data?: string;
+    };
+};
+
+export type DeleteBooksTestDeleteFolderResponse = DeleteBooksTestDeleteFolderResponses[keyof DeleteBooksTestDeleteFolderResponses];
+
+export type PostBooksTestUploadData = {
+    body: {
+        /**
+         * File to upload
+         */
+        file: Blob | File;
+    };
+    path?: never;
+    query?: never;
+    url: '/books/test-upload';
+};
+
+export type PostBooksTestUploadResponses = {
+    /**
+     * OK
+     */
+    200: TypesCommonResponse & {
+        data?: string;
+    };
+};
+
+export type PostBooksTestUploadResponse = PostBooksTestUploadResponses[keyof PostBooksTestUploadResponses];
 
 export type DeleteBooksByIdData = {
     body?: never;
@@ -703,3 +808,64 @@ export type PostBooksByIdRatingsResponses = {
 };
 
 export type PostBooksByIdRatingsResponse = PostBooksByIdRatingsResponses[keyof PostBooksByIdRatingsResponses];
+
+export type GetUserBooksData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/user-books';
+};
+
+export type GetUserBooksResponses = {
+    /**
+     * Books retrieved
+     */
+    200: TypesCommonResponse;
+};
+
+export type GetUserBooksResponse = GetUserBooksResponses[keyof GetUserBooksResponses];
+
+export type PostUserBooksData = {
+    /**
+     * Book ID
+     */
+    body: HandlersUserBookParams;
+    path?: never;
+    query?: never;
+    url: '/user-books';
+};
+
+export type PostUserBooksResponses = {
+    /**
+     * Book added to user
+     */
+    200: TypesCommonResponse;
+};
+
+export type PostUserBooksResponse = PostUserBooksResponses[keyof PostUserBooksResponses];
+
+export type DeleteUserBooksByBookIdData = {
+    body?: never;
+    path: {
+        /**
+         * Book ID
+         */
+        book_id: string;
+    };
+    query?: never;
+    url: '/user-books/{book_id}';
+};
+
+export type DeleteUserBooksByBookIdResponses = {
+    /**
+     * Book removed from user
+     */
+    200: TypesCommonResponse;
+};
+
+export type DeleteUserBooksByBookIdResponse = DeleteUserBooksByBookIdResponses[keyof DeleteUserBooksByBookIdResponses];
