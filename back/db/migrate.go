@@ -31,6 +31,8 @@ func RunMigrations(db *gorm.DB) error {
 		&models.BookRating{},
 		&models.FeaturedBookGroup{},
 		&models.FeaturedGroupBook{},
+		&models.Image{},
+		&models.UserBook{},
 	); err != nil {
 		return err
 	}

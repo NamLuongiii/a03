@@ -19,6 +19,9 @@ type Account struct {
 	CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index:idx_accounts_deleted_at" swaggerignore:"true"`
+
+	// Relations
+	UserBooks []UserBook `json:"user_books,omitempty" gorm:"foreignKey:AccountID"`
 }
 
 type AccountRepositoryInterface interface {

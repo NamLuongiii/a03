@@ -68,11 +68,6 @@ func main() {
 	docs.SwaggerInfo.Host = "localhost:8080"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
-	// 1. Lấy thông tin từ Turso
-	// URL có dạng: libsql://docluonwebsite-yourname.turso.io
-	//tursoUrl := "libsql://docluonwebsite-namluongiii.aws-ap-northeast-1.turso.io"
-	//authToken := "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJnaWQiOiI2OGFlMTRiOC05NDAxLTQ0NWUtYmU1MC01ODQwZDBkYjczN2EiLCJpYXQiOjE3NzMxNjkzODMsInJpZCI6IjcxYWFkZThjLTBmMGYtNDgwOS1iNzFjLTE0NzlkODVjMzRjNyJ9.rpSAM4yN8JJWAg5EXUH-zbwVpCGZHPLFEu99ycE1BLLcQ8r-5rBtDr6Awf-GHJVQCoV9vPIp63ZHG0W5vGXABA"
-
 	// 3. Kết nối bằng GORM
 	ConnectDatabase()
 
@@ -109,9 +104,11 @@ func main() {
 	featuredGroupRepo := models.NewFeaturedBookGroupRepository(database)
 	authorRepo := models.NewAuthorRepository(database)
 	imageRepo := models.NewImageRepository(database)
+	userBookRepo := models.NewUserBookRepository(database)
 
 	// Init services
 	epubService := services.NewEpubService()
+	userBookService := services.NewUserBookService(bookRepo, accountRepo, userBookRepo)
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(mailHandler, accountRepo, OTPRepo)
@@ -142,6 +139,8 @@ func main() {
 		ImageRepository:         imageRepo,
 		EpubService:             epubService,
 	})
+
+	userBookHandler := handlers.NewUserBookHandler(userBookService)
 
 	router := gin.Default()
 
@@ -198,6 +197,14 @@ func main() {
 			book.GET("/:id/comments", bookHandler.GetComments)
 			book.DELETE("/:id", middleware.RequiredAuth(types.RoleAdmin), bookHandler.DeleteBook)
 			book.PUT("/:id", middleware.RequiredAuth(types.RoleAdmin), bookHandler.UpdateBook)
+		}
+
+		// UserBook routes
+		userBook := v1.Group("/user-books")
+		{
+			userBook.POST("", middleware.RequiredAuth(types.RoleUser), userBookHandler.AddBookToUser)
+			userBook.DELETE("/:bookID", middleware.RequiredAuth(types.RoleUser), userBookHandler.RemoveBookFromUser)
+			userBook.GET("", middleware.RequiredAuth(types.RoleUser), userBookHandler.GetBooksByUser)
 		}
 
 		// Author routes

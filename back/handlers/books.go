@@ -115,7 +115,7 @@ func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
 	recommender := c.Query("recommender")
 
 	if recommender == "new-books" {
-		bs, e := h.bookRepository.GetNewestBooks(10)
+		bs, e := h.bookRepository.GetNewestBooks(16)
 		if e != nil {
 			c.Error(middleware.NewServerInternalError(e.Error()))
 			return
@@ -125,7 +125,7 @@ func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
 			Data:    bs,
 		})
 	} else if recommender == "popular-books" {
-		bs, e := h.bookRepository.GetPopularBooks(10)
+		bs, e := h.bookRepository.GetPopularBooks(16)
 		if e != nil {
 			c.Error(middleware.NewServerInternalError(e.Error()))
 			return
@@ -135,7 +135,7 @@ func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
 			Data:    bs,
 		})
 	} else if recommender == "books-other-users-liked" {
-		bs, e := h.bookRepository.GetBooksOtherUserRead(10)
+		bs, e := h.bookRepository.GetBooksOtherUserRead(16)
 		if e != nil {
 			c.Error(middleware.NewServerInternalError(e.Error()))
 			return

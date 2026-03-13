@@ -1196,6 +1196,116 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user-books": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get books by user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserBooks"
+                ],
+                "summary": "Get books by user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Books retrieved",
+                        "schema": {
+                            "$ref": "#/definitions/types.CommonResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Add book to user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserBooks"
+                ],
+                "summary": "Add book to user",
+                "parameters": [
+                    {
+                        "description": "Book ID",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UserBookParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Book added to user",
+                        "schema": {
+                            "$ref": "#/definitions/types.CommonResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-books/{book_id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Remove book from user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserBooks"
+                ],
+                "summary": "Remove book from user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Book ID",
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Book removed from user",
+                        "schema": {
+                            "$ref": "#/definitions/types.CommonResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1243,6 +1353,14 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.UserBookParams": {
+            "type": "object",
+            "properties": {
+                "book_id": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Account": {
             "type": "object",
             "properties": {
@@ -1266,6 +1384,13 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                },
+                "user_books": {
+                    "description": "Relations",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UserBook"
+                    }
                 }
             }
         },
@@ -1368,6 +1493,12 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                },
+                "user_books": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UserBook"
+                    }
                 },
                 "view_nums": {
                     "type": "integer"
@@ -1555,6 +1686,23 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserBook": {
+            "type": "object",
+            "properties": {
+                "accountID": {
+                    "type": "integer"
+                },
+                "bookID": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }

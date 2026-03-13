@@ -36,6 +36,7 @@ type Book struct {
 	Creator      *Account      `json:"creator,omitempty" gorm:"foreignKey:CreatedBy"`
 	Cover        *Image        `json:"cover,omitempty" gorm:"foreignKey:CoverID"`
 	DigitalBooks []DigitalBook `json:"digital_books,omitempty" gorm:"foreignKey:BookID"`
+	UserBooks    []UserBook    `json:"user_books,omitempty" gorm:"foreignKey:BookID"`
 }
 
 type BookRepositoryInterface interface {

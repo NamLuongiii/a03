@@ -28,6 +28,11 @@ definitions:
       otp:
         type: string
     type: object
+  handlers.UserBookParams:
+    properties:
+      book_id:
+        type: string
+    type: object
   models.Account:
     properties:
       created_at:
@@ -44,6 +49,11 @@ definitions:
         type: string
       updated_at:
         type: string
+      user_books:
+        description: Relations
+        items:
+          $ref: '#/definitions/models.UserBook'
+        type: array
     type: object
   models.Author:
     properties:
@@ -110,6 +120,10 @@ definitions:
         type: string
       updated_at:
         type: string
+      user_books:
+        items:
+          $ref: '#/definitions/models.UserBook'
+        type: array
       view_nums:
         type: integer
     type: object
@@ -228,6 +242,17 @@ definitions:
       id:
         type: integer
       updated_at:
+        type: string
+    type: object
+  models.UserBook:
+    properties:
+      accountID:
+        type: integer
+      bookID:
+        type: string
+      createdAt:
+        type: string
+      status:
         type: string
     type: object
   types.CommonResponse:
@@ -970,6 +995,74 @@ paths:
       summary: Test upload file
       tags:
       - books
+  /user-books:
+    get:
+      consumes:
+      - application/json
+      description: Get books by user
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Books retrieved
+          schema:
+            $ref: '#/definitions/types.CommonResponse'
+      security:
+      - BearerAuth: []
+      summary: Get books by user
+      tags:
+      - UserBooks
+    post:
+      consumes:
+      - application/json
+      description: Add book to user
+      parameters:
+      - description: Book ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UserBookParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Book added to user
+          schema:
+            $ref: '#/definitions/types.CommonResponse'
+      security:
+      - BearerAuth: []
+      summary: Add book to user
+      tags:
+      - UserBooks
+  /user-books/{book_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove book from user
+      parameters:
+      - description: Book ID
+        in: path
+        name: book_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Book removed from user
+          schema:
+            $ref: '#/definitions/types.CommonResponse'
+      security:
+      - BearerAuth: []
+      summary: Remove book from user
+      tags:
+      - UserBooks
 securityDefinitions:
   BearerAuth:
     description: Type only token (not include Bearer)
