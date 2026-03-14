@@ -1,5 +1,5 @@
 'use client';
-import {Button, Dropdown, DropdownItem, DropdownMenu, DropdownPopover, DropdownTrigger, Input,} from "@heroui/react";
+import {Button, Dropdown, DropdownItem, DropdownMenu, DropdownPopover, DropdownTrigger,} from "@heroui/react";
 import Link from "next/link";
 import {usePathname, useRouter} from "next/navigation";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
@@ -10,7 +10,6 @@ import Avatar from "boring-avatars";
 import {useState} from "react";
 import {LogOutIcon, MenuIcon, SearchIcon, UserIcon} from "lucide-react";
 import MobileOverlay from "@/app/components/ui/MobileOverlay";
-import Search from "@/app/components/Search";
 
 // Component cho Desktop
 function DesktopNavbar({
@@ -22,7 +21,6 @@ function DesktopNavbar({
     me?: ModelsAccount | null,
     logout: () => void
 }) {
-    const router = useRouter();
     return (
         <div className="hidden md:flex mx-auto h-16 max-w-7xl items-center justify-between px-4 gap-4 w-full">
             {/* Logo */}
@@ -31,7 +29,7 @@ function DesktopNavbar({
             </Link>
 
             {/* Categories + Search */}
-            <div className="flex flex-1 items-center max-w-xl gap-2">
+            <div className="flex flex-1 items-center justify-end gap-4">
                 <Dropdown>
                     <Button variant="tertiary">Thể loại</Button>
                     <DropdownPopover>
@@ -54,21 +52,11 @@ function DesktopNavbar({
                     </DropdownPopover>
                 </Dropdown>
 
-                <Input
-                    fullWidth
-                    placeholder="Tìm kiếm sách"
-                    type="search"
-                    onKeyDown={e => {
-                        if (e.key === 'Enter') {
-                            const searchTerm = e.currentTarget.value;
-                            if (searchTerm) {
-                                router.push(`/books?search=${searchTerm}`);
-                            }
-                            e.currentTarget.value = '';
-                            e.currentTarget.blur()
-                        }
-                    }}
-                />
+                <Link href='/search'>
+                    <Button isIconOnly={true} variant='tertiary'>
+                        <SearchIcon/>
+                    </Button>
+                </Link>
             </div>
 
             {/* Avatar / Login */}
@@ -88,7 +76,9 @@ function DesktopNavbar({
                     </Dropdown>
                 ) : (
                     <Link href="/login">
-                        <Button variant='primary'>Đăng nhập</Button>
+                        <Button isIconOnly variant='primary'>
+                            <UserIcon/>
+                        </Button>
                     </Link>
                 )}
             </div>
@@ -107,7 +97,6 @@ function MobileNavbar({
     logout: () => void
 }) {
     const router = useRouter();
-    const [showSearch, setShowSearch] = useState(false);
     const [open, setOpen] = useState(false);
     const [openMenu, setOpenMenu] = useState(false);
 
@@ -125,15 +114,11 @@ function MobileNavbar({
             </Link>
 
             {/* Search Icon */}
-            <Button
-                isIconOnly
-                size='sm'
-                variant='tertiary'
-                onClick={() => setShowSearch(!showSearch)}
-                className='ml-auto'
-            >
-                <SearchIcon/>
-            </Button>
+            <Link href='/search' className='ml-auto'>
+                <Button isIconOnly={true} variant='tertiary' size='sm'>
+                    <SearchIcon/>
+                </Button>
+            </Link>
 
             <Button isIconOnly variant='tertiary' size='sm' onClick={() => setOpen(true)}>
                 <MenuIcon/>
@@ -144,7 +129,7 @@ function MobileNavbar({
                 <Avatar variant='beam' size={36} onClick={() => setOpenMenu(true)}/>
             ) : (
                 <Link href="/login">
-                    <Button isIconOnly variant='primary' size='sm'>
+                    <Button isIconOnly variant='tertiary' size='sm'>
                         <UserIcon/>
                     </Button>
                 </Link>
@@ -183,10 +168,6 @@ function MobileNavbar({
                         Đăng xuất
                     </Button>
                 </div>
-            </MobileOverlay>
-
-            <MobileOverlay isOpen={showSearch} onClose={() => setShowSearch(false)}>
-                <Search onClose={() => setShowSearch(false)}/>
             </MobileOverlay>
         </div>
     );

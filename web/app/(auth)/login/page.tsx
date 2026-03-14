@@ -57,14 +57,14 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="min-h-screen flex items-center justify-center px-4">
             <Card
                 className="w-full max-w-md p-8 space-y-6"
             >
                 <div className="text-center space-y-1">
-                    <h1 className="text-2xl font-semibold">Đọc Luôn ^^</h1>
+                    <h1 className="text-2xl font-semibold">Đăng nhập ^^</h1>
                     <p className="text-sm text-default-500">
-                        Đăng nhập để tiếp tục đọc
+                        Đăng nhập để lưu và bình luận sách
                     </p>
                 </div>
 

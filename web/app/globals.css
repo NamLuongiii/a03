@@ -48,3 +48,8 @@ h6 {
     font-size: 0.875rem;
 }
 
+.bg-shape {
+    background-image: url('../public/stacked-peaks-haikei.svg');
+    background-size: cover;
+    background-position: center;
+}

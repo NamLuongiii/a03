@@ -4,6 +4,7 @@ import {useForm} from 'react-hook-form'
 import {Button, Card, Input, Label, Spinner, TextField, toast} from '@heroui/react'
 import {useMutation} from "@tanstack/react-query";
 import {postAuthSignup} from "@/app/api";
+import Link from "next/link";
 
 type SignupForm = {
     name: string
@@ -33,7 +34,7 @@ export default function SignupPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="min-h-screen flex items-center justify-center px-4">
             <Card className="w-full max-w-md p-8 space-y-6">
                 <div className="text-center space-y-1">
                     <h1 className="text-2xl font-semibold">Đăng ký tài khoản</h1>
@@ -91,10 +92,16 @@ export default function SignupPage() {
 
                     <Button
                         type="submit"
+                        fullWidth={true}
                     >
                         {isPending && <Spinner/>}
                         Đăng ký
                     </Button>
+
+                    <div className="text-center text-sm text-default-500">
+                        <Link href="/login" className="hover:underline">Đăng nhập ngay
+                        </Link>
+                    </div>
                 </form>
             </Card>
         </div>
