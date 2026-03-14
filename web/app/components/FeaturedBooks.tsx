@@ -13,7 +13,7 @@ interface FeaturedBooksProps {
 
 export default function FeaturedBooks({title, description, books}: FeaturedBooksProps) {
     return (
-        <section className="py-8">
+        <section>
             {/* 1. Tiêu đề & Mô tả */}
             <div className="flex flex-col mb-8">
                 <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">

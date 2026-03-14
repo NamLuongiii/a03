@@ -1262,6 +1262,42 @@
                 }
             }
         },
+        "/user-books/{bookID}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserBooks"
+                ],
+                "summary": "Get user book by book ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Book ID",
+                        "name": "bookID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Books retrieved",
+                        "schema": {
+                            "$ref": "#/definitions/types.CommonResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/user-books/{book_id}": {
             "delete": {
                 "security": [

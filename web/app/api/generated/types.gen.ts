@@ -849,6 +849,27 @@ export type PostUserBooksResponses = {
 
 export type PostUserBooksResponse = PostUserBooksResponses[keyof PostUserBooksResponses];
 
+export type GetUserBooksByBookIdData = {
+    body?: never;
+    path: {
+        /**
+         * Book ID
+         */
+        bookID: string;
+    };
+    query?: never;
+    url: '/user-books/{bookID}';
+};
+
+export type GetUserBooksByBookIdResponses = {
+    /**
+     * Books retrieved
+     */
+    200: TypesCommonResponse;
+};
+
+export type GetUserBooksByBookIdResponse = GetUserBooksByBookIdResponses[keyof GetUserBooksByBookIdResponses];
+
 export type DeleteUserBooksByBookIdData = {
     body?: never;
     path: {

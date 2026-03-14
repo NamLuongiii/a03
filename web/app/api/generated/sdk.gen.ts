@@ -2,7 +2,7 @@
 
 import { type Client, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteBooksByIdData, DeleteBooksByIdResponses, DeleteBooksTestDeleteFolderData, DeleteBooksTestDeleteFolderResponses, DeleteUserBooksByBookIdData, DeleteUserBooksByBookIdResponses, GetAuthMeData, GetAuthMeResponses, GetAuthorsData, GetAuthorsResponses, GetBooksAuthorsByAuthorIdData, GetBooksAuthorsByAuthorIdResponses, GetBooksByIdCommentsData, GetBooksByIdCommentsResponses, GetBooksByIdData, GetBooksByIdResponses, GetBooksCategoriesData, GetBooksCategoriesResponses, GetBooksData, GetBooksFeaturedData, GetBooksFeaturedResponses, GetBooksResponses, GetUserBooksData, GetUserBooksResponses, PostAuthLoginData, PostAuthLoginResponses, PostAuthorsData, PostAuthorsResponses, PostAuthRequestChangePasswordData, PostAuthRequestChangePasswordResponses, PostAuthResetPasswordData, PostAuthResetPasswordResponses, PostAuthSignupData, PostAuthSignupResponses, PostAuthVerifyOtpData, PostAuthVerifyOtpResponses, PostBooksByIdCommentsData, PostBooksByIdCommentsResponses, PostBooksByIdRatingsData, PostBooksByIdRatingsResponses, PostBooksCreateToolData, PostBooksCreateToolResponses, PostBooksData, PostBooksResponses, PostBooksTestDeleteData, PostBooksTestDeleteResponses, PostBooksTestUploadData, PostBooksTestUploadResponses, PostUserBooksData, PostUserBooksResponses, PutBooksByIdData, PutBooksByIdResponses } from './types.gen';
+import type { DeleteBooksByIdData, DeleteBooksByIdResponses, DeleteBooksTestDeleteFolderData, DeleteBooksTestDeleteFolderResponses, DeleteUserBooksByBookIdData, DeleteUserBooksByBookIdResponses, GetAuthMeData, GetAuthMeResponses, GetAuthorsData, GetAuthorsResponses, GetBooksAuthorsByAuthorIdData, GetBooksAuthorsByAuthorIdResponses, GetBooksByIdCommentsData, GetBooksByIdCommentsResponses, GetBooksByIdData, GetBooksByIdResponses, GetBooksCategoriesData, GetBooksCategoriesResponses, GetBooksData, GetBooksFeaturedData, GetBooksFeaturedResponses, GetBooksResponses, GetUserBooksByBookIdData, GetUserBooksByBookIdResponses, GetUserBooksData, GetUserBooksResponses, PostAuthLoginData, PostAuthLoginResponses, PostAuthorsData, PostAuthorsResponses, PostAuthRequestChangePasswordData, PostAuthRequestChangePasswordResponses, PostAuthResetPasswordData, PostAuthResetPasswordResponses, PostAuthSignupData, PostAuthSignupResponses, PostAuthVerifyOtpData, PostAuthVerifyOtpResponses, PostBooksByIdCommentsData, PostBooksByIdCommentsResponses, PostBooksByIdRatingsData, PostBooksByIdRatingsResponses, PostBooksCreateToolData, PostBooksCreateToolResponses, PostBooksData, PostBooksResponses, PostBooksTestDeleteData, PostBooksTestDeleteResponses, PostBooksTestUploadData, PostBooksTestUploadResponses, PostUserBooksData, PostUserBooksResponses, PutBooksByIdData, PutBooksByIdResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -281,6 +281,15 @@ export const postUserBooks = <ThrowOnError extends boolean = false>(options: Opt
         'Content-Type': 'application/json',
         ...options.headers
     }
+});
+
+/**
+ * Get user book by book ID
+ */
+export const getUserBooksByBookId = <ThrowOnError extends boolean = false>(options: Options<GetUserBooksByBookIdData, ThrowOnError>) => (options.client ?? client).get<GetUserBooksByBookIdResponses, unknown, ThrowOnError>({
+    security: [{ name: 'Authorization', type: 'apiKey' }],
+    url: '/user-books/{bookID}',
+    ...options
 });
 
 /**

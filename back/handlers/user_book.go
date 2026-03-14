@@ -12,6 +12,7 @@ type UserBookHandlerInterface interface {
 	AddBookToUser(c *gin.Context)
 	RemoveBookFromUser(c *gin.Context)
 	GetBooksByUser(c *gin.Context)
+	FindByID(c *gin.Context)
 }
 
 type UserBookHandler struct {
@@ -35,7 +36,7 @@ type UserBookParams struct {
 //	@Tags			UserBooks
 //	@Accept			json
 //	@Produce		json
-//	@Param			data	body		UserBookParams					true	"Book ID"
+//	@Param			data	body		UserBookParams			true	"Book ID"
 //	@Success		200		{object}	types.CommonResponse	"Book added to user"
 //	@Router			/user-books [post]
 //	@Security		BearerAuth
@@ -121,5 +122,33 @@ func (uh *UserBookHandler) GetBooksByUser(c *gin.Context) {
 		Data:    userBooks,
 		Success: true,
 		Message: "Books retrieved",
+	})
+}
+
+// Find by ID godoc
+//
+//	@Summary	Get user book by book ID
+//	@Tags		UserBooks
+//	@Accept		json
+//	@Produce	json
+//	@Param		bookID	path		string									true	"Book ID"
+//	@Success	200		{object}	types.CommonResponse{models.UserBook}	"Books retrieved"
+//	@Router		/user-books/{bookID} [get]
+//	@Security	BearerAuth
+func (uh *UserBookHandler) FindByID(c *gin.Context) {
+	claims := c.MustGet(types.ContextKeyTokenClaims).(*types.AuthClaims)
+	userID := claims.ID
+	bookID := c.Param("bookID")
+
+	ub, e := uh.userBookServiceInterface.FindByID(userID, bookID)
+	if e != nil {
+		c.Error(e)
+		return
+	}
+
+	c.JSON(200, types.CommonResponse{
+		Data:    ub,
+		Success: true,
+		Message: "Book retrieved",
 	})
 }

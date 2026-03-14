@@ -1065,6 +1065,28 @@ paths:
       summary: Remove book from user
       tags:
       - UserBooks
+  /user-books/{bookID}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Book ID
+        in: path
+        name: bookID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Books retrieved
+          schema:
+            $ref: '#/definitions/types.CommonResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user book by book ID
+      tags:
+      - UserBooks
 securityDefinitions:
   BearerAuth:
     description: Type only token (not include Bearer)

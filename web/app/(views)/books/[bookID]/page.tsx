@@ -91,67 +91,60 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
                 </div>
 
                 {/* CỘT PHẢI: Thông tin sách & Nút Tải về */}
-                <div className="col-span-1 md:col-span-8 lg:col-span-9 flex flex-col gap-3 md:gap-4">
-                    {/* Header Thông tin */}
-                    <div className="space-y-1 md:space-y-2">
-                        <h2 className="text-xl md:text-2xl lg:text-3xl">{book.name}</h2>
-
-                        <p className="text-sm md:text-base">Tác giả:
-                            <span> </span>
+                <div className="col-span-1 md:col-span-8 lg:col-span-9 flex flex-col gap-5">
+                    {/* Tên & Tác giả */}
+                    <div>
+                        <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-1">{book.name}</h2>
+                        <p className="text-sm text-default-500">
+                            Tác giả:{" "}
                             <Link
                                 href={`/authors/${book.author_id}`}
-                                className="text-primary hover:underline font-medium ml-1">
+                                className="text-primary font-medium hover:underline">
                                 {book.author?.name || "Đang cập nhật"}
                             </Link>
                         </p>
                     </div>
 
-                    {/* Các chỉ số (Rating, View, Download) */}
-                    <div className="flex flex-wrap items-center gap-2 md:gap-4">
-                        <Chip size="sm" className="text-xs md:text-sm">
+                    {/* Thống kê */}
+                    <div className="flex flex-wrap gap-2">
+                        <Chip size="sm">
                             <span>⭐</span>
-                            {book.rating_avg ? book.rating_avg.toFixed(1) : "N/A"} <span
-                            className="hidden sm:inline">({book.rating_count || 0})</span>
+                            {book.rating_avg?.toFixed(1) ?? "N/A"} ({book.rating_count || 0})
                         </Chip>
-                        <Chip size="sm" className="text-xs md:text-sm">
+                        <Chip size="sm">
                             <span>👁️</span>
-                            <span className="hidden sm:inline">{book.view_nums || 0} Lượt xem</span>
-                            <span className="sm:hidden">{book.view_nums || 0}</span>
+                            {book.view_nums || 0} lượt xem
                         </Chip>
-                        <Chip size="sm" className="text-xs md:text-sm">
+                        <Chip size="sm">
                             <span>⬇️</span>
-                            <span className="hidden sm:inline">{book.download_nums || 0} Lượt tải</span>
-                            <span className="sm:hidden">{book.download_nums || 0}</span>
+                            {book.download_nums || 0} lượt tải
                         </Chip>
                     </div>
 
-
-                    {/* Tóm tắt & Mô tả */}
-                    <div className="space-y-2">
-                        <h3 className="text-lg md:text-xl">Giới thiệu</h3>
-                        <div className="text-sm md:text-base leading-relaxed whitespace-pre-line">
+                    {/* Mô tả */}
+                    <div>
+                        <h3 className="text-base font-semibold mb-2">Giới thiệu</h3>
+                        <p className="text-sm text-default-600 leading-relaxed whitespace-pre-line">
                             {book.description || book.summary || "Chưa có nội dung mô tả cho cuốn sách này."}
-                        </div>
+                        </p>
                     </div>
 
-                    {/* Nút Tải Về (Chỉ hiện khi có file digital_books) */}
-                    <div className='flex items-center gap-2'>
+                    {/* Actions */}
+                    <div className="flex items-center gap-2">
                         {book.digital_books && book.digital_books.length > 0 && (
                             <DownloadBook db={book.digital_books}/>
                         )}
-
                         <SaveBook book_id={bookID}/>
                     </div>
                 </div>
-
             </div>
 
             {/*Lời phê bình sách */}
-            <div className='space-y-2'>
-                <h3 className="text-lg md:text-xl">Lời tựa</h3>
-                <div className='text-sm md:text-base whitespace-pre-line leading-relaxed'>
+            <div className="space-y-2">
+                <h3 className="text-base font-semibold">Lời tựa</h3>
+                <p className="text-sm text-default-600 leading-relaxed whitespace-pre-line">
                     {book.summary}
-                </div>
+                </p>
             </div>
 
             <Comments bookID={bookID}/>

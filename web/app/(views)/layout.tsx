@@ -9,7 +9,7 @@ export default function ViewsLayout({children}: { children: React.ReactNode }) {
             <Navbar/>
 
             {/* Main Container: Flex row trên màn hình lớn (lg), mặc định là flex-col */}
-            <main className="grow container mx-auto max-w-7xl px-4 py-6 flex flex-col lg:flex-row gap-8">
+            <main className="grow container mx-auto max-w-7xl px-4 py-12 flex flex-col lg:flex-row gap-8">
 
                 {/* Content chính: Chiếm hết chỗ trống */}
                 <section className="flex-1 min-w-0">
@@ -17,7 +17,7 @@ export default function ViewsLayout({children}: { children: React.ReactNode }) {
                 </section>
 
                 {/* Sidebar bên phải */}
-                <aside className="w-full lg:w-80 space-y-6 sticky top-20 self-start">
+                <aside className="w-full lg:w-80 space-y-6 sticky top-20 self-start hidden lg:block">
                     <Link href="/login" className="block">
                         <Image
                             src="/loginBanner.jpg"

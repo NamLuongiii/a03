@@ -205,6 +205,7 @@ func main() {
 			userBook.POST("", middleware.RequiredAuth(types.RoleUser), userBookHandler.AddBookToUser)
 			userBook.DELETE("/:bookID", middleware.RequiredAuth(types.RoleUser), userBookHandler.RemoveBookFromUser)
 			userBook.GET("", middleware.RequiredAuth(types.RoleUser), userBookHandler.GetBooksByUser)
+			userBook.GET("/:bookID", middleware.RequiredAuth(types.RoleUser), userBookHandler.FindByID)
 		}
 
 		// Author routes

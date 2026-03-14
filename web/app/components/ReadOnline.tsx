@@ -64,11 +64,6 @@ export default function ReadOnline({book}: Props) {
 
     return <div className='h-screen flex flex-col'>
         <div ref={renderRef} className='w-full flex-1 mx-auto overflow-scroll'>
-            {/*{chapterUrl && (*/}
-            {/*    <iframe*/}
-            {/*        src={chapterUrl}*/}
-            {/*        className='h-full w-full'/>*/}
-            {/*)}*/}
         </div>
 
         <footer className='flex justify-end items-center gap-2 p-2 bg-blue-500 text-white'>

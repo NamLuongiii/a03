@@ -19,6 +19,7 @@ type UserBookRepositoryInterface interface {
 	Create(userBook *UserBook) error
 	DeleteByID(userID int, bookID string) error
 	GetBooksByUser(userID int, limit int) ([]UserBook, error)
+	FindByID(userID int, bookID string) (*UserBook, error)
 }
 
 type UserBookRepository struct {
@@ -53,4 +54,11 @@ func (r *UserBookRepository) GetBooksByUser(userID int, limit int) ([]UserBook, 
 		Find(&userBooks).Error
 
 	return userBooks, err
+}
+
+func (r *UserBookRepository) FindByID(userID int, bookID string) (*UserBook, error) {
+	var userBook UserBook
+	err := r.db.Where("account_id = ? AND book_id = ?", userID, bookID).First(&userBook).Error
+
+	return &userBook, err
 }

@@ -8,6 +8,9 @@ import {deleteCookie} from "cookies-next";
 import {useMe} from "@/app/hooks/useMe";
 import Avatar from "boring-avatars";
 import {useState} from "react";
+import {LogOutIcon, MenuIcon, SearchIcon, UserIcon} from "lucide-react";
+import MobileOverlay from "@/app/components/ui/MobileOverlay";
+import Search from "@/app/components/Search";
 
 // Component cho Desktop
 function DesktopNavbar({
@@ -105,98 +108,86 @@ function MobileNavbar({
 }) {
     const router = useRouter();
     const [showSearch, setShowSearch] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [openMenu, setOpenMenu] = useState(false);
+
+    const selectCate = (cate: ModelsCategory) => {
+        router.push(`/categories/${cate.id}`)
+        setOpen(false);
+    }
 
     return (
-        <div className="md:hidden w-full">
-            {/* Top bar */}
-            <div className="flex h-16 items-center justify-between px-4 gap-2">
-                {/* Logo */}
-                <Link href="/" className="text-sm font-bold tracking-tighter text-primary shrink-0">
-                    Đọc Luôn
-                </Link>
+        <div className="md:hidden flex items-center px-4 py-2 gap-4">
+            {/* Logo */}
+            <Link href="/" className="text-sm font-bold tracking-tighter"
+                  onClick={() => selectCate({id: '/books',})}>
+                Đọc Luôn
+            </Link>
 
-                <div className="flex items-center gap-2">
-                    {/* Categories Dropdown */}
-                    <Dropdown>
-                        <DropdownTrigger render={() =>
-                            <Button isIconOnly size='sm' variant='tertiary'>
-                                📚
-                            </Button>
-                        }>
-                        </DropdownTrigger>
-                        <DropdownPopover>
-                            <DropdownMenu
-                                aria-label="Categories"
-                                className="max-h-[400px] overflow-y-auto"
-                            >
-                                <DropdownItem key="all" href="/books">
-                                    Tất cả
-                                </DropdownItem>
-                                {categories?.map((cat: ModelsCategory) => (
-                                    <DropdownItem
-                                        key={cat.id}
-                                        href={`/categories/${cat.id}`}
-                                    >
-                                        {cat.name}
-                                    </DropdownItem>
-                                )) || <DropdownItem>Đang tải...</DropdownItem>}
-                            </DropdownMenu>
-                        </DropdownPopover>
-                    </Dropdown>
+            {/* Search Icon */}
+            <Button
+                isIconOnly
+                size='sm'
+                variant='tertiary'
+                onClick={() => setShowSearch(!showSearch)}
+                className='ml-auto'
+            >
+                <SearchIcon/>
+            </Button>
 
-                    {/* Search Icon */}
-                    <Button
-                        isIconOnly
-                        size='sm'
-                        variant='tertiary'
-                        onClick={() => setShowSearch(!showSearch)}
-                    >
-                        🔍
+            <Button isIconOnly variant='tertiary' size='sm' onClick={() => setOpen(true)}>
+                <MenuIcon/>
+            </Button>
+
+            {/* Avatar / Login */}
+            {me ? (
+                <Avatar variant='beam' size={36} onClick={() => setOpenMenu(true)}/>
+            ) : (
+                <Link href="/login">
+                    <Button isIconOnly variant='primary' size='sm'>
+                        <UserIcon/>
                     </Button>
-
-                    {/* Avatar / Login */}
-                    {me ? (
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Avatar variant='beam' size={32}/>
-                            </DropdownTrigger>
-                            <DropdownPopover placement='bottom right'>
-                                <DropdownMenu aria-label="Profile Actions">
-                                    <DropdownItem key="profile" href="/profile">Hồ sơ của tôi</DropdownItem>
-                                    <DropdownItem key="settings">Cài đặt</DropdownItem>
-                                    <DropdownItem key="logout" onClick={logout}>Đăng xuất</DropdownItem>
-                                </DropdownMenu>
-                            </DropdownPopover>
-                        </Dropdown>
-                    ) : (
-                        <Link href="/login">
-                            <Button variant='primary' size='sm'>Đăng nhập</Button>
-                        </Link>
-                    )}
-                </div>
-            </div>
-
-            {/* Search bar (expandable) */}
-            {showSearch && (
-                <div className="px-4 pb-3">
-                    <Input
-                        fullWidth
-                        placeholder="Tìm kiếm sách"
-                        type="search"
-                        autoFocus
-                        onKeyDown={e => {
-                            if (e.key === 'Enter') {
-                                const searchTerm = e.currentTarget.value;
-                                if (searchTerm) {
-                                    router.push(`/books?search=${searchTerm}`);
-                                }
-                                e.currentTarget.value = '';
-                                setShowSearch(false);
-                            }
-                        }}
-                    />
-                </div>
+                </Link>
             )}
+
+            <MobileOverlay isOpen={open} onClose={() => setOpen(false)}>
+                <div className='flex flex-col gap-4 text-center'>
+                    <Link href='/books' onClick={() => setOpen(false)}>
+                        Tất cả
+                    </Link>
+                    {categories.map(cate => (
+                        <div
+                            key={cate.id}
+                            aria-label={cate.name}
+                            onClick={() => selectCate(cate)}
+                        >
+                            {cate.name}
+                        </div>
+                    ))}
+                </div>
+            </MobileOverlay>
+
+            <MobileOverlay isOpen={openMenu} onClose={() => setOpenMenu(false)}>
+                <div className='flex flex-col gap-4 justify-center items-center h-full'>
+                    <Link href="/profile">
+                        <Button variant='tertiary' type='button'>
+                            <UserIcon/>
+                            Tài khoản
+                        </Button>
+                    </Link>
+                    <Button variant='tertiary' type='button' onClick={() => {
+                        logout();
+                        setOpenMenu(false);
+                    }}>
+                        <LogOutIcon/>
+                        Đăng xuất
+                    </Button>
+                </div>
+            </MobileOverlay>
+
+            <MobileOverlay isOpen={showSearch} onClose={() => setShowSearch(false)}>
+                <Search onClose={() => setShowSearch(false)}/>
+            </MobileOverlay>
         </div>
     );
 }

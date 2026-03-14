@@ -8,6 +8,7 @@ type UserBookServiceInterface interface {
 	AddBookToUser(userID int, bookID string) error
 	RemoveBookFromUser(userID int, bookID string) error
 	GetBooksByUser(userID int, limit int) ([]models.UserBook, error)
+	FindByID(userID int, bookID string) (*models.UserBook, error)
 }
 
 type UserBookServiceImpl struct {
@@ -46,4 +47,8 @@ func (s *UserBookServiceImpl) RemoveBookFromUser(userID int, bookID string) erro
 
 func (s *UserBookServiceImpl) GetBooksByUser(userID int, limit int) ([]models.UserBook, error) {
 	return s.userBookModelInterface.GetBooksByUser(userID, limit)
+}
+
+func (s *UserBookServiceImpl) FindByID(userID int, bookID string) (*models.UserBook, error) {
+	return s.userBookModelInterface.FindByID(userID, bookID)
 }
