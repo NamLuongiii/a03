@@ -1,8 +1,8 @@
 import {createFileRoute, useNavigate} from '@tanstack/react-router'
 import {ArrowRight, LockKeyhole, User} from "lucide-react";
 import {Field, Input, Label} from "@headlessui/react";
-import {Button} from "../../components/ui/Button.tsx";
-import {cn} from "../../ultis/cn.ts";
+import {Button} from "@components/ui/Button.tsx";
+import {cn} from "@/ultis/cn.ts";
 import {useForm} from "react-hook-form";
 import {useAuth} from "../../Auth.tsx";
 import {useMutation} from "@tanstack/react-query";
@@ -42,8 +42,8 @@ function RouteComponent() {
     return (
         <div className="min-h-screen bg-main-bg flex items-center justify-center p-6 font-sans">
             {/* Container chính bento-style */}
-            <div className="w-full max-w-[420px]">
-                <div className="admin-card !p-10 shadow-xl border-slate-200/60">
+            <div className="w-full max-w-105">
+                <div className="admin-card p-10! shadow-xl border-slate-200/60">
 
                     {/* Logo hoặc Tiêu đề */}
                     <div className="mb-10 text-center">
@@ -106,7 +106,7 @@ function RouteComponent() {
                         <Button
                             type="submit"
                             variant="primary"
-                            className="w-full !py-4 !text-base shadow-lg shadow-blue-500/10"
+                            className="w-full py-4! text-base! shadow-lg shadow-blue-500/10"
                             isLoading={isPending}
                         >
                             Đăng nhập hệ thống
