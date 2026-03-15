@@ -10,6 +10,10 @@ import { client } from "./client.gen";
 import type {
   DeleteBooksByIdData,
   DeleteBooksByIdResponses,
+  DeleteBooksTestDeleteFolderData,
+  DeleteBooksTestDeleteFolderResponses,
+  DeleteUserBooksByBookIdData,
+  DeleteUserBooksByBookIdResponses,
   GetAuthMeData,
   GetAuthMeResponses,
   GetAuthorsData,
@@ -26,6 +30,10 @@ import type {
   GetBooksFeaturedData,
   GetBooksFeaturedResponses,
   GetBooksResponses,
+  GetUserBooksByBookIdData,
+  GetUserBooksByBookIdResponses,
+  GetUserBooksData,
+  GetUserBooksResponses,
   PostAuthLoginData,
   PostAuthLoginResponses,
   PostAuthorsData,
@@ -42,10 +50,16 @@ import type {
   PostBooksByIdCommentsResponses,
   PostBooksByIdRatingsData,
   PostBooksByIdRatingsResponses,
+  PostBooksCreateToolData,
+  PostBooksCreateToolResponses,
   PostBooksData,
   PostBooksResponses,
-  PostBooksUnzipData,
-  PostBooksUnzipResponses,
+  PostBooksTestDeleteData,
+  PostBooksTestDeleteResponses,
+  PostBooksTestUploadData,
+  PostBooksTestUploadResponses,
+  PostUserBooksData,
+  PostUserBooksResponses,
   PutBooksByIdData,
   PutBooksByIdResponses,
 } from "./types.gen";
@@ -267,6 +281,7 @@ export class Books {
     >({
       ...formDataBodySerializer,
       responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
       url: "/books",
       ...options,
       headers: {
@@ -311,6 +326,29 @@ export class Books {
   }
 
   /**
+   * Create a new book for a tool
+   */
+  public static postBooksCreateTool<ThrowOnError extends boolean = false>(
+    options?: Options<PostBooksCreateToolData, ThrowOnError>,
+  ) {
+    return (options?.client ?? client).post<
+      PostBooksCreateToolResponses,
+      unknown,
+      ThrowOnError
+    >({
+      ...formDataBodySerializer,
+      responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
+      url: "/books/create-tool",
+      ...options,
+      headers: {
+        "Content-Type": null,
+        ...options?.headers,
+      },
+    });
+  }
+
+  /**
    * Get featured books
    */
   public static getBooksFeatured<ThrowOnError extends boolean = false>(
@@ -328,23 +366,74 @@ export class Books {
   }
 
   /**
-   * Unzip a book
+   * Test delete file
+   *
+   * Xóa một file dựa trên đường dẫn cung cấp
    */
-  public static postBooksUnzip<ThrowOnError extends boolean = false>(
-    options?: Options<PostBooksUnzipData, ThrowOnError>,
+  public static postBooksTestDelete<ThrowOnError extends boolean = false>(
+    options: Options<PostBooksTestDeleteData, ThrowOnError>,
   ) {
-    return (options?.client ?? client).post<
-      PostBooksUnzipResponses,
+    return (options.client ?? client).post<
+      PostBooksTestDeleteResponses,
       unknown,
       ThrowOnError
     >({
       ...formDataBodySerializer,
       responseType: "json",
-      url: "/books/unzip",
+      security: [{ name: "Authorization", type: "apiKey" }],
+      url: "/books/test-delete",
+      ...options,
+      headers: {
+        "Content-Type": null,
+        ...options.headers,
+      },
+    });
+  }
+
+  /**
+   * Delete folder on R1
+   *
+   * Delete folder on R1
+   */
+  public static deleteBooksTestDeleteFolder<
+    ThrowOnError extends boolean = false,
+  >(options?: Options<DeleteBooksTestDeleteFolderData, ThrowOnError>) {
+    return (options?.client ?? client).delete<
+      DeleteBooksTestDeleteFolderResponses,
+      unknown,
+      ThrowOnError
+    >({
+      ...formDataBodySerializer,
+      responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
+      url: "/books/test-delete-folder",
       ...options,
       headers: {
         "Content-Type": null,
         ...options?.headers,
+      },
+    });
+  }
+
+  /**
+   * Test upload file
+   */
+  public static postBooksTestUpload<ThrowOnError extends boolean = false>(
+    options: Options<PostBooksTestUploadData, ThrowOnError>,
+  ) {
+    return (options.client ?? client).post<
+      PostBooksTestUploadResponses,
+      unknown,
+      ThrowOnError
+    >({
+      ...formDataBodySerializer,
+      responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
+      url: "/books/test-upload",
+      ...options,
+      headers: {
+        "Content-Type": null,
+        ...options.headers,
       },
     });
   }
@@ -361,6 +450,7 @@ export class Books {
       ThrowOnError
     >({
       responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
       url: "/books/{id}",
       ...options,
     });
@@ -396,6 +486,7 @@ export class Books {
     >({
       ...formDataBodySerializer,
       responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
       url: "/books/{id}",
       ...options,
       headers: {
@@ -434,6 +525,7 @@ export class Books {
       ThrowOnError
     >({
       responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
       url: "/books/{id}/comments",
       ...options,
       headers: {
@@ -455,7 +547,92 @@ export class Books {
       ThrowOnError
     >({
       responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
       url: "/books/{id}/ratings",
+      ...options,
+    });
+  }
+}
+
+export class UserBooks {
+  /**
+   * Get books by user
+   *
+   * Get books by user
+   */
+  public static getUserBooks<ThrowOnError extends boolean = false>(
+    options?: Options<GetUserBooksData, ThrowOnError>,
+  ) {
+    return (options?.client ?? client).get<
+      GetUserBooksResponses,
+      unknown,
+      ThrowOnError
+    >({
+      responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
+      url: "/user-books",
+      ...options,
+    });
+  }
+
+  /**
+   * Add book to user
+   *
+   * Add book to user
+   */
+  public static postUserBooks<ThrowOnError extends boolean = false>(
+    options: Options<PostUserBooksData, ThrowOnError>,
+  ) {
+    return (options.client ?? client).post<
+      PostUserBooksResponses,
+      unknown,
+      ThrowOnError
+    >({
+      responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
+      url: "/user-books",
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    });
+  }
+
+  /**
+   * Get user book by book ID
+   */
+  public static getUserBooksByBookId<ThrowOnError extends boolean = false>(
+    options: Options<GetUserBooksByBookIdData, ThrowOnError>,
+  ) {
+    return (options.client ?? client).get<
+      GetUserBooksByBookIdResponses,
+      unknown,
+      ThrowOnError
+    >({
+      responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
+      url: "/user-books/{bookID}",
+      ...options,
+    });
+  }
+
+  /**
+   * Remove book from user
+   *
+   * Remove book from user
+   */
+  public static deleteUserBooksByBookId<ThrowOnError extends boolean = false>(
+    options: Options<DeleteUserBooksByBookIdData, ThrowOnError>,
+  ) {
+    return (options.client ?? client).delete<
+      DeleteUserBooksByBookIdResponses,
+      unknown,
+      ThrowOnError
+    >({
+      responseType: "json",
+      security: [{ name: "Authorization", type: "apiKey" }],
+      url: "/user-books/{book_id}",
       ...options,
     });
   }

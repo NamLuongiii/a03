@@ -3,6 +3,7 @@ package seeding
 import (
 	"quickstart/functions"
 	"quickstart/models"
+	"quickstart/types"
 
 	"gorm.io/gorm"
 )
@@ -21,7 +22,7 @@ func AccountSeeding(db *gorm.DB) error {
 	}
 	accounts := []models.Account{
 		{Name: "namlk", Email: "namlk@solashi.com", HPassword: hp},
-		{Name: "namluong", Email: "luongkhacnam222@gmail.com", HPassword: hp},
+		{Name: "namluong", Email: "luongkhacnam222@gmail.com", HPassword: hp, Role: string(types.RoleAdmin)},
 	}
 
 	db.Create(&accounts)

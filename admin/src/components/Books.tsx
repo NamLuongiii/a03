@@ -6,7 +6,13 @@ import {deleteBooksByIdMutation, getBooksOptions, getBooksQueryKey, type ModelsB
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {Button, Chip} from "@heroui/react";
 import {useAlerts} from "@/providers/AlertProvider.tsx";
-import {useState} from "react";
+import {useMemo, useState} from "react";
+import {getFullURL} from "@/ultis/getFullURL.ts";
+
+type TQuery = {
+    search?: string,
+    category?: string,
+}
 
 export default function BooksPage() {
     const navigate = useNavigate();
@@ -14,6 +20,7 @@ export default function BooksPage() {
     const alerts = useAlerts()
 
     const [page, setPage] = useState(1);
+    const [queries, setQueries] = useState<TQuery | null>()
 
     // 1. Mutation để xóa sách
     const {mutateAsync: deleteBook} = useMutation(deleteBooksByIdMutation());
@@ -29,7 +36,11 @@ export default function BooksPage() {
 
     // Hàm xóa nhanh
     const removeBookCache = (id: string) => {
-        const bookKey = getBooksQueryKey({query: {page: 1, size: 24}})
+        const bookKey = getBooksQueryKey({
+            query: {
+                page: 1, size: 24, ...queries
+            }
+        })
         const d = queryClient.getQueryData(bookKey) as { data: { items: ModelsBook[] } }
 
         // remove item id from an array
@@ -41,6 +52,28 @@ export default function BooksPage() {
         navigate({to: '/book/new'});
     };
 
+    const forms = useMemo(() => {
+        return [
+            {
+                name: 'search', title: 'Tên',
+            }, {
+                name: 'category', title: 'Danh mục ID',
+
+            }
+        ]
+    }, [])
+
+    const onFormSubmit = (data: Record<string, string>) => {
+        const q = {} as TQuery;
+        if (data.search) {
+            q['search'] = data.search;
+        }
+        if (data.category) {
+            q['category'] = data.category;
+        }
+        setQueries(q)
+    }
+
     // 2. Định nghĩa Columns bên trong hoặc truyền mutation vào
     const columns: ColumnDef<ModelsBook>[] = [
         {
@@ -49,7 +82,8 @@ export default function BooksPage() {
             cell: ({row}) => (
                 <div className="w-10 h-14 rounded-lg bg-slate-100 overflow-hidden border border-slate-200">
                     {row.original.cover?.xs ? (
-                        <img src={row.original.cover.xs} className="w-full h-full object-cover" alt="cover"/>
+                        <img src={getFullURL(row.original.cover.xs)} className="w-full h-full object-cover"
+                             alt="cover"/>
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400">No
                             Img</div>
@@ -134,7 +168,7 @@ export default function BooksPage() {
         },
     ];
 
-    const {data: response, isLoading} = useQuery(getBooksOptions({query: {page: page, size: 24}}));
+    const {data: response, isLoading} = useQuery(getBooksOptions({query: {page: page, size: 24, ...queries}}));
 
     return (
         <div className="space-y-6">
@@ -146,12 +180,16 @@ export default function BooksPage() {
                 <Button onPress={onCreateBook}>Thêm sách mới</Button>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-                {response?.data && response.data.items && (
-                    <DataTable columns={columns} paginationData={response.data} isLoading={isLoading}
-                               setPage={setPage}/>
-                )}
-            </div>
+            {response?.data && response.data.items && (
+                <DataTable
+                    columns={columns}
+                    paginationData={response.data}
+                    isLoading={isLoading}
+                    setPage={setPage}
+                    forms={forms}
+                    onFormSubmit={onFormSubmit}
+                />
+            )}
         </div>
     );
 }

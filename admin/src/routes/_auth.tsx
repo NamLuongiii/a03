@@ -16,7 +16,7 @@ function AuthLayout() {
     return (
         <div className="flex min-h-screen bg-slate-50/50 font-sans">
             {/* 1. Sidebar (Đã có logic Responsive bên trong) */}
-            <Sidebar />
+            <Sidebar/>
 
             {/* 2. Vùng Content chính */}
             <main className={cn(
@@ -34,13 +34,14 @@ function AuthLayout() {
 
                     {/* Render các trang con (Books, Dashboard, etc.) */}
                     <section className="animate-in fade-in slide-in-from-bottom-2 duration-700">
-                        <Outlet />
+                        <Outlet/>
                     </section>
                 </div>
 
                 {/* Footer nhẹ nhàng chuẩn Admin Panel (Tùy chọn) */}
-                <footer className="py-6 px-8 text-center text-[10px] text-slate-400 font-medium uppercase tracking-widest">
-                    &copy; 2026 BookOn Admin • Built with TanStack
+                <footer
+                    className="py-6 px-8 text-center text-[10px] text-slate-400 font-medium uppercase tracking-widest">
+                    &copy; 2026 Trang quản lý <a href="docluon.com" target='_blank'>Docluon.com</a>
                 </footer>
             </main>
         </div>

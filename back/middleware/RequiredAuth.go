@@ -10,7 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func RequiredAuth(role types.Role) gin.HandlerFunc {
+func RequiredAuth(roles ...types.Role) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Get token from the header
 		tokenString := c.GetHeader("Authorization")
@@ -43,7 +43,15 @@ func RequiredAuth(role types.Role) gin.HandlerFunc {
 		}
 
 		// Check role
-		if claims.Role != string(role) {
+		var isValidRole bool
+		for _, role := range roles {
+			if claims.Role == string(role) {
+				isValidRole = true
+				break
+			}
+		}
+		
+		if !isValidRole {
 			c.AbortWithStatusJSON(http.StatusForbidden, types.CommonResponse{
 				Success: false,
 				Message: "Forbidden",

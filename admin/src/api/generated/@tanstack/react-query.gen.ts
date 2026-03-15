@@ -10,10 +10,14 @@ import {
 import type { AxiosError } from "axios";
 
 import { client } from "../client.gen";
-import { Auth, Authors, Books, type Options } from "../sdk.gen";
+import { Auth, Authors, Books, type Options, UserBooks } from "../sdk.gen";
 import type {
   DeleteBooksByIdData,
   DeleteBooksByIdResponse,
+  DeleteBooksTestDeleteFolderData,
+  DeleteBooksTestDeleteFolderResponse,
+  DeleteUserBooksByBookIdData,
+  DeleteUserBooksByBookIdResponse,
   GetAuthMeData,
   GetAuthMeResponse,
   GetAuthorsData,
@@ -30,6 +34,10 @@ import type {
   GetBooksFeaturedData,
   GetBooksFeaturedResponse,
   GetBooksResponse,
+  GetUserBooksByBookIdData,
+  GetUserBooksByBookIdResponse,
+  GetUserBooksData,
+  GetUserBooksResponse,
   PostAuthLoginData,
   PostAuthLoginResponse,
   PostAuthorsData,
@@ -46,10 +54,16 @@ import type {
   PostBooksByIdCommentsResponse,
   PostBooksByIdRatingsData,
   PostBooksByIdRatingsResponse,
+  PostBooksCreateToolData,
+  PostBooksCreateToolResponse,
   PostBooksData,
   PostBooksResponse,
-  PostBooksUnzipData,
-  PostBooksUnzipResponse,
+  PostBooksTestDeleteData,
+  PostBooksTestDeleteResponse,
+  PostBooksTestUploadData,
+  PostBooksTestUploadResponse,
+  PostUserBooksData,
+  PostUserBooksResponse,
   PutBooksByIdData,
   PutBooksByIdResponse,
 } from "../types.gen";
@@ -549,6 +563,33 @@ export const getBooksCategoriesOptions = (
     queryKey: getBooksCategoriesQueryKey(options),
   });
 
+/**
+ * Create a new book for a tool
+ */
+export const postBooksCreateToolMutation = (
+  options?: Partial<Options<PostBooksCreateToolData>>,
+): UseMutationOptions<
+  PostBooksCreateToolResponse,
+  AxiosError<DefaultError>,
+  Options<PostBooksCreateToolData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostBooksCreateToolResponse,
+    AxiosError<DefaultError>,
+    Options<PostBooksCreateToolData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await Books.postBooksCreateTool({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
 export const getBooksFeaturedQueryKey = (
   options?: Options<GetBooksFeaturedData>,
 ) => createQueryKey("getBooksFeatured", options);
@@ -578,22 +619,80 @@ export const getBooksFeaturedOptions = (
   });
 
 /**
- * Unzip a book
+ * Test delete file
+ *
+ * Xóa một file dựa trên đường dẫn cung cấp
  */
-export const postBooksUnzipMutation = (
-  options?: Partial<Options<PostBooksUnzipData>>,
+export const postBooksTestDeleteMutation = (
+  options?: Partial<Options<PostBooksTestDeleteData>>,
 ): UseMutationOptions<
-  PostBooksUnzipResponse,
+  PostBooksTestDeleteResponse,
   AxiosError<DefaultError>,
-  Options<PostBooksUnzipData>
+  Options<PostBooksTestDeleteData>
 > => {
   const mutationOptions: UseMutationOptions<
-    PostBooksUnzipResponse,
+    PostBooksTestDeleteResponse,
     AxiosError<DefaultError>,
-    Options<PostBooksUnzipData>
+    Options<PostBooksTestDeleteData>
   > = {
     mutationFn: async (fnOptions) => {
-      const { data } = await Books.postBooksUnzip({
+      const { data } = await Books.postBooksTestDelete({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * Delete folder on R1
+ *
+ * Delete folder on R1
+ */
+export const deleteBooksTestDeleteFolderMutation = (
+  options?: Partial<Options<DeleteBooksTestDeleteFolderData>>,
+): UseMutationOptions<
+  DeleteBooksTestDeleteFolderResponse,
+  AxiosError<DefaultError>,
+  Options<DeleteBooksTestDeleteFolderData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteBooksTestDeleteFolderResponse,
+    AxiosError<DefaultError>,
+    Options<DeleteBooksTestDeleteFolderData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await Books.deleteBooksTestDeleteFolder({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+/**
+ * Test upload file
+ */
+export const postBooksTestUploadMutation = (
+  options?: Partial<Options<PostBooksTestUploadData>>,
+): UseMutationOptions<
+  PostBooksTestUploadResponse,
+  AxiosError<DefaultError>,
+  Options<PostBooksTestUploadData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostBooksTestUploadResponse,
+    AxiosError<DefaultError>,
+    Options<PostBooksTestUploadData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await Books.postBooksTestUpload({
         ...options,
         ...fnOptions,
         throwOnError: true,
@@ -755,6 +854,119 @@ export const postBooksByIdRatingsMutation = (
   > = {
     mutationFn: async (fnOptions) => {
       const { data } = await Books.postBooksByIdRatings({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const getUserBooksQueryKey = (options?: Options<GetUserBooksData>) =>
+  createQueryKey("getUserBooks", options);
+
+/**
+ * Get books by user
+ *
+ * Get books by user
+ */
+export const getUserBooksOptions = (options?: Options<GetUserBooksData>) =>
+  queryOptions<
+    GetUserBooksResponse,
+    AxiosError<DefaultError>,
+    GetUserBooksResponse,
+    ReturnType<typeof getUserBooksQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await UserBooks.getUserBooks({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getUserBooksQueryKey(options),
+  });
+
+/**
+ * Add book to user
+ *
+ * Add book to user
+ */
+export const postUserBooksMutation = (
+  options?: Partial<Options<PostUserBooksData>>,
+): UseMutationOptions<
+  PostUserBooksResponse,
+  AxiosError<DefaultError>,
+  Options<PostUserBooksData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostUserBooksResponse,
+    AxiosError<DefaultError>,
+    Options<PostUserBooksData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await UserBooks.postUserBooks({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const getUserBooksByBookIdQueryKey = (
+  options: Options<GetUserBooksByBookIdData>,
+) => createQueryKey("getUserBooksByBookId", options);
+
+/**
+ * Get user book by book ID
+ */
+export const getUserBooksByBookIdOptions = (
+  options: Options<GetUserBooksByBookIdData>,
+) =>
+  queryOptions<
+    GetUserBooksByBookIdResponse,
+    AxiosError<DefaultError>,
+    GetUserBooksByBookIdResponse,
+    ReturnType<typeof getUserBooksByBookIdQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await UserBooks.getUserBooksByBookId({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getUserBooksByBookIdQueryKey(options),
+  });
+
+/**
+ * Remove book from user
+ *
+ * Remove book from user
+ */
+export const deleteUserBooksByBookIdMutation = (
+  options?: Partial<Options<DeleteUserBooksByBookIdData>>,
+): UseMutationOptions<
+  DeleteUserBooksByBookIdResponse,
+  AxiosError<DefaultError>,
+  Options<DeleteUserBooksByBookIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteUserBooksByBookIdResponse,
+    AxiosError<DefaultError>,
+    Options<DeleteUserBooksByBookIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await UserBooks.deleteUserBooksByBookId({
         ...options,
         ...fnOptions,
         throwOnError: true,

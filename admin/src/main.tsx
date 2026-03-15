@@ -1,4 +1,3 @@
-import {StrictMode} from 'react'
 import ReactDOM from 'react-dom/client'
 import {createRouter, RouterProvider} from '@tanstack/react-router'
 import {QueryClient, QueryClientProvider,} from '@tanstack/react-query'
@@ -10,6 +9,7 @@ import {ToastContainer} from "react-toastify";
 import {AuthProvider, useAuth} from "./Auth.tsx";
 import {Toaster} from "sonner";
 import {AlertDialogProvider} from "@/providers/AlertProvider.tsx";
+import {Toast} from '@heroui/react';
 
 // Create a new router instance
 const router = createRouter({
@@ -31,7 +31,6 @@ declare module '@tanstack/react-router' {
 // eslint-disable-next-line react-refresh/only-export-components
 function InnerApp() {
     const auth = useAuth()
-    console.log(auth)
     return <RouterProvider router={router} context={{auth}}/>
 }
 
@@ -49,7 +48,7 @@ const rootElement = document.getElementById('root')!
 if (!rootElement.innerHTML) {
     const root = ReactDOM.createRoot(rootElement)
     root.render(
-        <StrictMode>
+        <div>
             <QueryClientProvider client={queryClient}>
                 <AuthProvider>
                     <AlertDialogProvider>
@@ -58,7 +57,8 @@ if (!rootElement.innerHTML) {
                 </AuthProvider>
                 <ToastContainer/>
             </QueryClientProvider>
+            <Toast.Provider/>
             <Toaster/>
-        </StrictMode>,
+        </div>,
     )
 }

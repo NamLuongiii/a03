@@ -1,8 +1,9 @@
 import {client} from './generated/client.gen.ts';
+import {toast} from "@heroui/react";
 
 // Cấu hình Base URL
 client.setConfig({
-    baseURL: 'http://localhost:8080/api/v1'
+    baseURL: import.meta.env.VITE_API_URL,
 });
 
 client.instance.interceptors.request.use((config) => {
@@ -17,10 +18,8 @@ client.instance.interceptors.request.use((config) => {
 client.instance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.status === 401) {
-            localStorage.removeItem('token');
-            window.location.href = '/login';
-        }
+        console.error('Error:', error);
+        toast.danger(error.message);
         return Promise.reject(error);
     }
 );
@@ -28,4 +27,4 @@ client.instance.interceptors.response.use(
 // Export
 export * from './generated';
 export * from './generated/@tanstack/react-query.gen';
-export { client };
+export {client};

@@ -12,6 +12,7 @@ import {useNavigate} from "@tanstack/react-router";
 import {AuthorSelect} from "@components/AuthorSelect.tsx";
 import {Alert, Input as HeroInput, Label, Surface} from "@heroui/react"
 import {useAlerts} from "@/providers/AlertProvider.tsx";
+import {getFullURL} from "@/ultis/getFullURL.ts";
 
 type Props = {
     id: string;
@@ -76,7 +77,7 @@ export function UpdateBook({id, book}: Props): JSX.Element {
                     render={({field}) => (
                         <CoverInput
                             value={field.value as File}
-                            initialUrl={book.cover?.sm}
+                            initialUrl={getFullURL(book.cover?.sm)}
                             onChange={field.onChange}
                         />
                     )}

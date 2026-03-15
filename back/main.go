@@ -170,7 +170,7 @@ func main() {
 		auth := v1.Group("/auth")
 		{
 			auth.GET("/me",
-				middleware.RequiredAuth(types.RoleUser),
+				middleware.RequiredAuth(types.RoleUser, types.RoleAdmin),
 				authHandler.Me)
 			auth.POST("/login", authHandler.Login)
 			auth.POST("/signup", authHandler.SignUp)

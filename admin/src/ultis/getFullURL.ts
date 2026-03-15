@@ -1,0 +1,1 @@
+export const getFullURL = (path?: string) => `${import.meta.env.VITE_OBJECT_STORAGE_BASE}${path}`
