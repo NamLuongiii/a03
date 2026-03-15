@@ -69,7 +69,6 @@ function DesktopNavbar({
                         <DropdownPopover placement='bottom right'>
                             <DropdownMenu aria-label="Profile Actions">
                                 <DropdownItem key="profile" href="/profile">Hồ sơ của tôi</DropdownItem>
-                                <DropdownItem key="settings">Cài đặt</DropdownItem>
                                 <DropdownItem key="logout" onClick={logout}>Đăng xuất</DropdownItem>
                             </DropdownMenu>
                         </DropdownPopover>

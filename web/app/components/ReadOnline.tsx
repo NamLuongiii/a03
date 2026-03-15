@@ -1,9 +1,9 @@
 'use client'
 
 import {ModelsBook} from "@/app/api";
-import {Button, CloseIcon, IconChevronRight, Modal} from "@heroui/react";
+import {Button, ButtonGroup, CloseIcon, IconChevronLeft, IconChevronRight, Modal, Toolbar} from "@heroui/react";
 import {useRouter} from "next/navigation";
-import {Rocket, SquareMenu} from "lucide-react";
+import {MenuIcon, Rocket} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
 import {EpubEngine} from "@/app/epubEngine";
 import BookNavigation from "@/app/components/BookNavigation";
@@ -54,6 +54,11 @@ export default function ReadOnline({book}: Props) {
         bookEngineRef.current.next()
     }
 
+    const prevChapter = () => {
+        if (!bookEngineRef.current) return
+        bookEngineRef.current.previous()
+    }
+
     const jumpToChapter = (item: NavItem) => {
         if (!bookEngineRef.current) return
         setOpen(false)
@@ -66,16 +71,46 @@ export default function ReadOnline({book}: Props) {
         <div ref={renderRef} className='w-full flex-1 mx-auto overflow-scroll'>
         </div>
 
-        <footer className='flex justify-end items-center gap-2 p-2 bg-blue-500 text-white'>
-            <Button isIconOnly onClick={goHome} variant='secondary'><CloseIcon/></Button>
-            <Button
-                isIconOnly
-                variant='secondary'
-                onClick={() => setOpen(true)}><SquareMenu/></Button>
-            <Button variant='primary' className='max-w-4/6' onClick={nextChapter}>
-                <span className='truncate'>{book.name}</span><IconChevronRight/>
-            </Button>
-        </footer>
+        <Toolbar
+            aria-label="Toolbar"
+            orientation='vertical'
+            className='fixed bottom-6 right-6'
+        >
+            <ButtonGroup variant='tertiary'>
+                <Button
+                    aria-label='open-menu'
+                    isIconOnly
+                    onClick={() => setOpen(true)}>
+                    <MenuIcon/>
+                </Button>
+                <Button
+                    aria-label='next-chapter'
+                    isIconOnly
+                    onClick={nextChapter}
+                >
+                    <ButtonGroup.Separator/>
+                    <IconChevronRight/>
+                </Button>
+                <Button
+                    aria-label='previous-chapter'
+                    isIconOnly
+                    onClick={prevChapter}
+                >
+                    <ButtonGroup.Separator/>
+                    <IconChevronLeft/>
+                </Button>
+            </ButtonGroup>
+
+            <ButtonGroup variant='tertiary'>
+                <Button
+                    aria-label='go-home'
+                    isIconOnly
+                    onClick={goHome}
+                >
+                    <CloseIcon/>
+                </Button>
+            </ButtonGroup>
+        </Toolbar>
 
         <Modal isOpen={open} onOpenChange={setOpen}>
             <Modal.Backdrop>

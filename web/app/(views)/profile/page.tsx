@@ -1,5 +1,6 @@
 import {Card} from '@heroui/react'
 import {getAuthMe} from '@/app/api'
+import SavedBooks from "@/app/components/SavedBooks";
 
 export default async function ProfilePage() {
     const res = await getAuthMe()
@@ -14,20 +15,22 @@ export default async function ProfilePage() {
     }
 
     return (
-        <div className="bg-background px-4 py-10 flex justify-center">
+        <div className='space-y-12'>
             <Card className="w-full max-w-2xl p-8 space-y-6">
                 {/* Header */}
                 <div className="flex items-center gap-4">
                     <div>
-                        <h1 className="text-2xl font-semibold">
+                        <h3 className="text-2xl font-semibold">
                             {user.name}
-                        </h1>
+                        </h3>
                         <p className="text-default-500 text-sm">
                             {user.email}
                         </p>
                     </div>
                 </div>
             </Card>
+
+            <SavedBooks/>
         </div>
     )
 }
