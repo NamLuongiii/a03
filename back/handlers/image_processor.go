@@ -102,7 +102,7 @@ func (p *ImageProcessor) ProcessImage(fh *multipart.FileHeader) (
 		b := &bytes.Buffer{}
 
 		// 4️⃣ encode
-		if err := jpeg.Encode(b, resized, &jpeg.Options{Quality: 80}); err != nil {
+		if err := jpeg.Encode(b, resized, &jpeg.Options{Quality: 96}); err != nil {
 			return nil, nil, nil, "", "", "", err
 		}
 

@@ -114,21 +114,21 @@ function MobileNavbar({
 
             {/* Search Icon */}
             <Link href='/search' className='ml-auto'>
-                <Button isIconOnly={true} variant='tertiary' size='sm'>
+                <Button isIconOnly={true} variant='ghost'>
                     <SearchIcon/>
                 </Button>
             </Link>
 
-            <Button isIconOnly variant='tertiary' size='sm' onClick={() => setOpen(true)}>
+            <Button isIconOnly variant='ghost' onClick={() => setOpen(true)}>
                 <MenuIcon/>
             </Button>
 
             {/* Avatar / Login */}
             {me ? (
-                <Avatar variant='beam' size={36} onClick={() => setOpenMenu(true)}/>
+                <Avatar variant='beam' size={32} onClick={() => setOpenMenu(true)}/>
             ) : (
                 <Link href="/login">
-                    <Button isIconOnly variant='tertiary' size='sm'>
+                    <Button isIconOnly variant='ghost'>
                         <UserIcon/>
                     </Button>
                 </Link>
@@ -136,7 +136,10 @@ function MobileNavbar({
 
             <MobileOverlay isOpen={open} onClose={() => setOpen(false)}>
                 <div className='flex flex-col gap-4 text-center'>
-                    <Link href='/books' onClick={() => setOpen(false)}>
+                    <Link
+                        href='/books'
+                        className='text-lg font-semibold'
+                        onClick={() => setOpen(false)}>
                         Tất cả
                     </Link>
                     {categories.map(cate => (
@@ -144,6 +147,7 @@ function MobileNavbar({
                             key={cate.id}
                             aria-label={cate.name}
                             onClick={() => selectCate(cate)}
+                            className='text-lg font-semibold'
                         >
                             {cate.name}
                         </div>

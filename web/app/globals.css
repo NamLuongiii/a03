@@ -21,7 +21,8 @@
 body {
     background: var(--background);
     color: var(--foreground);
-    font-family: Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased; /* Giúp chữ thanh mảnh, đẹp hơn trên Mac/iPhone */
+    -moz-osx-font-smoothing: grayscale;
 }
 
 h1 {

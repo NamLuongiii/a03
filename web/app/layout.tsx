@@ -1,5 +1,5 @@
 import type {Metadata} from "next";
-import {Geist, Geist_Mono} from "next/font/google";
+import {Be_Vietnam_Pro} from "next/font/google";
 import "./globals.css";
 import {Providers} from "./components/providers";
 
@@ -8,8 +8,13 @@ import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
 import {cookies} from "next/headers";
 import {getAuthMe, ModelsAccount} from "@/app/api";
 
-const geistSans = Geist({variable: "--font-geist-sans", subsets: ["latin"]});
-const geistMono = Geist_Mono({variable: "--font-geist-mono", subsets: ["latin"]});
+// Cấu hình font
+const beVietnamPro = Be_Vietnam_Pro({
+    weight: ['400', '500', '600', '700'],
+    subsets: ['vietnamese'],
+    display: 'swap',
+    variable: '--font-be-vietnam', // Đặt biến CSS
+});
 
 export const metadata: Metadata = {
     title: "Đọc Luôn - Đọc sách online",
@@ -45,7 +50,7 @@ export default async function RootLayout({children}: { children: React.ReactNode
 
     return (
         <html lang="vi" className="light">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}>
+        <body className={beVietnamPro.className}>
         <Providers>
             {/* 4. Bao bọc bằng HydrationBoundary để truyền dữ liệu xuống Client */}
             <HydrationBoundary state={dehydrate(queryClient)}>

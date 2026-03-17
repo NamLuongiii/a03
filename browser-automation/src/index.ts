@@ -135,4 +135,4 @@ async function downloadSingleBook(urlDetail: string) {
     crawlBookDetail(page, {detailUrl: urlDetail, downloadUrl})
 }
 
-run(336, 336)
+run(1, 346)
