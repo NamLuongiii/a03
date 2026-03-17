@@ -1,15 +1,17 @@
-import ePub, {Book, NavItem, Rendition} from 'epubjs';
+import ePub, {Book, Location, NavItem, Rendition} from 'epubjs';
 import {getFullUrl} from "@/app/helpers";
 
 export class EpubEngine {
     public rendition: Rendition | null = null; // Lưu lại để điều khiển sau này
-    private book: Book;
-    private baseUrl: string;
+    private readonly book: Book;
+    private readonly baseUrl: string;
     private currentSpineIndex: number = 0;
+    private ID: string
 
-    constructor(unzipRootURL: string) {
+    constructor(ID: string, unzipRootURL: string) {
         this.baseUrl = unzipRootURL.endsWith('/') ? unzipRootURL : `${unzipRootURL}/`;
         this.book = ePub(getFullUrl(this.baseUrl));
+        this.ID = ID
     }
 
     async init() {
@@ -39,6 +41,17 @@ export class EpubEngine {
                 "line-height": "1.7 !important",
                 "max-width": "1000px !important",
                 "margin": "0 auto !important",
+            },
+        });
+        
+        // Tự động lưu vị trí mỗi khi người dùng cuộn hoặc chuyển trang
+        this.rendition.on("relocated", (location: Location) => {
+            this.saveProgress(location.start.cfi);
+
+            // Cập nhật spine index hiện tại
+            const spineItem = this.book.spine.get(location.start.href);
+            if (spineItem) {
+                this.currentSpineIndex = spineItem.index;
             }
         });
 
@@ -140,5 +153,32 @@ export class EpubEngine {
             this.rendition.destroy();
         }
         this.book.destroy();
+    }
+
+    /**
+     * LẤY LỊCH SỬ: Trả về CFI đã lưu
+     */
+    getStoredLocation(): string | null {
+        return localStorage.getItem(this.ID);
+    }
+
+    /**
+     * ĐI TỚI LỊCH SỬ: Nhảy đến vị trí cũ nếu có
+     */
+    async goToStoredLocation() {
+        if (!this.rendition) return;
+
+        const storedCfi = this.getStoredLocation();
+        if (storedCfi) {
+            console.log("Đang quay lại vị trí cũ:", storedCfi);
+            return await this.rendition.display(storedCfi);
+        }
+
+        // Nếu không có lịch sử, bắt đầu từ đầu
+        return await this.start();
+    }
+
+    private saveProgress(cfi: string) {
+        localStorage.setItem(this.ID, cfi);
     }
 }

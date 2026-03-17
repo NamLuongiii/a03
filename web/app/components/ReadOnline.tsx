@@ -27,9 +27,14 @@ export default function ReadOnline({book}: Props) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true)
 
-        if (!book.unzip_root_url || !renderRef.current || !mounted) return;
+        if (
+            !book.unzip_root_url ||
+            !renderRef.current ||
+            !mounted ||
+            !book.id
+        ) return;
 
-        const bookEngine = new EpubEngine(book.unzip_root_url)
+        const bookEngine = new EpubEngine(book.id, book.unzip_root_url)
         bookEngineRef.current = bookEngine
 
         bookEngine.init().then(() => {
@@ -39,11 +44,13 @@ export default function ReadOnline({book}: Props) {
             })
 
             if (!renderRef.current) return
-            bookEngine.render(renderRef.current).catch(alert)
+            bookEngine.render(renderRef.current).then(() => {
+                return bookEngine.goToStoredLocation()
+            }).catch(console.error)
         })
 
         return () => bookEngine.destroy()
-    }, [book.unzip_root_url, mounted]);
+    }, [book.unzip_root_url, mounted, book.id]);
 
     const goHome = () => {
         router.push(`/books/${book.id}`)
@@ -68,7 +75,7 @@ export default function ReadOnline({book}: Props) {
     if (!mounted) return null
 
     return <div className='h-screen flex flex-col'>
-        <div ref={renderRef} className='w-full flex-1 mx-auto overflow-scroll'>
+        <div ref={renderRef} className='w-full h-100vh relative flex-1 mx-auto overflow-hidden'>
         </div>
 
         <Toolbar
