@@ -1,5 +1,5 @@
 'use client';
-import {Button, Dropdown, DropdownItem, DropdownMenu, DropdownPopover, DropdownTrigger,} from "@heroui/react";
+import {Button, Dropdown, DropdownItem, DropdownMenu, DropdownPopover, DropdownTrigger, Modal,} from "@heroui/react";
 import Link from "next/link";
 import {usePathname, useRouter} from "next/navigation";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
@@ -10,17 +10,18 @@ import Avatar from "boring-avatars";
 import {useState} from "react";
 import {LogOutIcon, MenuIcon, SearchIcon, UserIcon} from "lucide-react";
 import MobileOverlay from "@/app/components/ui/MobileOverlay";
+import Search from "@/app/components/Search";
 
-// Component cho Desktop
-function DesktopNavbar({
-                           categories,
-                           me,
-                           logout
-                       }: {
+type Props = {
     categories: ModelsCategory[],
     me?: ModelsAccount | null,
     logout: () => void
-}) {
+}
+
+// Component cho Desktop
+function DesktopNavbar({categories, me, logout}: Props) {
+    const [open, setOpen] = useState(false);
+
     return (
         <div className="hidden md:flex mx-auto h-16 max-w-7xl items-center justify-between px-4 gap-4 w-full">
             {/* Logo */}
@@ -29,35 +30,47 @@ function DesktopNavbar({
             </Link>
 
             {/* Categories + Search */}
-            <div className="flex flex-1 items-center justify-end gap-4">
-                <Dropdown>
-                    <Button variant="tertiary">Thể loại</Button>
-                    <DropdownPopover>
-                        <DropdownMenu
-                            aria-label="Categories"
-                            className="max-h-[400px] overflow-y-auto"
-                        >
-                            <DropdownItem key="all" href="/books">
-                                Tất cả
+            <Dropdown>
+                <Button variant="tertiary" className='ml-auto'>Thể loại</Button>
+                <DropdownPopover>
+                    <DropdownMenu
+                        aria-label="Categories"
+                        className="max-h-100 overflow-y-auto"
+                    >
+                        <DropdownItem key="all" href="/books">
+                            Tất cả
+                        </DropdownItem>
+                        {categories?.map((cat: ModelsCategory) => (
+                            <DropdownItem
+                                key={cat.id}
+                                href={`/categories/${cat.id}`}
+                            >
+                                {cat.name}
                             </DropdownItem>
-                            {categories?.map((cat: ModelsCategory) => (
-                                <DropdownItem
-                                    key={cat.id}
-                                    href={`/categories/${cat.id}`}
-                                >
-                                    {cat.name}
-                                </DropdownItem>
-                            )) || <DropdownItem>Đang tải...</DropdownItem>}
-                        </DropdownMenu>
-                    </DropdownPopover>
-                </Dropdown>
+                        )) || <DropdownItem>Đang tải...</DropdownItem>}
+                    </DropdownMenu>
+                </DropdownPopover>
+            </Dropdown>
 
-                <Link href='/search'>
-                    <Button isIconOnly={true} variant='tertiary'>
-                        <SearchIcon/>
-                    </Button>
-                </Link>
-            </div>
+            <Button isIconOnly variant="tertiary" onClick={() => setOpen(true)}>
+                <SearchIcon/>
+            </Button>
+
+            <Modal isOpen={open} onOpenChange={setOpen}>
+                <Modal.Backdrop>
+                    <Modal.Container placement='top'>
+                        <Modal.Dialog>
+                            <Modal.CloseTrigger/>
+                            <Modal.Header>
+                                <Modal.Heading>Tìm kiếm</Modal.Heading>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <Search onClose={() => setOpen(false)}/>
+                            </Modal.Body>
+                        </Modal.Dialog>
+                    </Modal.Container>
+                </Modal.Backdrop>
+            </Modal>
 
             {/* Avatar / Login */}
             <div className="flex items-center gap-2">
@@ -86,18 +99,11 @@ function DesktopNavbar({
 }
 
 // Component cho Mobile
-function MobileNavbar({
-                          categories,
-                          me,
-                          logout
-                      }: {
-    categories: ModelsCategory[],
-    me?: ModelsAccount | null,
-    logout: () => void
-}) {
+function MobileNavbar({categories, me, logout}: Props) {
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const [openMenu, setOpenMenu] = useState(false);
+    const [openSearch, setOpenSearch] = useState(false);
 
     const selectCate = (cate: ModelsCategory) => {
         router.push(`/categories/${cate.id}`)
@@ -113,11 +119,14 @@ function MobileNavbar({
             </Link>
 
             {/* Search Icon */}
-            <Link href='/search' className='ml-auto'>
-                <Button isIconOnly={true} variant='ghost'>
-                    <SearchIcon/>
-                </Button>
-            </Link>
+            <Button
+                isIconOnly
+                className='ml-auto'
+                variant='ghost'
+                onClick={() => setOpenSearch(true)}
+            >
+                <SearchIcon/>
+            </Button>
 
             <Button isIconOnly variant='ghost' onClick={() => setOpen(true)}>
                 <MenuIcon/>
@@ -172,6 +181,11 @@ function MobileNavbar({
                     </Button>
                 </div>
             </MobileOverlay>
+
+            <MobileOverlay isOpen={openSearch} onClose={() => setOpenSearch(false)}>
+                <div className='text-lg font-semibold'>Tìm kiếm</div>
+                <Search onClose={() => setOpenSearch(false)}/>
+            </MobileOverlay>
         </div>
     );
 }
@@ -206,3 +220,4 @@ export default function Navbar() {
         </nav>
     );
 }
+

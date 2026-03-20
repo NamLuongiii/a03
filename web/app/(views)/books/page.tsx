@@ -15,13 +15,15 @@ export default async function BooksPage({searchParams}: Props) {
     const page = Number(resolvedSearchParams.page) || 1;
     const size = Number(resolvedSearchParams.size) || 24; // 12 thường chia hết cho 2, 3, 4, 6 nên grid đẹp hơn
     const search = (resolvedSearchParams.search as string) || "";
+    const author = (resolvedSearchParams.author as string) || "";
 
     // Giả sử API của bạn trả về data có total_pages hoặc total_items
     const {data} = await getBooks({
         query: {
             page,
             size,
-            search
+            search,
+            author,
         }
     });
     const paginationData = data?.data
@@ -40,7 +42,7 @@ export default async function BooksPage({searchParams}: Props) {
 
             {/* Header section */}
             <div className="flex flex-col gap-2">
-                <h1 className="text-2xl font-bold uppercase tracking-widest">
+                <h1 className="text-lg font-semibold">
                     {search ? `Kết quả: ${search}` : "Thư viện sách"}
                 </h1>
                 <div className="h-1 w-12 bg-primary"/>
@@ -54,7 +56,7 @@ export default async function BooksPage({searchParams}: Props) {
                     ))}
                 </div>
             ) : (
-                <div className="py-20 text-center border border-dashed border-divider">
+                <div className="py-20 text-center">
                     <p className="text-default-400">Không tìm thấy cuốn sách nào khớp với yêu cầu của bạn.</p>
                 </div>
             )}

@@ -1,7 +1,9 @@
-export const revalidate = 1800;
-
+import {Button} from "@heroui/react";
 import {getBooksFeatured} from "@/app/api";
 import FeaturedBooks from "@/app/components/FeaturedBooks";
+import Link from "next/link";
+
+export const revalidate = 1800;
 
 export default async function HomePage() {
     const {data, error} = await getBooksFeatured({
@@ -23,6 +25,12 @@ export default async function HomePage() {
                 description="Những cuốn sách vừa cập nhật trên hệ thống."
                 books={books}
             />
+
+            <section className="flex justify-center items-center">
+                <Link href='/categories'>
+                    <Button type='button' variant='primary'>Xem thêm</Button>
+                </Link>
+            </section>
         </div>
     );
 }

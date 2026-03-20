@@ -34,13 +34,12 @@ export default async function CategoryPage({params, searchParams}: Props) {
         <div className="space-y-10">
             <Breadcrumbs>
                 <Breadcrumbs.Item href="/">Trang chủ</Breadcrumbs.Item>
-                <Breadcrumbs.Item href="/">Danh mục</Breadcrumbs.Item>
-                <Breadcrumbs.Item>{cateID}</Breadcrumbs.Item>
+                <Breadcrumbs.Item href="/categories">Danh mục</Breadcrumbs.Item>
             </Breadcrumbs>
 
             {/* Header: Hiển thị tên Category (nếu API có trả về tên, hoặc dùng ID tạm) */}
             <div className="flex flex-col gap-2 border-l-4 border-primary pl-4">
-                <h1 className="text-xl font-bold uppercase tracking-[0.2em] text-foreground">
+                <h1 className="text-lg font-semibold">
                     Thể loại: {cateID}
                 </h1>
                 <p className="text-tiny text-default-400 uppercase tracking-widest">
@@ -56,11 +55,9 @@ export default async function CategoryPage({params, searchParams}: Props) {
                         <BookCard key={book.id} book={book}/>))}
                 </div>
             ) : (
-                <div className="py-32 text-center border border-dashed border-divider">
-                    <p className="text-sm text-default-400 italic font-serif">
-                        Hiện chưa có sách nào trong thể loại này.
-                    </p>
-                </div>
+                <p className="text-sm text-default-400 italic">
+                    Hiện chưa có sách nào trong thể loại này.
+                </p>
             )}
 
             {/* Phân trang */}

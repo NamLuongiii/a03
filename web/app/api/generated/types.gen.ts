@@ -4,6 +4,11 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}/api/v1` | (string & {});
 };
 
+export type DtoAuthorDetailResponse = {
+    author?: ModelsAuthor;
+    books?: Array<ModelsBook>;
+};
+
 export type DtoCommentDto = {
     text?: string;
     title?: string;
@@ -154,6 +159,13 @@ export type ModelsProfile = {
     full_name?: string;
     id?: number;
     updated_at?: string;
+};
+
+export type ModelsTags = {
+    createdAt?: string;
+    description?: string;
+    id?: number;
+    name?: string;
 };
 
 export type ModelsUserBook = {
@@ -381,6 +393,10 @@ export type GetBooksData = {
          * Search term
          */
         search?: string;
+        /**
+         * Author name
+         */
+        author?: string;
     };
     url: '/books';
 };
@@ -470,7 +486,10 @@ export type GetBooksAuthorsByAuthorIdResponses = {
      * OK
      */
     200: TypesCommonResponse & {
-        data?: ModelsAuthor;
+        data?: DtoAuthorDetailResponse & {
+            ' books'?: ModelsBook;
+            author?: ModelsAuthor;
+        };
     };
 };
 
@@ -808,6 +827,24 @@ export type PostBooksByIdRatingsResponses = {
 };
 
 export type PostBooksByIdRatingsResponse = PostBooksByIdRatingsResponses[keyof PostBooksByIdRatingsResponses];
+
+export type GetTagsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/tags';
+};
+
+export type GetTagsResponses = {
+    /**
+     * OK
+     */
+    200: TypesCommonResponse & {
+        data?: Array<ModelsTags>;
+    };
+};
+
+export type GetTagsResponse = GetTagsResponses[keyof GetTagsResponses];
 
 export type GetUserBooksData = {
     body?: never;

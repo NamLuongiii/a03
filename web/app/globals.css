@@ -54,3 +54,9 @@ h6 {
     background-size: cover;
     background-position: center;
 }
+
+.bg-shape-2 {
+    background-image: url('../public/symbol-scatter-haikei.svg');
+    background-size: cover;
+    background-position: center;
+}
