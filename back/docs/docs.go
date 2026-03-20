@@ -369,6 +369,12 @@ const docTemplate = `{
                         "description": "Search term",
                         "name": "search",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Author name",
+                        "name": "author",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -539,7 +545,22 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Author"
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/dto.AuthorDetailResponse"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        " books": {
+                                                            "$ref": "#/definitions/models.Book"
+                                                        },
+                                                        "author": {
+                                                            "$ref": "#/definitions/models.Author"
+                                                        }
+                                                    }
+                                                }
+                                            ]
                                         }
                                     }
                                 }
@@ -1197,6 +1218,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/tags": {
+            "get": {
+                "description": "Get all tags",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Get all tags",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.CommonResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.Tags"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/user-books": {
             "get": {
                 "security": [
@@ -1345,6 +1404,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.AuthorDetailResponse": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "$ref": "#/definitions/models.Author"
+                },
+                "books": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Book"
+                    }
+                }
+            }
+        },
         "dto.CommentDto": {
             "type": "object",
             "properties": {
@@ -1722,6 +1795,23 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Tags": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
                     "type": "string"
                 }
             }

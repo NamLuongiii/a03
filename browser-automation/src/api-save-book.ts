@@ -27,7 +27,12 @@ export async function saveBook(data: BookData, filenames: string[]) {
                 formData.append('readingFile', file, filenames[index]);
         });
 
-        const res = await axios.post('http://localhost:8080/api/v1/books/create-tool', formData);
+        const res = await axios.post('http://localhost:8080/api/v1/books/create-tool',
+            formData, {
+                headers: {
+                    'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Imx1b25na2hhY25hbTIyMkBnbWFpbC5jb20iLCJJRCI6MiwiUm9sZSI6ImFkbWluIn0.Z5TBk0vp4OCwr_8nKJ5_7EDhGTcXmn4WlL10N4Qi8fQ'
+                }
+            });
         console.log('🚀 Save book success:', res.data.message);
     } catch (error: any) {
         console.error(error.response?.data?.message || error.message)

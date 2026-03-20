@@ -1,5 +1,14 @@
 basePath: /api/v1
 definitions:
+  dto.AuthorDetailResponse:
+    properties:
+      author:
+        $ref: '#/definitions/models.Author'
+      books:
+        items:
+          $ref: '#/definitions/models.Book'
+        type: array
+    type: object
   dto.CommentDto:
     properties:
       text:
@@ -242,6 +251,17 @@ definitions:
       id:
         type: integer
       updated_at:
+        type: string
+    type: object
+  models.Tags:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
         type: string
     type: object
   models.UserBook:
@@ -506,6 +526,10 @@ paths:
       - description: Search term
         in: query
         name: search
+        type: string
+      - description: Author name
+        in: query
+        name: author
         type: string
       produces:
       - application/json
@@ -814,7 +838,14 @@ paths:
             - $ref: '#/definitions/types.CommonResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Author'
+                  allOf:
+                  - $ref: '#/definitions/dto.AuthorDetailResponse'
+                  - properties:
+                      ' books':
+                        $ref: '#/definitions/models.Book'
+                      author:
+                        $ref: '#/definitions/models.Author'
+                    type: object
               type: object
       summary: Get author by ID
       tags:
@@ -997,6 +1028,28 @@ paths:
       summary: Test upload file
       tags:
       - books
+  /tags:
+    get:
+      consumes:
+      - application/json
+      description: Get all tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Tags'
+                  type: array
+              type: object
+      summary: Get all tags
+      tags:
+      - Tags
   /user-books:
     get:
       consumes:

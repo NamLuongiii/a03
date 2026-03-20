@@ -1,4 +1,4 @@
-export const revalidate = 1800;
+// export const revalidate = 1800;
 
 import {getBooks, ModelsBook} from "@/app/api";
 import BookPagination from "@/app/components/BookPagination";

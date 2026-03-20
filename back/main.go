@@ -105,10 +105,12 @@ func main() {
 	authorRepo := models.NewAuthorRepository(database)
 	imageRepo := models.NewImageRepository(database)
 	userBookRepo := models.NewUserBookRepository(database)
+	tagsRepo := models.CreateTagsRepository(database)
 
 	// Init services
 	epubService := services.NewEpubService()
 	userBookService := services.NewUserBookService(bookRepo, accountRepo, userBookRepo)
+	tagsService := services.NewTagsService(tagsRepo)
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(mailHandler, accountRepo, OTPRepo)
@@ -141,6 +143,7 @@ func main() {
 	})
 
 	userBookHandler := handlers.NewUserBookHandler(userBookService)
+	tagsHandler := handlers.NewTagsHandler(tagsService)
 
 	router := gin.Default()
 
@@ -213,6 +216,12 @@ func main() {
 		{
 			author.GET("", authorHandler.GetAll)
 			author.POST("", authorHandler.Create)
+		}
+
+		// Tag routes
+		tags := v1.Group("/tags")
+		{
+			tags.GET("", tagsHandler.GetAll)
 		}
 
 	}

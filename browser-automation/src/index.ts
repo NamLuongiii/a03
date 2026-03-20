@@ -118,7 +118,7 @@ async function getRootPages(url: string) {
 
 
 async function run(pageStart: number, pageEnd: number) {
-    for (let i = pageStart; i <= pageEnd; i++) {
+    for (let i = pageEnd; i >= pageStart; i--) {
         console.log(`--- 🎃📙🍑 Đang xử lý trang ${i} 🎃📙🍑---`);
         const url = `https://sachmoi.net/trang/${i}#gsc.tab=0`;
         await getRootPages(url);
@@ -135,4 +135,4 @@ async function downloadSingleBook(urlDetail: string) {
     crawlBookDetail(page, {detailUrl: urlDetail, downloadUrl})
 }
 
-run(1, 346)
+run(146, 206)

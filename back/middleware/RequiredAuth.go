@@ -50,7 +50,7 @@ func RequiredAuth(roles ...types.Role) gin.HandlerFunc {
 				break
 			}
 		}
-		
+
 		if !isValidRole {
 			c.AbortWithStatusJSON(http.StatusForbidden, types.CommonResponse{
 				Success: false,

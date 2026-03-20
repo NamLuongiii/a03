@@ -148,7 +148,7 @@ func (p *ImageProcessor) CropImage(fh *multipart.FileHeader) (*ProcessedImage, e
 
 	encodeToJpeg := func(img image.Image) ([]byte, error) {
 		buf := new(bytes.Buffer)
-		e := jpeg.Encode(buf, img, &jpeg.Options{Quality: 80})
+		e := jpeg.Encode(buf, img, &jpeg.Options{Quality: 96})
 		if e != nil {
 			return nil, e
 		}

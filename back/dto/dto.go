@@ -1,6 +1,10 @@
 package dto
 
-import "github.com/golang-jwt/jwt/v5"
+import (
+	"quickstart/models"
+
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type RequestChangePassword struct {
 	Email string `json:"email"`
@@ -30,4 +34,9 @@ type CommentDto struct {
 
 type RatingDto struct {
 	Rating int `json:"rating"`
+}
+
+type AuthorDetailResponse struct {
+	Author *models.Author `json:"author"`
+	Books  []models.Book  `json:"books"`
 }

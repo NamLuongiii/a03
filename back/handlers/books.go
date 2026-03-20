@@ -76,6 +76,7 @@ func NewBooksHandler(params BookParams) *BooksHandler {
 // @Param		page		query		int																		false	"Page number"
 // @Param		category	query		string																	false	"Category name"
 // @Param		search		query		string																	false	"Search term"
+// @Param		author		query		string																	false	"Author name"
 // @Success	200			{object}	types.CommonResponse{data=types.PaginationData{items=[]models.Book}}	"OK"
 // @Router		/books [get]
 func (h *BooksHandler) GetBooks(c *gin.Context) {
@@ -91,6 +92,7 @@ func (h *BooksHandler) GetBooks(c *gin.Context) {
 		Page:     page,
 		Category: c.Query("category"),
 		Search:   c.Query("search"),
+		Author:   c.Query("author"),
 	}
 
 	pd, e := h.bookRepository.GetAll(params)
@@ -193,8 +195,8 @@ func (h *BooksHandler) GetCategories(c *gin.Context) {
 // @Tags		books
 // @Accept		json
 // @Produce	json
-// @Param		authorID	path		string										true	"Author ID"
-// @Success	200			{object}	types.CommonResponse{data=models.Author}	"OK"
+// @Param		authorID	path		string																							true	"Author ID"
+// @Success	200			{object}	types.CommonResponse{data=dto.AuthorDetailResponse{author=models.Author, books=models.Book[}}	"OK"
 // @Router		/books/authors/{authorID} [get]
 func (h *BooksHandler) GetAuthors(c *gin.Context) {
 	id := c.Param("authorID")
@@ -203,9 +205,19 @@ func (h *BooksHandler) GetAuthors(c *gin.Context) {
 		c.Error(middleware.NewServerInternalError(e.Error()))
 		return
 	}
+
+	books, e := h.bookRepository.GetByAuthorID(id)
+	if e != nil {
+		c.Error(middleware.NewServerInternalError(e.Error()))
+		return
+	}
+
 	c.JSON(http.StatusOK, types.CommonResponse{
 		Success: true,
-		Data:    author,
+		Data: dto.AuthorDetailResponse{
+			Author: author,
+			Books:  books,
+		},
 	})
 }
 
@@ -746,9 +758,9 @@ func (h *BooksHandler) createCoverImage(f *multipart.FileHeader, bookID string) 
 		return nil, e
 	}
 	fileName := h.imageProcessor.CreateFileNameJPEG(f.Filename)
-	mdUrl, e := h.fileStorage.UploadFile(bytes.NewReader(d.Md), fileName, string(FolderBookCovers), bookID)
-	smUrl, e1 := h.fileStorage.UploadFile(bytes.NewReader(d.Sm), fileName, string(FolderBookCovers), bookID)
-	xsUrl, e2 := h.fileStorage.UploadFile(bytes.NewReader(d.Xs), fileName, string(FolderBookCovers), bookID)
+	mdUrl, e := h.fileStorage.UploadFile(bytes.NewReader(d.Md), "300_480_"+fileName, string(FolderBookCovers), bookID)
+	smUrl, e1 := h.fileStorage.UploadFile(bytes.NewReader(d.Sm), "150_240"+fileName, string(FolderBookCovers), bookID)
+	xsUrl, e2 := h.fileStorage.UploadFile(bytes.NewReader(d.Xs), "50_80"+fileName, string(FolderBookCovers), bookID)
 	if e != nil {
 		return nil, e
 	}

@@ -49,6 +49,7 @@ type BookRepositoryInterface interface {
 	Update(book *Book) error
 	Delete(id string) error
 	GetByIDSimple(id string) (Book, error)
+	GetByAuthorID(authorID string) ([]Book, error)
 }
 
 type BookRepository struct {
@@ -81,34 +82,43 @@ func (r *BookRepository) Create(book *Book) error {
 
 func (r *BookRepository) GetAll(params types.PaginationParams) (types.PaginationData, error) {
 	var books []Book
-	query := r.db.Model(&Book{}).
-		Preload("Cover").
-		Preload("Author").
-		Preload("Category")
+	var total int64
 
-	// 1. Filtering by Category
+	// Khởi tạo query trên model Book
+	query := r.db.Model(&Book{})
+
+	// 1. Lọc theo Category
 	if params.Category != "" {
-		query = query.Where("category_id = ?", params.Category)
+		query = query.Where("books.category_id = ?", params.Category)
 	}
 
-	// 2. Searching (Title or Description)
+	// 2. Lọc theo Author Name (Dùng Joins theo phong cách Type ORM)
+	if params.Author != "" {
+		// "Author" là tên trường (Field) trong struct Book
+		// GORM sẽ tự động Join bảng authors
+		query = query.Joins("Author").Where("Author.name LIKE ?", "%"+params.Author+"%")
+	}
+
+	// 3. Tìm kiếm (Title hoặc Description)
 	if params.Search != "" {
 		searchTerm := "%" + params.Search + "%"
-		query = query.Where("name LIKE ? OR description LIKE ?", searchTerm, searchTerm)
+		// Gom nhóm điều kiện bằng Group để không làm loạn logic Join/Where khác
+		query = query.Where(r.db.Where("books.name LIKE ?", searchTerm).Or("books.description LIKE ?", searchTerm))
 	}
 
-	// 3. Pagination
-	// Calculate offset: (page - 1) * size
-	offset := (params.Page - 1) * params.Size
-
-	// 4. Total count
-	var total int64
+	// 4. Đếm tổng số (Phải thực hiện trước khi Limit/Offset)
 	query.Count(&total)
 
-	// 5. Order by created_at desc
-	query = query.Order("created_at DESC")
+	// 5. Preload dữ liệu liên quan
+	query = query.Preload("Cover").Preload("Author").Preload("Category")
 
-	err := query.Limit(params.Size).Offset(offset).Find(&books).Error
+	// 6. Phân trang và Sắp xếp
+	// Luôn chỉ định "books.created_at" để tránh lỗi ambiguous khi có Join
+	offset := (params.Page - 1) * params.Size
+	err := query.Order("books.created_at DESC").
+		Limit(params.Size).
+		Offset(offset).
+		Find(&books).Error
 
 	return types.PaginationData{
 		Page:  params.Page,
@@ -186,4 +196,14 @@ func (r *BookRepository) validateName(name string) error {
 		return errors.New("Name must be at least 4 characters long")
 	}
 	return nil
+}
+
+func (r *BookRepository) GetByAuthorID(authorID string) ([]Book, error) {
+	var books []Book
+	err := r.db.
+		Preload("Cover").
+		Preload("Category").
+		Where("author_id = ?", authorID).
+		Find(&books).Error
+	return books, err
 }

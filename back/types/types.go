@@ -42,6 +42,7 @@ type PaginationParams struct {
 	Page     int
 	Category string
 	Search   string
+	Author   string
 }
 
 type PaginationData struct {

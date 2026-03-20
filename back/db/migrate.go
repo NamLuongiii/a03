@@ -33,15 +33,16 @@ func RunMigrations(db *gorm.DB) error {
 		&models.FeaturedGroupBook{},
 		&models.Image{},
 		&models.UserBook{},
+		&models.Tags{},
 	); err != nil {
 		return err
 	}
 
 	// Run seeding
-	e := runSeeding(db)
-	if e != nil {
-		return e
-	}
+	//e := runSeeding(db)
+	//if e != nil {
+	//	return e
+	//}
 
 	log.Println("Migrations completed successfully")
 	return nil
