@@ -60,3 +60,26 @@ h6 {
     background-size: cover;
     background-position: center;
 }
+
+.text-wave-bold {
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    padding-bottom: 6px; /* Khoảng cách giữa chữ và sóng */
+
+    /* SVG tạo hình sóng lượn */
+    /* stroke-width='3' giúp đường sóng cực dày và đậm */
+    /* stroke='%2300e5ff' là màu xanh Cyan sáng rực */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath fill='none' stroke='%2300e5ff' stroke-width='3' d='M0 3.5c5 0 5-3 10-3s5 3 10 3'/%3E%3C/svg%3E");
+
+    background-repeat: repeat-x;
+    background-size: 20px 6px; /* 20px là độ rộng sóng, 6px là độ cao lượn */
+    background-position: 0 100%;
+}
+
+/* Hiệu ứng Hover đổi màu sang Hồng Neon đậm */
+.text-wave-bold:hover {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath fill='none' stroke='%23ff007f' stroke-width='3' d='M0 3.5c5 0 5-3 10-3s5 3 10 3'/%3E%3C/svg%3E");
+    transition: background-image 0.2s ease;
+    cursor: pointer;
+}

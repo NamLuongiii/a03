@@ -23,7 +23,7 @@ export default function ViewsLayout({children}: { children: React.ReactNode }) {
             </main>
 
             <footer className="w-full flex items-center justify-center py-3 border-t">
-                <small className="text-small text-default-400">
+                <small className="text-small text-default-400 text-center">
                     © 2026 Toàn bộ sách được sưu tập trên không gian mạng
                 </small>
             </footer>

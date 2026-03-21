@@ -26,7 +26,7 @@ export default function FeaturedBooks({title, description, books, href = "/books
             {/* Header */}
             <div className="flex justify-between items-end mb-6">
                 <div>
-                    <h2 className="text-2xl font-bold">{title}</h2>
+                    <h3 className="text-base lg:text-2xl font-bold text-wave-bold">{title}</h3>
                     {description && <p className="text-gray-500 text-sm">{description}</p>}
                 </div>
                 <Link href={href} className="text-primary hover:underline text-sm font-medium">
@@ -35,7 +35,7 @@ export default function FeaturedBooks({title, description, books, href = "/books
             </div>
 
             {/* Carousel Container */}
-            <div className="relative">
+            <div className="relative mx-4">
                 {/* Nút Prev */}
                 <Button
                     onClick={scrollPrev}

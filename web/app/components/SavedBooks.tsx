@@ -7,6 +7,7 @@ import Link from "next/link";
 import {Card, Separator, Skeleton} from "@heroui/react";
 import {BookmarkIcon} from "lucide-react";
 import Image from "next/image";
+import {getFullUrl} from "@/app/helpers";
 
 export default function SavedBooks() {
     const me = useMe()
@@ -35,7 +36,7 @@ export default function SavedBooks() {
     return (
         <Card className="w-full">
             <Card.Header className="flex gap-2 px-4 py-3">
-                <BookmarkIcon size={16} className="text-default-500 mt-0.5"/>
+                <BookmarkIcon/>
                 <div>
                     <p className="text-sm font-semibold">Sách đã lưu</p>
                     <p className="text-xs text-default-400">5 quyển gần nhất</p>
@@ -44,7 +45,7 @@ export default function SavedBooks() {
 
             <Separator className="my-0"/>
 
-            <Card.Content className="px-0 py-0">
+            <Card.Content className="space-y-4">
                 {isLoading ? (
                     <div className="flex flex-col gap-3 p-4">
                         {Array.from({length: 3}).map((_, i) => (
@@ -60,9 +61,19 @@ export default function SavedBooks() {
                         <Link
                             key={book.book_id}
                             href={`/books/${book.book_id}`}
-                            className="flex items-center px-4 py-2.5 text-sm hover:bg-default-100 transition-colors"
+                            className="flex items-start gap-2 text-sm"
                         >
-                            {book.book?.name}
+                            {book.book?.cover?.xs && (
+                                <Image src={getFullUrl(book.book?.cover?.md)}
+                                       alt="my-book"
+                                       width={40}
+                                       height={64}
+                                />
+                            )}
+                            <div>
+                                <div className='line-clamp-2 text-ellipsis'>{book.book?.name}</div>
+                                <div className='text-xs'>{book.book?.author?.name}</div>
+                            </div>
                         </Link>
                     ))
                 )}

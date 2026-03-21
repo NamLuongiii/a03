@@ -49,6 +49,8 @@ func (r *UserBookRepository) GetBooksByUser(userID int, limit int) ([]UserBook, 
 	// Lấy dữ liệu từ bảng UserBook và "kéo" luôn thông tin Book đi kèm
 	err := r.db.Where("account_id = ?", userID).
 		Preload("Book"). // GORM tự động lấy thông tin sách dựa trên BookID
+		Preload("Book.Author").
+		Preload("Book.Cover").
 		Limit(limit).
 		Order("created_at DESC").
 		Find(&userBooks).Error

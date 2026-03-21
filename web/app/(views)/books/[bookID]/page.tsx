@@ -53,7 +53,7 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
                 <Breadcrumbs.Item href="/">Trang chủ</Breadcrumbs.Item>
                 <Breadcrumbs.Item href='/books'>Tất cả</Breadcrumbs.Item>
                 {book.category && (
-                    <Breadcrumbs.Item href={`/categories/${book.category_id}`}>
+                    <Breadcrumbs.Item className='hidden lg:flex' href={`/categories/${book.category_id}`}>
                         {book.category.name}
                     </Breadcrumbs.Item>
                 )}

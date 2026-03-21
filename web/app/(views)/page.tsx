@@ -73,52 +73,52 @@ export default async function HomePage() {
     }
 
     return (
-        <div className="space-y-12">
+        <div className="space-y-4 lg:space-y-12">
             {/* 2. Truyền dữ liệu vào component FeaturedBooks bạn vừa viết */}
             <FeaturedBooks
                 title="Sách mới nhất"
-                description="Những cuốn sách vừa cập nhật trên hệ thống."
+                description="Sách mới cập nhật"
                 books={books}
             />
 
             <FeaturedBooks
                 title={BOOK_CATEGORIES.KHOI_NGHIEP.label}
-                description="Sách chủ đề khởi nghiệp mới"
+                description="Sách khởi nghiệp mới"
                 books={khoiNghiepBooks as ModelsBook[]}
                 href={"/categories/" + BOOK_CATEGORIES.KHOI_NGHIEP.id}
             />
 
             <FeaturedBooks
                 title={BOOK_CATEGORIES.VAN_HOC.label}
-                description="Sách chủ đề văn học mới"
+                description="Sách văn học mới"
                 books={res3.data?.data?.items as ModelsBook[]}
                 href={"/categories/" + BOOK_CATEGORIES.VAN_HOC.id}
             />
 
             <FeaturedBooks
                 title={BOOK_CATEGORIES.TIEU_THUYET.label}
-                description="Sách chủ đề tiểu thuyết mới"
+                description="Sách tiểu thuyết mới"
                 books={res4.data?.data?.items as ModelsBook[]}
                 href={"/categories/" + BOOK_CATEGORIES.TIEU_THUYET.id}
             />
 
             <FeaturedBooks
                 title={BOOK_CATEGORIES.TRINH_THAM.label}
-                description="Sách chủ đề trinh thám mới"
+                description="Sách trinh thám mới"
                 books={res5.data?.data?.items as ModelsBook[]}
                 href={"/categories/" + BOOK_CATEGORIES.TRINH_THAM.id}
             />
 
             <FeaturedBooks
                 title={BOOK_CATEGORIES.MARKETING.label}
-                description="Sách chủ đề bán hàng marketing mới"
+                description="Sách bán hàng marketing mới"
                 books={res6.data?.data?.items as ModelsBook[]}
                 href={"/categories/" + BOOK_CATEGORIES.MARKETING.id}
             />
 
             <FeaturedBooks
                 title={BOOK_CATEGORIES.TRIET_HOC.label}
-                description="Sách chủ đề triết học mới"
+                description="Sách triết học mới"
                 books={res7.data?.data?.items as ModelsBook[]}
                 href={"/categories/" + BOOK_CATEGORIES.TRIET_HOC.id}
             />

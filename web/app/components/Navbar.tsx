@@ -111,30 +111,36 @@ function MobileNavbar({categories, me, logout}: Props) {
     }
 
     return (
-        <div className="md:hidden flex items-center px-4 py-2 gap-4">
+        <div className="md:hidden flex items-center px-4 p-2 gap-1">
             {/* Logo */}
             <Link href="/" className="text-sm font-bold tracking-tighter"
                   onClick={() => selectCate({id: '/books',})}>
                 Đọc Luôn
             </Link>
 
+            {me ? <Link href='/profile' className='block ml-auto'>
+                <Button variant='tertiary' size='sm' className='text-xs' type='button'>Sách của tôi</Button>
+            </Link> : null}
+
             {/* Search Icon */}
             <Button
                 isIconOnly
-                className='ml-auto'
                 variant='ghost'
+                size='sm'
                 onClick={() => setOpenSearch(true)}
             >
                 <SearchIcon/>
             </Button>
 
-            <Button isIconOnly variant='ghost' onClick={() => setOpen(true)}>
+            <Button isIconOnly variant='ghost'
+                    size='sm'
+                    onClick={() => setOpen(true)}>
                 <MenuIcon/>
             </Button>
 
             {/* Avatar / Login */}
             {me ? (
-                <Avatar variant='beam' size={32} onClick={() => setOpenMenu(true)}/>
+                <Avatar variant='beam' size={24} onClick={() => setOpenMenu(true)}/>
             ) : (
                 <Link href="/login">
                     <Button isIconOnly variant='ghost'>
@@ -144,10 +150,11 @@ function MobileNavbar({categories, me, logout}: Props) {
             )}
 
             <MobileOverlay isOpen={open} onClose={() => setOpen(false)}>
-                <div className='flex flex-col gap-4 text-center'>
+                <div className='flex flex-col gap-4'>
+                    <div className='text-lg font-semibold'>Thể loại</div>
                     <Link
                         href='/books'
-                        className='text-lg font-semibold'
+                        className='text-lg'
                         onClick={() => setOpen(false)}>
                         Tất cả
                     </Link>
@@ -156,7 +163,7 @@ function MobileNavbar({categories, me, logout}: Props) {
                             key={cate.id}
                             aria-label={cate.name}
                             onClick={() => selectCate(cate)}
-                            className='text-lg font-semibold'
+                            className='text-lg'
                         >
                             {cate.name}
                         </div>
@@ -165,14 +172,15 @@ function MobileNavbar({categories, me, logout}: Props) {
             </MobileOverlay>
 
             <MobileOverlay isOpen={openMenu} onClose={() => setOpenMenu(false)}>
-                <div className='flex flex-col gap-4 justify-center items-center h-full'>
+                <div className='flex flex-col gap-4 h-full'>
+                    <div className="text-lg font-semibold">Chức năng</div>
                     <Link href="/profile">
-                        <Button variant='tertiary' type='button'>
+                        <Button variant='ghost' type='button'>
                             <UserIcon/>
                             Tài khoản
                         </Button>
                     </Link>
-                    <Button variant='tertiary' type='button' onClick={() => {
+                    <Button variant='ghost' type='button' onClick={() => {
                         logout();
                         setOpenMenu(false);
                     }}>
