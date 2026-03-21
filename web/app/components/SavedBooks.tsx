@@ -6,6 +6,7 @@ import {getUserBooks, ModelsUserBook} from "@/app/api";
 import Link from "next/link";
 import {Card, Separator, Skeleton} from "@heroui/react";
 import {BookmarkIcon} from "lucide-react";
+import Image from "next/image";
 
 export default function SavedBooks() {
     const me = useMe()
@@ -19,7 +20,14 @@ export default function SavedBooks() {
         enabled: !!me
     })
 
-    if (!me) return null
+    if (!me) return <div>
+        <Link href="/login" className="block">
+            <Image
+                src="/loginBanner.jpg"
+                alt="Banner Sidebar"
+                className='w-full' width={500} height={250}/>
+        </Link>
+    </div>
 
     const userBooks = (data || []) as ModelsUserBook[]
     const len = userBooks.length

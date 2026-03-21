@@ -14,8 +14,8 @@ export default async function Page() {
             {Object.entries(BOOK_CATEGORIES).map(([key, cate]) => (
                 <Link key={key}
                       href={`/categories/${cate.id}`}
-                      className="flex items-center gap-2 justify-between p-4 border rounded-lg shadow-sm bg-shape-2 text-white cursor-pointer">
-                    <div className='text-lg font-semibold'>{cate.label}</div>
+                      className="flex items-center gap-2 justify-between p-4 shadow-sm cursor-pointer">
+                    <div className='text-lg'>{cate.label}</div>
 
                     <ChevronRightIcon className="h-4 w-4"/>
                 </Link>

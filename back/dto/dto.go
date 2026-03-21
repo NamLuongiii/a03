@@ -40,3 +40,7 @@ type AuthorDetailResponse struct {
 	Author *models.Author `json:"author"`
 	Books  []models.Book  `json:"books"`
 }
+
+type AutomationTaskDto struct {
+	TaskName string `json:"task_name"`
+}

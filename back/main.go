@@ -111,6 +111,7 @@ func main() {
 	epubService := services.NewEpubService()
 	userBookService := services.NewUserBookService(bookRepo, accountRepo, userBookRepo)
 	tagsService := services.NewTagsService(tagsRepo)
+	automationService := services.NewAutomationService()
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(mailHandler, accountRepo, OTPRepo)
@@ -144,6 +145,7 @@ func main() {
 
 	userBookHandler := handlers.NewUserBookHandler(userBookService)
 	tagsHandler := handlers.NewTagsHandler(tagsService)
+	automationHandler := handlers.NewAutomationHandler(automationService, bookRepo, categoryRepo)
 
 	router := gin.Default()
 
@@ -222,6 +224,12 @@ func main() {
 		tags := v1.Group("/tags")
 		{
 			tags.GET("", tagsHandler.GetAll)
+		}
+
+		// Automation routes
+		automation := v1.Group("/automation")
+		{
+			automation.POST("task", middleware.RequiredAuth(types.RoleAdmin), automationHandler.Task)
 		}
 
 	}

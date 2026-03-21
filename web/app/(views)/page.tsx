@@ -1,19 +1,74 @@
 import {Button} from "@heroui/react";
-import {getBooksFeatured} from "@/app/api";
+import {getBooks, getBooksFeatured, ModelsBook} from "@/app/api";
 import FeaturedBooks from "@/app/components/FeaturedBooks";
 import Link from "next/link";
+import {BOOK_CATEGORIES} from "@/app/api/types";
 
 export const revalidate = 1800;
 
 export default async function HomePage() {
-    const {data, error} = await getBooksFeatured({
-        query: {
-            recommender: 'new-books',
-        }
-    });
-    const books = data?.data || []
 
-    if (error) {
+    const [
+        {data, error},
+        {data: khoiNghiepData, error: khoiNghiepError},
+        res3,
+        res4,
+        res5,
+        res6,
+        res7,
+    ] = await Promise.all([
+        getBooksFeatured({
+            query: {
+                recommender: 'new-books',
+            }
+        }),
+        getBooks({
+            query: {
+                page: 1,
+                size: 24,
+                category: BOOK_CATEGORIES.KHOI_NGHIEP.id
+            }
+        }),
+        getBooks({
+            query: {
+                page: 1,
+                size: 24,
+                category: BOOK_CATEGORIES.VAN_HOC.id
+            }
+        }),
+        getBooks({
+            query: {
+                page: 1,
+                size: 24,
+                category: BOOK_CATEGORIES.TIEU_THUYET.id
+            }
+        }),
+        getBooks({
+            query: {
+                page: 1,
+                size: 24,
+                category: BOOK_CATEGORIES.TRINH_THAM.id
+            }
+        }),
+        getBooks({
+            query: {
+                page: 1,
+                size: 24,
+                category: BOOK_CATEGORIES.MARKETING.id
+            }
+        }),
+        getBooks({
+            query: {
+                page: 1,
+                size: 24,
+                category: BOOK_CATEGORIES.TRIET_HOC.id
+            }
+        })
+    ]);
+    const books = data?.data || []
+    const khoiNghiepBooks = khoiNghiepData?.data?.items || []
+
+    if (error || khoiNghiepError || res3.error || res4.error || res5.error || res6.error || res7.error) {
         return <div className="py-10 text-center">Không thể tải dữ liệu sách.</div>;
     }
 
@@ -24,6 +79,48 @@ export default async function HomePage() {
                 title="Sách mới nhất"
                 description="Những cuốn sách vừa cập nhật trên hệ thống."
                 books={books}
+            />
+
+            <FeaturedBooks
+                title={BOOK_CATEGORIES.KHOI_NGHIEP.label}
+                description="Sách chủ đề khởi nghiệp mới"
+                books={khoiNghiepBooks as ModelsBook[]}
+                href={"/categories/" + BOOK_CATEGORIES.KHOI_NGHIEP.id}
+            />
+
+            <FeaturedBooks
+                title={BOOK_CATEGORIES.VAN_HOC.label}
+                description="Sách chủ đề văn học mới"
+                books={res3.data?.data?.items as ModelsBook[]}
+                href={"/categories/" + BOOK_CATEGORIES.VAN_HOC.id}
+            />
+
+            <FeaturedBooks
+                title={BOOK_CATEGORIES.TIEU_THUYET.label}
+                description="Sách chủ đề tiểu thuyết mới"
+                books={res4.data?.data?.items as ModelsBook[]}
+                href={"/categories/" + BOOK_CATEGORIES.TIEU_THUYET.id}
+            />
+
+            <FeaturedBooks
+                title={BOOK_CATEGORIES.TRINH_THAM.label}
+                description="Sách chủ đề trinh thám mới"
+                books={res5.data?.data?.items as ModelsBook[]}
+                href={"/categories/" + BOOK_CATEGORIES.TRINH_THAM.id}
+            />
+
+            <FeaturedBooks
+                title={BOOK_CATEGORIES.MARKETING.label}
+                description="Sách chủ đề bán hàng marketing mới"
+                books={res6.data?.data?.items as ModelsBook[]}
+                href={"/categories/" + BOOK_CATEGORIES.MARKETING.id}
+            />
+
+            <FeaturedBooks
+                title={BOOK_CATEGORIES.TRIET_HOC.label}
+                description="Sách chủ đề triết học mới"
+                books={res7.data?.data?.items as ModelsBook[]}
+                href={"/categories/" + BOOK_CATEGORIES.TRIET_HOC.id}
             />
 
             <section className="flex justify-center items-center">

@@ -333,6 +333,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/automation/task": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Automation task",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Automation"
+                ],
+                "summary": "Automation task",
+                "parameters": [
+                    {
+                        "description": "Automation task",
+                        "name": "task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AutomationTaskDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CommonResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/books": {
             "get": {
                 "consumes": [
@@ -1415,6 +1454,14 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Book"
                     }
+                }
+            }
+        },
+        "dto.AutomationTaskDto": {
+            "type": "object",
+            "properties": {
+                "task_name": {
+                    "type": "string"
                 }
             }
         },

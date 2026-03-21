@@ -9,6 +9,11 @@ definitions:
           $ref: '#/definitions/models.Book'
         type: array
     type: object
+  dto.AutomationTaskDto:
+    properties:
+      task_name:
+        type: string
+    type: object
   dto.CommentDto:
     properties:
       text:
@@ -506,6 +511,30 @@ paths:
       summary: Create a new author
       tags:
       - Authors
+  /automation/task:
+    post:
+      consumes:
+      - application/json
+      description: Automation task
+      parameters:
+      - description: Automation task
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AutomationTaskDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CommonResponse'
+      security:
+      - BearerAuth: []
+      summary: Automation task
+      tags:
+      - Automation
   /books:
     get:
       consumes:

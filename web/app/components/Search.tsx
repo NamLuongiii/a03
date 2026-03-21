@@ -21,20 +21,20 @@ export default function Search({onClose}: Props) {
         setHistory(history)
     }, [])
 
-    const onSearch = (term: string) => {
+    const onSearch = (term: string, saveHistory?: boolean) => {
         if (term) {
             if (type === 'author') {
                 router.push(`/books?author=${term}`);
             } else
                 router.push(`/books?search=${term}`);
-
+            onClose()
+            if (!saveHistory) return
             // save history
             if (history.length > 5) {
                 history.pop()
             }
             history.unshift(term)
             localStorage.setItem('search_history', JSON.stringify(history))
-            onClose()
         }
     }
 
@@ -48,7 +48,7 @@ export default function Search({onClose}: Props) {
                 onKeyDown={e => {
                     if (e.key === 'Enter') {
                         const searchTerm = e.currentTarget.value.trim();
-                        onSearch(searchTerm);
+                        onSearch(searchTerm, true);
                         e.currentTarget.value = '';
                         e.currentTarget.blur()
                     }

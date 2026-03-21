@@ -1,36 +1,78 @@
 'use client';
 
-import React from "react";
-import {ModelsBook} from "@/app/api";
+import React, {useCallback} from "react";
 import {BookCard} from "@/app/components/BookCard";
+import useEmblaCarousel from 'embla-carousel-react';
+import Link from "next/link";
+import {ChevronLeft, ChevronRight} from "lucide-react";
+import {ModelsBook} from "@/app/api";
+import {Button} from "@heroui/react";
 
-
-interface FeaturedBooksProps {
+type Props = {
     title: string;
     description?: string;
-    books: ModelsBook[] | undefined;
+    books: ModelsBook[];
+    href?: string;
 }
 
-export default function FeaturedBooks({title, description, books}: FeaturedBooksProps) {
+export default function FeaturedBooks({title, description, books, href = "/books"}: Props) {
+    const [emblaRef, emblaApi] = useEmblaCarousel({align: 'start', dragFree: true});
+
+    const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+    const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+
     return (
-        <section>
-            {/* 1. Tiêu đề & Mô tả */}
-            <div className="flex flex-col mb-8">
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-                    {title}
-                </h2>
-                {description && (
-                    <p className="text-default-500 mt-2 max-w-2xl text-small md:text-medium">
-                        {description}
-                    </p>
-                )}
+        <section className="relative">
+            {/* Header */}
+            <div className="flex justify-between items-end mb-6">
+                <div>
+                    <h2 className="text-2xl font-bold">{title}</h2>
+                    {description && <p className="text-gray-500 text-sm">{description}</p>}
+                </div>
+                <Link href={href} className="text-primary hover:underline text-sm font-medium">
+                    Xem tất cả
+                </Link>
             </div>
 
-            {/* 2. Danh sách sách (Grid) */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                {books?.map((book) => (
-                    <BookCard key={book.id} book={book}/>
-                ))}
+            {/* Carousel Container */}
+            <div className="relative">
+                {/* Nút Prev */}
+                <Button
+                    onClick={scrollPrev}
+                    isIconOnly
+                    size='lg'
+                    variant='tertiary'
+                    className="absolute top-1/2 -translate-x-1/2 -translate-y-10/12 z-10 bg-white border"
+                >
+                    <ChevronLeft size={20}/>
+                </Button>
+
+                <div className="overflow-hidden" ref={emblaRef}>
+                    <div className="flex gap-4 md:gap-6">
+                        {books?.map((book: ModelsBook) => (
+                            <div
+                                key={book.id}
+                                // MOBILE: 2 cuốn (50% - gap)
+                                // TABLET/DESKTOP: 4 cuốn (25%)
+                                // LG trở lên: 6 cuốn (16.66%)
+                                className="flex-[0_0_calc(50%-8px)] md:flex-[0_0_calc(25%-12px)] lg:flex-[0_0_calc(16.66%-20px)] min-w-0"
+                            >
+                                <BookCard book={book}/>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Nút Next */}
+                <Button
+                    onClick={scrollNext}
+                    variant='tertiary'
+                    size='lg'
+                    isIconOnly
+                    className="absolute top-1/2 right-0 -translate-y-10/12 translate-x-1/2 z-10 p-2 bg-white border"
+                >
+                    <ChevronRight size={20}/>
+                </Button>
             </div>
         </section>
     );

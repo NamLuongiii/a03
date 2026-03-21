@@ -50,6 +50,7 @@ type BookRepositoryInterface interface {
 	Delete(id string) error
 	GetByIDSimple(id string) (Book, error)
 	GetByAuthorID(authorID string) ([]Book, error)
+	UpdateBookCategory(bookID string, categoryID string) error
 }
 
 type BookRepository struct {
@@ -206,4 +207,8 @@ func (r *BookRepository) GetByAuthorID(authorID string) ([]Book, error) {
 		Where("author_id = ?", authorID).
 		Find(&books).Error
 	return books, err
+}
+
+func (r *BookRepository) UpdateBookCategory(bookID string, categoryID string) error {
+	return r.db.Model(&Book{}).Where("id = ?", bookID).Update("category_id", categoryID).Error
 }

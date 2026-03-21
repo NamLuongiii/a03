@@ -20,6 +20,8 @@ const (
 	R1Region      Env = "DIGITAL_OCEAN_REGION"
 	R1Bucket      Env = "DIGITAL_OCEAN_BUCKET"
 	R1Endpoint    Env = "DIGITAL_OCEAN_ENDPOINT"
+	GEMINI_KEY    Env = "GEMINI_KEY"
+	GEMINI_MODEL  Env = "GEMINI_MODEL"
 )
 
 // SetupEnv validates all required environment variables are set
@@ -40,6 +42,8 @@ func SetupEnv() {
 		R1Region,
 		R1Bucket,
 		R1Endpoint,
+		GEMINI_KEY,
+		GEMINI_MODEL,
 	}
 
 	missing := []string{}
