@@ -26,6 +26,9 @@ export const BOOK_CATEGORIES = {
 
 // Tạo Type từ Object để dùng trong Props
 export type CategoryKey = keyof typeof BOOK_CATEGORIES;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+export const CATEGORY_KEY_MAP = Object.fromEntries(Object.entries(BOOK_CATEGORIES).map(([key, value]) => [value.id, key])) as const;
 
 export const FileTypes = {
     'application/epub+zip': 'epub',

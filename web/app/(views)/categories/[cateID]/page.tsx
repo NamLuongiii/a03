@@ -2,6 +2,7 @@ import {getBooks, ModelsBook} from "@/app/api";
 import BookPagination from "@/app/components/BookPagination";
 import {BookCard} from "@/app/components/BookCard";
 import {Breadcrumbs} from "@heroui/react";
+import {BOOK_CATEGORIES, CATEGORY_KEY_MAP, CategoryKey} from "@/app/api/types";
 
 type Props = {
     params: Promise<{ cateID: string }>;
@@ -39,10 +40,10 @@ export default async function CategoryPage({params, searchParams}: Props) {
 
             {/* Header: Hiển thị tên Category (nếu API có trả về tên, hoặc dùng ID tạm) */}
             <div className="flex flex-col gap-2 border-l-4 border-primary pl-4">
-                <h1 className="text-lg font-semibold">
-                    Thể loại: {cateID}
+                <h1 className="text-lg! font-semibold">
+                    Thể loại: {BOOK_CATEGORIES[CATEGORY_KEY_MAP[cateID] as CategoryKey].label}
                 </h1>
-                <p className="text-tiny text-default-400 uppercase tracking-widest">
+                <p className="text-xs! italic">
                     Tìm thấy {total} cuốn sách
                 </p>
             </div>
