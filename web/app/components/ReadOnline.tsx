@@ -1,7 +1,7 @@
 'use client'
 
 import {ModelsBook} from "@/app/api";
-import {Button, ButtonGroup, CloseIcon, IconChevronLeft, IconChevronRight, Modal, Toolbar} from "@heroui/react";
+import {Button, CloseIcon, Modal} from "@heroui/react";
 import {useRouter} from "next/navigation";
 import {MenuIcon, Rocket} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
@@ -75,49 +75,24 @@ export default function ReadOnline({book}: Props) {
     if (!mounted) return null
 
     return <div className='h-screen flex flex-col'>
-        <div ref={renderRef} className='w-full h-100vh relative flex-1 mx-auto overflow-hidden'>
+        <div className='flex items-center justify-between gap-4 border-b px-4 z-20'>
+            <Button isIconOnly onClick={goHome} size='sm' variant='ghost'>
+                <CloseIcon/>
+            </Button>
+            <div
+                className='flex-1 text-ellipsis line-clamp-1 text-center text-xs italic '>{book.name}</div>
+            <Button isIconOnly onClick={() => setOpen(true)} size='sm' variant='ghost'>
+                <MenuIcon/>
+            </Button>
         </div>
 
-        <Toolbar
-            aria-label="Toolbar"
-            orientation='vertical'
-            className='fixed bottom-6 right-6'
-        >
-            <ButtonGroup variant='tertiary'>
-                <Button
-                    aria-label='open-menu'
-                    isIconOnly
-                    onClick={() => setOpen(true)}>
-                    <MenuIcon/>
-                </Button>
-                <Button
-                    aria-label='next-chapter'
-                    isIconOnly
-                    onClick={nextChapter}
-                >
-                    <ButtonGroup.Separator/>
-                    <IconChevronRight/>
-                </Button>
-                <Button
-                    aria-label='previous-chapter'
-                    isIconOnly
-                    onClick={prevChapter}
-                >
-                    <ButtonGroup.Separator/>
-                    <IconChevronLeft/>
-                </Button>
-            </ButtonGroup>
+        <div ref={renderRef} className='w-full h-100vh max-w-250 relative flex-1 mx-auto overflow-hidden'>
+        </div>
 
-            <ButtonGroup variant='tertiary'>
-                <Button
-                    aria-label='go-home'
-                    isIconOnly
-                    onClick={goHome}
-                >
-                    <CloseIcon/>
-                </Button>
-            </ButtonGroup>
-        </Toolbar>
+        <button className='fixed left-0 h-screen bg-transparent cursor-pointer w-16 md:w-31 lg:w-60 z-10'
+                onClick={prevChapter}/>
+        <button className='fixed right-0 h-screen bg-transparent cursor-pointer w-16 md:w-31 lg:w-60 z-10'
+                onClick={nextChapter}/>
 
         <Modal isOpen={open} onOpenChange={setOpen}>
             <Modal.Backdrop>

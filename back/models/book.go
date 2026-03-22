@@ -20,7 +20,7 @@ type Book struct {
 	RatingCount  int            `json:"rating_count" gorm:"default:0"`
 	IsHidden     bool           `json:"is_hidden" gorm:"default:false;index:idx_books_is_hidden;index:idx_books_is_hidden_deleted_at,priority:1"`
 	UnzipRootURL string         `json:"unzip_root_url" gorm:"type:text"`
-	CoverID      *int           `json:"cover_id,omitempty" gorm:"type:int"`
+	CoverID      *int           `json:"cover_id,omitempty" gorm:"type:int;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	CategoryID   *string        `json:"category_id,omitempty" gorm:"type:varchar(255);index:idx_books_category_id"`
 	AuthorID     *string        `json:"author_id,omitempty" gorm:"type:varchar(255);index:idx_books_author_id"`
 	SeriesID     *string        `json:"series_id,omitempty" gorm:"type:varchar(255);index:idx_books_series_id"`

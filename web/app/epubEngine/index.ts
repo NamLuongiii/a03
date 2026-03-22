@@ -28,8 +28,9 @@ export class EpubEngine {
         this.rendition = this.book.renderTo(elementRef, {
             width: "100%",
             height: "100%",
-            flow: "scrolled", // Dạng cuộn (scrolled) hoặc lật trang (paginated)
+            flow: "paginated", // Dạng cuộn (scrolled) hoặc lật trang (paginated)
             manager: "default",
+            spread: "none",
             allowScriptedContent: true,
         });
 
@@ -39,11 +40,10 @@ export class EpubEngine {
                 "font-family": "system-ui, -apple-system, sans-serif !important",
                 "font-size": "18px !important",
                 "line-height": "1.7 !important",
-                "max-width": "1000px !important",
                 "margin": "0 auto !important",
             },
         });
-        
+
         // Tự động lưu vị trí mỗi khi người dùng cuộn hoặc chuyển trang
         this.rendition.on("relocated", (location: Location) => {
             this.saveProgress(location.start.cfi);
