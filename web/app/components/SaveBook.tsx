@@ -1,7 +1,7 @@
 'use client'
 
-import {Button, toast} from "@heroui/react";
-import {HeartIcon} from "lucide-react";
+import {toast, ToggleButton} from "@heroui/react";
+import {BookmarkIcon} from "lucide-react";
 import {useEffect, useState} from "react";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {deleteUserBooksByBookId, getUserBooksByBookId, ModelsUserBook, postUserBooks} from "@/app/api";
@@ -19,6 +19,7 @@ export default function SaveBook({book_id}: Props) {
     const {data, isLoading} = useQuery({
         queryKey: ['get-user-book-by-id', book_id],
         queryFn: async () => getUserBooksByBookId({path: {bookID: book_id}}),
+        enabled: !!me
     })
 
     useEffect(() => {
@@ -62,8 +63,13 @@ export default function SaveBook({book_id}: Props) {
         toast.success('Xóa sách thành công')
     }
 
-    const handleClick = async () => {
-        if (isSaved) {
+    const handleClick = async (isSaved: boolean) => {
+        if (!me) {
+            toast.warning("Vui lòng đăng nhập để lưu sách")
+            return
+        }
+        if (isLoading || isAdding || isRemoving) return;
+        if (!isSaved) {
             await removeBookFromUser()
         } else {
             await saveBook()
@@ -71,14 +77,13 @@ export default function SaveBook({book_id}: Props) {
     }
 
     return (
-        <Button
-            isPending={isAdding || isRemoving || isLoading}
+        <ToggleButton
             isIconOnly={true}
-            variant='tertiary'
             isDisabled={isAdding || isRemoving}
-            onClick={handleClick}>
-            {isSaved ? <HeartIcon color='red' fill='red'/> :
-                <HeartIcon color='gray' fill='gray'/>}
-        </Button>
+            isSelected={isSaved}
+            onChange={handleClick}
+        >
+            <BookmarkIcon/>
+        </ToggleButton>
     )
 }

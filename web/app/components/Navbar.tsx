@@ -88,7 +88,7 @@ function DesktopNavbar({categories, me, logout}: Props) {
                     </Dropdown>
                 ) : (
                     <Link href="/login">
-                        <Button isIconOnly variant='primary'>
+                        <Button isIconOnly variant='tertiary'>
                             <UserIcon/>
                         </Button>
                     </Link>
@@ -113,12 +113,12 @@ function MobileNavbar({categories, me, logout}: Props) {
     return (
         <div className="md:hidden flex items-center px-4 p-2 gap-1">
             {/* Logo */}
-            <Link href="/" className="text-sm font-bold tracking-tighter"
+            <Link href="/" className="text-sm font-bold tracking-tighter block mr-auto"
                   onClick={() => selectCate({id: '/books',})}>
                 Đọc Luôn
             </Link>
 
-            {me ? <Link href='/profile' className='block ml-auto'>
+            {me ? <Link href='/profile' className='block'>
                 <Button variant='tertiary' size='sm' className='text-xs' type='button'>Sách của tôi</Button>
             </Link> : null}
 

@@ -42,7 +42,7 @@ export default function FeaturedBooks({title, description, books, href = "/books
                     isIconOnly
                     size='lg'
                     variant='tertiary'
-                    className="absolute top-1/2 -translate-x-1/2 -translate-y-10/12 z-10 bg-white border"
+                    className="absolute top-1/2 -translate-x-1/2 -translate-y-10/12 z-10 border"
                 >
                     <ChevronLeft size={20}/>
                 </Button>
@@ -69,7 +69,7 @@ export default function FeaturedBooks({title, description, books, href = "/books
                     variant='tertiary'
                     size='lg'
                     isIconOnly
-                    className="absolute top-1/2 right-0 -translate-y-10/12 translate-x-1/2 z-10 p-2 bg-white border"
+                    className="absolute top-1/2 right-0 -translate-y-10/12 translate-x-1/2 z-10 p-2 border"
                 >
                     <ChevronRight size={20}/>
                 </Button>

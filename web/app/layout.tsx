@@ -8,6 +8,7 @@ import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
 import {cookies} from "next/headers";
 import {getAuthMe, ModelsAccount} from "@/app/api";
 import NextTopLoader from "nextjs-toploader";
+import {ThemeProvider} from "next-themes";
 
 // Cấu hình font
 const beVietnamPro = Be_Vietnam_Pro({
@@ -63,12 +64,14 @@ export default async function RootLayout({children}: { children: React.ReactNode
             speed={200}
             shadow="0 0 10px #2299DD,0 0 5px #2299DD"
         />
-        <Providers>
-            {/* 4. Bao bọc bằng HydrationBoundary để truyền dữ liệu xuống Client */}
-            <HydrationBoundary state={dehydrate(queryClient)}>
-                {children}
-            </HydrationBoundary>
-        </Providers>
+        <ThemeProvider>
+            <Providers>
+                {/* 4. Bao bọc bằng HydrationBoundary để truyền dữ liệu xuống Client */}
+                <HydrationBoundary state={dehydrate(queryClient)}>
+                    {children}
+                </HydrationBoundary>
+            </Providers>
+        </ThemeProvider>
         </body>
         </html>
     );
