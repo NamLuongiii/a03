@@ -157,6 +157,7 @@ func main() {
 			"http://localhost:3000",
 			"https://docluon.com",
 			"https://www.docluon.com",
+			"https://admin.docluon.com",
 		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Content-Length"},
