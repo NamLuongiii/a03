@@ -847,6 +847,32 @@ paths:
       summary: Add rating
       tags:
       - books
+  /books/{id}/view:
+    post:
+      consumes:
+      - multipart/form-data
+      description: View book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: View book
+      tags:
+      - books
   /books/authors/{authorID}:
     get:
       consumes:
@@ -969,6 +995,27 @@ paths:
                   type: array
               type: object
       summary: Get featured books
+      tags:
+      - books
+  /books/most-viewed:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.CommonResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Book'
+                  type: array
+              type: object
+      summary: Get most viewed books
       tags:
       - books
   /books/test-delete:

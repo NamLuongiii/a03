@@ -9,6 +9,7 @@ import (
 	"quickstart/docs"
 	"quickstart/env"
 	"quickstart/handlers"
+	"quickstart/jobs"
 	"quickstart/middleware"
 	"quickstart/models"
 	"quickstart/services"
@@ -71,6 +72,9 @@ func main() {
 	// 3. Kết nối bằng GORM
 	ConnectDatabase()
 
+	dbmigrate.InitRedis()
+	defer dbmigrate.CloseRedis()
+
 	log.Println("Successfully connected to Turso!")
 
 	// Run migrations
@@ -78,6 +82,13 @@ func main() {
 		log.Fatal("Failed to run migrations:", err)
 		return
 	}
+
+	// Initialize repositories
+	bookRepo := models.NewBookRepository(database)
+
+	// Start cron jobs
+	jobs.StartScheduler(bookRepo)
+	defer jobs.StopScheduler()
 
 	// Initialize mailer
 	mailClient, mailErr := mail.NewClient(
@@ -92,10 +103,9 @@ func main() {
 	}
 	mailHandler := handlers.NewMailHandler(mailClient)
 
-	// Initialize repositories
+	// Initialize repositories (moved up)
 	accountRepo := models.NewAccountRepository(database)
 	OTPRepo := models.NewOTPRepository(database)
-	bookRepo := models.NewBookRepository(database)
 	bookSeriesRepo := models.NewBookSeriesRepository(database)
 	digitalBookRepo := models.NewDigitalBookRepository(database)
 	bookRatingRepo := models.NewBookRatingRepository(database)
@@ -193,6 +203,7 @@ func main() {
 			book.POST("/test-upload", middleware.RequiredAuth(types.RoleAdmin), bookHandler.TestUpload)
 			book.POST("/test-delete", middleware.RequiredAuth(types.RoleAdmin), bookHandler.TestDelete)
 			book.DELETE("/test-delete-folder", bookHandler.TestDeleteFolder)
+			book.GET("/most-viewed", bookHandler.GetMostViewedBooks)
 			book.GET("/:id", bookHandler.GetBookByID)
 			book.POST("", middleware.RequiredAuth(types.RoleAdmin), bookHandler.CreateBook)
 			book.GET("/featured", bookHandler.GetFeaturedBooks)
@@ -203,6 +214,7 @@ func main() {
 			book.GET("/:id/comments", bookHandler.GetComments)
 			book.DELETE("/:id", middleware.RequiredAuth(types.RoleAdmin), bookHandler.DeleteBook)
 			book.PUT("/:id", middleware.RequiredAuth(types.RoleAdmin), bookHandler.UpdateBook)
+			book.POST("/:id/view", bookHandler.View)
 		}
 
 		// UserBook routes

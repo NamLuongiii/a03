@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
+	"quickstart/db"
 	"quickstart/dto"
 	"quickstart/middleware"
 	"quickstart/models"
@@ -16,6 +17,7 @@ import (
 	"quickstart/types"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
@@ -148,6 +150,25 @@ func (h *BooksHandler) GetFeaturedBooks(c *gin.Context) {
 		})
 	}
 
+}
+
+// @Summary	Get most viewed books
+// @Tags		books
+// @Accept		json
+// @Produce	json
+// @Success	200	{object}	types.CommonResponse{data=[]models.Book}	"OK"
+// @Router		/books/most-viewed [get]
+func (h *BooksHandler) GetMostViewedBooks(c *gin.Context) {
+	books, err := h.bookRepository.GetMostViewedBooks(24)
+	if err != nil {
+		c.Error(middleware.NewServerInternalError(err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, types.CommonResponse{
+		Success: true,
+		Data:    books,
+	})
 }
 
 // @Summary	Get book by ID
@@ -1055,4 +1076,59 @@ func (h *BooksHandler) TestDeleteFolder(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, types.CommonResponse{Success: true})
+}
+
+// View godoc
+//
+//	@Summary		View book
+//	@Description	View book
+//	@Tags			books
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Param			id	path		string	true	"Book ID"
+//	@Success		200	{object}	types.CommonResponse{data=string}
+//	@Router			/books/{id}/view [post]
+func (h *BooksHandler) View(c *gin.Context) {
+	// get IP from request
+	ip := c.ClientIP()
+
+	if ip == "" {
+		c.Error(middleware.NewBadRequestError("IP is empty"))
+		return
+	}
+
+	// get book ID
+	ID := c.Param("id")
+	ctx := c.Request.Context()
+
+	// lock to redis
+	lockKey := fmt.Sprintf("lock:book:%s", ID)
+	val, e := db.RedisClient.Exists(ctx, lockKey).Result()
+	if e != nil {
+		c.Error(middleware.NewBadRequestError(e.Error()))
+		return
+	}
+	if val > 0 {
+		// lock exists
+		c.JSON(http.StatusOK, types.CommonResponse{Success: false, Message: "Book is being viewed by another user"})
+		return
+	} else {
+		// lock not exists each 30 minutes
+		// exp: 3h 10800*time.Second
+		// exp 1minute 60*time.Second
+		e = db.RedisClient.Set(ctx, lockKey, "1", 3600*time.Second).Err()
+		if e != nil {
+			c.Error(middleware.NewBadRequestError(e.Error()))
+			return
+		}
+		// increase view count
+		countKey := fmt.Sprintf("viewNums:book:%s", ID)
+		e = db.RedisClient.Incr(ctx, countKey).Err()
+		if e != nil {
+			c.Error(middleware.NewBadRequestError(e.Error()))
+			return
+		}
+
+		c.JSON(http.StatusOK, types.CommonResponse{Success: true, Data: ip + ID})
+	}
 }

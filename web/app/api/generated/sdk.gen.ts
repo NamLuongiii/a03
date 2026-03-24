@@ -2,7 +2,7 @@
 
 import { type Client, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteBooksByIdData, DeleteBooksByIdResponses, DeleteBooksTestDeleteFolderData, DeleteBooksTestDeleteFolderResponses, DeleteUserBooksByBookIdData, DeleteUserBooksByBookIdResponses, GetAuthMeData, GetAuthMeResponses, GetAuthorsData, GetAuthorsResponses, GetBooksAuthorsByAuthorIdData, GetBooksAuthorsByAuthorIdResponses, GetBooksByIdCommentsData, GetBooksByIdCommentsResponses, GetBooksByIdData, GetBooksByIdResponses, GetBooksCategoriesData, GetBooksCategoriesResponses, GetBooksData, GetBooksFeaturedData, GetBooksFeaturedResponses, GetBooksResponses, GetTagsData, GetTagsResponses, GetUserBooksByBookIdData, GetUserBooksByBookIdResponses, GetUserBooksData, GetUserBooksResponses, PostAuthLoginData, PostAuthLoginResponses, PostAuthorsData, PostAuthorsResponses, PostAuthRequestChangePasswordData, PostAuthRequestChangePasswordResponses, PostAuthResetPasswordData, PostAuthResetPasswordResponses, PostAuthSignupData, PostAuthSignupResponses, PostAuthVerifyOtpData, PostAuthVerifyOtpResponses, PostBooksByIdCommentsData, PostBooksByIdCommentsResponses, PostBooksByIdRatingsData, PostBooksByIdRatingsResponses, PostBooksCreateToolData, PostBooksCreateToolResponses, PostBooksData, PostBooksResponses, PostBooksTestDeleteData, PostBooksTestDeleteResponses, PostBooksTestUploadData, PostBooksTestUploadResponses, PostUserBooksData, PostUserBooksResponses, PutBooksByIdData, PutBooksByIdResponses } from './types.gen';
+import type { DeleteBooksByIdData, DeleteBooksByIdResponses, DeleteBooksTestDeleteFolderData, DeleteBooksTestDeleteFolderResponses, DeleteUserBooksByBookIdData, DeleteUserBooksByBookIdResponses, GetAuthMeData, GetAuthMeResponses, GetAuthorsData, GetAuthorsResponses, GetBooksAuthorsByAuthorIdData, GetBooksAuthorsByAuthorIdResponses, GetBooksByIdCommentsData, GetBooksByIdCommentsResponses, GetBooksByIdData, GetBooksByIdResponses, GetBooksCategoriesData, GetBooksCategoriesResponses, GetBooksData, GetBooksFeaturedData, GetBooksFeaturedResponses, GetBooksMostViewedData, GetBooksMostViewedResponses, GetBooksResponses, GetTagsData, GetTagsResponses, GetUserBooksByBookIdData, GetUserBooksByBookIdResponses, GetUserBooksData, GetUserBooksResponses, PostAuthLoginData, PostAuthLoginResponses, PostAuthorsData, PostAuthorsResponses, PostAuthRequestChangePasswordData, PostAuthRequestChangePasswordResponses, PostAuthResetPasswordData, PostAuthResetPasswordResponses, PostAuthSignupData, PostAuthSignupResponses, PostAuthVerifyOtpData, PostAuthVerifyOtpResponses, PostAutomationTaskData, PostAutomationTaskResponses, PostBooksByIdCommentsData, PostBooksByIdCommentsResponses, PostBooksByIdRatingsData, PostBooksByIdRatingsResponses, PostBooksByIdViewData, PostBooksByIdViewResponses, PostBooksCreateToolData, PostBooksCreateToolResponses, PostBooksData, PostBooksResponses, PostBooksTestDeleteData, PostBooksTestDeleteResponses, PostBooksTestUploadData, PostBooksTestUploadResponses, PostUserBooksData, PostUserBooksResponses, PutBooksByIdData, PutBooksByIdResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -109,6 +109,21 @@ export const postAuthors = <ThrowOnError extends boolean = false>(options: Optio
 });
 
 /**
+ * Automation task
+ *
+ * Automation task
+ */
+export const postAutomationTask = <ThrowOnError extends boolean = false>(options: Options<PostAutomationTaskData, ThrowOnError>) => (options.client ?? client).post<PostAutomationTaskResponses, unknown, ThrowOnError>({
+    security: [{ name: 'Authorization', type: 'apiKey' }],
+    url: '/automation/task',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Get books
  */
 export const getBooks = <ThrowOnError extends boolean = false>(options?: Options<GetBooksData, ThrowOnError>) => (options?.client ?? client).get<GetBooksResponses, unknown, ThrowOnError>({ url: '/books', ...options });
@@ -155,6 +170,11 @@ export const postBooksCreateTool = <ThrowOnError extends boolean = false>(option
  * Get featured books
  */
 export const getBooksFeatured = <ThrowOnError extends boolean = false>(options?: Options<GetBooksFeaturedData, ThrowOnError>) => (options?.client ?? client).get<GetBooksFeaturedResponses, unknown, ThrowOnError>({ url: '/books/featured', ...options });
+
+/**
+ * Get most viewed books
+ */
+export const getBooksMostViewed = <ThrowOnError extends boolean = false>(options?: Options<GetBooksMostViewedData, ThrowOnError>) => (options?.client ?? client).get<GetBooksMostViewedResponses, unknown, ThrowOnError>({ url: '/books/most-viewed', ...options });
 
 /**
  * Test delete file
@@ -256,6 +276,13 @@ export const postBooksByIdRatings = <ThrowOnError extends boolean = false>(optio
     url: '/books/{id}/ratings',
     ...options
 });
+
+/**
+ * View book
+ *
+ * View book
+ */
+export const postBooksByIdView = <ThrowOnError extends boolean = false>(options: Options<PostBooksByIdViewData, ThrowOnError>) => (options.client ?? client).post<PostBooksByIdViewResponses, unknown, ThrowOnError>({ url: '/books/{id}/view', ...options });
 
 /**
  * Get all tags

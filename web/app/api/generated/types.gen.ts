@@ -9,6 +9,10 @@ export type DtoAuthorDetailResponse = {
     books?: Array<ModelsBook>;
 };
 
+export type DtoAutomationTaskDto = {
+    task_name?: string;
+};
+
 export type DtoCommentDto = {
     text?: string;
     title?: string;
@@ -373,6 +377,25 @@ export type PostAuthorsResponses = {
 
 export type PostAuthorsResponse = PostAuthorsResponses[keyof PostAuthorsResponses];
 
+export type PostAutomationTaskData = {
+    /**
+     * Automation task
+     */
+    body: DtoAutomationTaskDto;
+    path?: never;
+    query?: never;
+    url: '/automation/task';
+};
+
+export type PostAutomationTaskResponses = {
+    /**
+     * OK
+     */
+    200: TypesCommonResponse;
+};
+
+export type PostAutomationTaskResponse = PostAutomationTaskResponses[keyof PostAutomationTaskResponses];
+
 export type GetBooksData = {
     body?: never;
     path?: never;
@@ -574,6 +597,24 @@ export type GetBooksFeaturedResponses = {
 };
 
 export type GetBooksFeaturedResponse = GetBooksFeaturedResponses[keyof GetBooksFeaturedResponses];
+
+export type GetBooksMostViewedData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/books/most-viewed';
+};
+
+export type GetBooksMostViewedResponses = {
+    /**
+     * OK
+     */
+    200: TypesCommonResponse & {
+        data?: Array<ModelsBook>;
+    };
+};
+
+export type GetBooksMostViewedResponse = GetBooksMostViewedResponses[keyof GetBooksMostViewedResponses];
 
 export type PostBooksTestDeleteData = {
     body: {
@@ -827,6 +868,29 @@ export type PostBooksByIdRatingsResponses = {
 };
 
 export type PostBooksByIdRatingsResponse = PostBooksByIdRatingsResponses[keyof PostBooksByIdRatingsResponses];
+
+export type PostBooksByIdViewData = {
+    body?: never;
+    path: {
+        /**
+         * Book ID
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/books/{id}/view';
+};
+
+export type PostBooksByIdViewResponses = {
+    /**
+     * OK
+     */
+    200: TypesCommonResponse & {
+        data?: string;
+    };
+};
+
+export type PostBooksByIdViewResponse = PostBooksByIdViewResponses[keyof PostBooksByIdViewResponses];
 
 export type GetTagsData = {
     body?: never;

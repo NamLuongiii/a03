@@ -1,6 +1,18 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis_server
+    restart: always
+    ports:
+      - "6379:6379"  # Expose để dev (Golang ngoài Docker) connect được
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - web_network
+
   backend:
     build: .
     container_name: backend_app  # Đặt tên cố định cho dễ nhận diện
@@ -11,6 +23,8 @@ services:
       - "8080"
     networks:
       - web_network
+    depends_on:
+      - redis
 
   caddy:
     image: caddy:latest
@@ -34,3 +48,4 @@ networks:
 volumes:
   caddy_data:
   caddy_config:
+  redis_data:

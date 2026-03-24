@@ -46,6 +46,7 @@ type BookRepositoryInterface interface {
 	GetNewestBooks(limit int) ([]Book, error)
 	GetPopularBooks(limit int) ([]Book, error)
 	GetBooksOtherUserRead(limit int) ([]Book, error)
+	GetMostViewedBooks(limit int) ([]Book, error)
 	Update(book *Book) error
 	Delete(id string) error
 	GetByIDSimple(id string) (Book, error)
@@ -211,4 +212,16 @@ func (r *BookRepository) GetByAuthorID(authorID string) ([]Book, error) {
 
 func (r *BookRepository) UpdateBookCategory(bookID string, categoryID string) error {
 	return r.db.Model(&Book{}).Where("id = ?", bookID).Update("category_id", categoryID).Error
+}
+
+func (r *BookRepository) GetMostViewedBooks(limit int) ([]Book, error) {
+	var books []Book
+	err := r.db.
+		Preload("Cover").
+		Preload("Author").
+		Preload("Category").
+		Order("view_nums DESC").
+		Limit(limit).
+		Find(&books).Error
+	return books, err
 }

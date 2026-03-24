@@ -1,4 +1,3 @@
-import {Button} from "@heroui/react";
 import {getBooks, getBooksFeatured, ModelsBook} from "@/app/api";
 import FeaturedBooks from "@/app/components/FeaturedBooks";
 import Link from "next/link";
@@ -74,6 +73,22 @@ export default async function HomePage() {
 
     return (
         <div className="space-y-4 lg:space-y-12">
+            <div>
+                <h3 className='text-base lg:text-2xl font-bold'>Khám phá</h3>
+                <div className="grid grid-cols-2 gap-4 mt-4 lg:grid-cols-4">
+                    <Link href='/categories'>
+                        <div className='p-4 border'>
+                            Thể loại sách
+                        </div>
+                    </Link>
+                    <Link href='/rank'>
+                        <div className='p-4 border'>
+                            Bảng xếp hạng
+                        </div>
+                    </Link>
+                </div>
+            </div>
+
             {/* 2. Truyền dữ liệu vào component FeaturedBooks bạn vừa viết */}
             <FeaturedBooks
                 title="Sách mới nhất"
@@ -122,12 +137,6 @@ export default async function HomePage() {
                 books={res7.data?.data?.items as ModelsBook[]}
                 href={"/categories/" + BOOK_CATEGORIES.TRIET_HOC.id}
             />
-
-            <section className="flex justify-center items-center">
-                <Link href='/categories'>
-                    <Button type='button' variant='primary'>Xem thêm</Button>
-                </Link>
-            </section>
         </div>
     );
 }

@@ -1,13 +1,14 @@
 'use client'
 
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {getBooksByIdComments, ModelsComment, postBooksByIdComments} from "@/app/api";
+import {getBooksByIdComments, ModelsComment, postBooksByIdComments, postBooksByIdView} from "@/app/api";
 import {Button, Input, Spinner, TextArea, toast} from "@heroui/react";
 import Avatar from "boring-avatars";
 import {formatDistanceToNow} from "date-fns";
 import {vi} from "date-fns/locale";
 import {useForm} from "react-hook-form";
 import {useMe} from "@/app/hooks/useMe";
+import {useEffect} from "react";
 
 type TForm = { title: string; text: string; }
 
@@ -15,6 +16,11 @@ export const Comments = ({bookID}: { bookID: string }) => {
     const me = useMe();
     const queryClient = useQueryClient();
     const {register, handleSubmit, reset} = useForm<TForm>();
+
+    useEffect(() => {
+        if (!bookID) return;
+        postBooksByIdView({path: {id: bookID}})
+    }, [bookID])
 
     const {data: cmts, isLoading} = useQuery({
         queryKey: ['comments', bookID],
