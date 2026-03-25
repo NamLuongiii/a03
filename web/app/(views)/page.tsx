@@ -1,9 +1,10 @@
+export const revalidate = 12000;
+
 import {getBooks, getBooksFeatured, ModelsBook} from "@/app/api";
 import FeaturedBooks from "@/app/components/FeaturedBooks";
 import Link from "next/link";
 import {BOOK_CATEGORIES} from "@/app/api/types";
 
-export const revalidate = 1800;
 
 export default async function HomePage() {
 
