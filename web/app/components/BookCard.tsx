@@ -11,7 +11,7 @@ export const BookCard = ({book}: Props) => (
         <div className='space-y-2'>
             {/* 3. Bìa sách ratio 1.6/1 */}
             <div
-                className="relative w-full aspect-[1/1.6] overflow-hidden rounded-xl shadow-md group-hover:shadow-xl transition-shadow duration-300">
+                className="relative w-full aspect-[1/1.6] overflow-hidden group-hover:shadow-xl transition-shadow duration-300">
                 {book.cover?.md && (
                     <img
                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"

@@ -25,42 +25,42 @@ export default async function HomePage() {
         getBooks({
             query: {
                 page: 1,
-                size: 24,
+                size: 12,
                 category: BOOK_CATEGORIES.KHOI_NGHIEP.id
             }
         }),
         getBooks({
             query: {
                 page: 1,
-                size: 24,
+                size: 12,
                 category: BOOK_CATEGORIES.VAN_HOC.id
             }
         }),
         getBooks({
             query: {
                 page: 1,
-                size: 24,
+                size: 12,
                 category: BOOK_CATEGORIES.TIEU_THUYET.id
             }
         }),
         getBooks({
             query: {
                 page: 1,
-                size: 24,
+                size: 12,
                 category: BOOK_CATEGORIES.TRINH_THAM.id
             }
         }),
         getBooks({
             query: {
                 page: 1,
-                size: 24,
+                size: 12,
                 category: BOOK_CATEGORIES.MARKETING.id
             }
         }),
         getBooks({
             query: {
                 page: 1,
-                size: 24,
+                size: 12,
                 category: BOOK_CATEGORIES.TRIET_HOC.id
             }
         })

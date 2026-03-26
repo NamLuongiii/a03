@@ -52,7 +52,7 @@ function DesktopNavbar({categories, me, logout}: Props) {
                 </DropdownPopover>
             </Dropdown>
 
-            <Button isIconOnly variant="tertiary" onClick={() => setOpen(true)}>
+            <Button isIconOnly variant='ghost' onClick={() => setOpen(true)}>
                 <SearchIcon/>
             </Button>
 
@@ -77,7 +77,7 @@ function DesktopNavbar({categories, me, logout}: Props) {
                 {me ? (
                     <Dropdown>
                         <DropdownTrigger>
-                            <Avatar variant='beam'/>
+                            <Avatar variant='beam' size={32}/>
                         </DropdownTrigger>
                         <DropdownPopover placement='bottom right'>
                             <DropdownMenu aria-label="Profile Actions">

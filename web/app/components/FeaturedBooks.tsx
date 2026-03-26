@@ -35,14 +35,14 @@ export default function FeaturedBooks({title, description, books, href = "/books
             </div>
 
             {/* Carousel Container */}
-            <div className="relative mx-4">
+            <div className="relative">
                 {/* Nút Prev */}
                 <Button
                     onClick={scrollPrev}
                     isIconOnly
                     size='lg'
-                    variant='tertiary'
-                    className="absolute top-1/2 -translate-x-1/2 -translate-y-10/12 z-10 border"
+                    variant='ghost'
+                    className="hidden lg:flex absolute top-1/2 -translate-y-10/12 z-10 bg-gray-100"
                 >
                     <ChevronLeft size={20}/>
                 </Button>
@@ -66,10 +66,10 @@ export default function FeaturedBooks({title, description, books, href = "/books
                 {/* Nút Next */}
                 <Button
                     onClick={scrollNext}
-                    variant='tertiary'
+                    variant='ghost'
                     size='lg'
                     isIconOnly
-                    className="absolute top-1/2 right-0 -translate-y-10/12 translate-x-1/2 z-10 p-2 border"
+                    className="hidden lg:flex absolute top-1/2 right-0 -translate-y-10/12 z-10 p-2 bg-gray-100"
                 >
                     <ChevronRight size={20}/>
                 </Button>
