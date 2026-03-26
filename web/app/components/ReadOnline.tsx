@@ -3,7 +3,7 @@
 import {ModelsBook} from "@/app/api";
 import {Button, CloseIcon, Modal} from "@heroui/react";
 import {useRouter} from "next/navigation";
-import {MenuIcon, Rocket} from "lucide-react";
+import {FullscreenIcon, MenuIcon, Rocket} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
 import {EpubEngine} from "@/app/epubEngine";
 import BookNavigation from "@/app/components/BookNavigation";
@@ -44,9 +44,7 @@ export default function ReadOnline({book}: Props) {
             })
 
             if (!renderRef.current) return
-            bookEngine.render(renderRef.current).then(() => {
-                return bookEngine.goToStoredLocation()
-            }).catch(console.error)
+            bookEngine.render(renderRef.current)
         })
 
         return () => bookEngine.destroy()
@@ -72,18 +70,69 @@ export default function ReadOnline({book}: Props) {
         bookEngineRef.current.jumpToChapter(item).catch(alert)
     }
 
+    const toggleFullScreen = () => {
+        // Kiểm tra xem hiện tại có đang trong chế độ FullScreen không
+        if (!document.fullscreenElement) {
+            // Nếu không: Yêu cầu mở FullScreen
+            // Thường ta sẽ để cả trang hoặc chỉ element chứa nội dung sách (ví dụ: id="reader")
+            const element = document.documentElement; // Toàn bộ trang web
+
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                if (element.webkitRequestFullscreen) { /* Safari */
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    element.webkitRequestFullscreen();
+                } else {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    if (element.msRequestFullscreen) { /* IE11 */
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                        element.msRequestFullscreen();
+                    }
+                }
+            }
+        } else {
+            // Nếu đang mở: Yêu cầu thoát
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+            } else if (document.webkitExitFullscreen) { /* Safari */
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                document.webkitExitFullscreen();
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+            } else if (document.msExitFullscreen) { /* IE11 */
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                document.msExitFullscreen();
+            }
+        }
+    };
+
     if (!mounted) return null
 
     return <div className='h-screen flex flex-col'>
-        <div className='flex items-center justify-between gap-4 border-b px-4 z-20'>
+        <div className='flex items-center justify-between gap-4 border-b px-4 py-1 z-20'>
             <Button isIconOnly onClick={goHome} size='sm' variant='ghost'>
                 <CloseIcon/>
             </Button>
-            <div
-                className='flex-1 text-ellipsis line-clamp-1 text-center text-xs italic '>{book.name}</div>
-            <Button isIconOnly onClick={() => setOpen(true)} size='sm' variant='ghost'>
-                <MenuIcon/>
-            </Button>
+            <div className='flex-1 text-ellipsis line-clamp-1 text-center text-xs italic '>{book.name}</div>
+
+            <div>
+                <Button isIconOnly size='sm' variant='ghost' onClick={toggleFullScreen}>
+                    <FullscreenIcon/>
+                </Button>
+                <Button isIconOnly onClick={() => setOpen(true)} size='sm' variant='ghost'>
+                    <MenuIcon/>
+                </Button>
+            </div>
         </div>
 
         <div ref={renderRef} className='w-full h-100vh max-w-250 relative flex-1 mx-auto overflow-hidden'>
