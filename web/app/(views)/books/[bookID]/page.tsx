@@ -65,7 +65,7 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
 
             {/*Lời phê bình sách */}
             <div className="space-y-2">
-                <h3 className="text-base font-semibold">Lời tựa</h3>
+                <h3 className="text-base font-semibold">Giới thiệu sách</h3>
                 <p className="text-sm text-default-600 leading-relaxed whitespace-pre-line">
                     {book.summary}
                 </p>

@@ -46,7 +46,10 @@ export default function Search({onClose}: Props) {
                 autoFocus
                 className='text-lg'
                 onKeyDown={e => {
+                    if (e.nativeEvent.isComposing) return;
+                    
                     if (e.key === 'Enter') {
+                        console.log('term')
                         const searchTerm = e.currentTarget.value.trim();
                         onSearch(searchTerm, true);
                         e.currentTarget.value = '';

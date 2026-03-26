@@ -53,7 +53,7 @@ export default function ReadOnline({book}: Props) {
     }, [book.unzip_root_url, mounted, book.id]);
 
     const goHome = () => {
-        router.push(`/books/${book.id}`)
+        router.back()
     }
 
     const nextChapter = () => {
