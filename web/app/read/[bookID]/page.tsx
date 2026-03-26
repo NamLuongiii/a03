@@ -1,5 +1,5 @@
 import {getBooksById} from "@/app/api";
-import ReadOnline from "@/app/components/ReadOnline";
+import ReadOnline from "@/app/components/ReadingScreen/ReadOnline";
 
 export default async function ReadingPage({params}: { params: Promise<{ bookID: string }> }) {
     const {bookID} = await params;

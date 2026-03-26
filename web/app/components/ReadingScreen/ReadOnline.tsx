@@ -3,11 +3,12 @@
 import {ModelsBook} from "@/app/api";
 import {Button, CloseIcon, Modal} from "@heroui/react";
 import {useRouter} from "next/navigation";
-import {FullscreenIcon, MenuIcon, Rocket} from "lucide-react";
+import {ALargeSmall, FullscreenIcon, MenuIcon, Rocket} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
 import {EpubEngine} from "@/app/epubEngine";
 import BookNavigation from "@/app/components/BookNavigation";
 import {NavItem} from "epubjs";
+import {type Font, fonts, Theme, themes} from "@/app/components/ReadingScreen/type";
 
 type Props = {
     book: ModelsBook
@@ -22,6 +23,7 @@ export default function ReadOnline({book}: Props) {
     const bookEngineRef = useRef<EpubEngine>(null)
     // const [chapterUrl, setChapterUrl] = useState<string | null>(null)
     const renderRef = useRef<HTMLDivElement>(null)
+    const [openSettings, setOpenSettings] = useState<boolean>(false)
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -116,6 +118,22 @@ export default function ReadOnline({book}: Props) {
         }
     };
 
+    const clickTheme = (theme: Theme) => {
+        if (!bookEngineRef.current) return
+        bookEngineRef.current.setTheme(theme)
+    }
+
+    const clickFont = (font: Font) => {
+        if (!bookEngineRef.current) return
+        bookEngineRef.current.setFont(font)
+    }
+
+    const clickReset = () => {
+        if (!bookEngineRef.current) return
+        bookEngineRef.current.resetTheme()
+        setOpenSettings(false)
+    }
+
     if (!mounted) return null
 
     return <div className='h-screen flex flex-col'>
@@ -128,6 +146,9 @@ export default function ReadOnline({book}: Props) {
             <div>
                 <Button isIconOnly size='sm' variant='ghost' onClick={toggleFullScreen}>
                     <FullscreenIcon/>
+                </Button>
+                <Button isIconOnly={true} size='sm' variant='ghost' onClick={() => setOpenSettings(true)}>
+                    <ALargeSmall/>
                 </Button>
                 <Button isIconOnly onClick={() => setOpen(true)} size='sm' variant='ghost'>
                     <MenuIcon/>
@@ -149,7 +170,7 @@ export default function ReadOnline({book}: Props) {
                     <Modal.Dialog>
                         <Modal.CloseTrigger/>
                         <Modal.Header>
-                            <Modal.Icon className="bg-default text-foreground">
+                            <Modal.Icon>
                                 <Rocket className="size-5"/>
                             </Modal.Icon>
                             <Modal.Heading>Mục lục</Modal.Heading>
@@ -160,6 +181,61 @@ export default function ReadOnline({book}: Props) {
                         <Modal.Footer>
                             <Button className="w-full" slot="close">
                                 Đóng
+                            </Button>
+                        </Modal.Footer>
+                    </Modal.Dialog>
+                </Modal.Container>
+            </Modal.Backdrop>
+        </Modal>
+
+        <Modal isOpen={openSettings} onOpenChange={setOpenSettings}>
+            <Modal.Backdrop>
+                <Modal.Container>
+                    <Modal.Dialog>
+                        <Modal.CloseTrigger/>
+                        <Modal.Header>
+                            <Modal.Heading>Cài đặt hiển thị</Modal.Heading>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <div className='my-8 space-y-4'>
+                                <div className='space-y-2'>
+                                    <div className='text-lg font-semibold'>Chế độ</div>
+                                    <div className='grid grid-cols-3 gap-4'>
+                                        {themes.map(theme => (<div
+                                            key={theme.code}
+                                            className='border flex items-center justify-center'
+                                            style={{
+                                                ...theme.value,
+                                                height: 48,
+                                            }}
+                                            onClick={() => clickTheme(theme)}
+                                        >
+                                            {theme.name}
+                                        </div>))}
+                                    </div>
+                                </div>
+
+                                <div className='space-y-2'>
+                                    <div className='text-lg font-semibold'>Kích thước chữ</div>
+                                    <div className='grid grid-cols-4 gap-4'>
+                                        {fonts.map(font => (
+                                            <button
+                                                key={font.value}
+                                                style={{fontSize: font.value}}
+                                                className='border'
+                                                onClick={() => clickFont(font)}
+                                            >
+                                                Aa
+                                            </button>
+                                        ))}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button type='button' className="w-full" onClick={clickReset}>
+                                Đặt lại
                             </Button>
                         </Modal.Footer>
                     </Modal.Dialog>

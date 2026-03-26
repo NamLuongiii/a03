@@ -1,5 +1,6 @@
 import ePub, {Book, Location, NavItem, Rendition} from 'epubjs';
 import {getFullUrl} from "@/app/helpers";
+import {Font, Theme, ThemeCodes} from "@/app/components/ReadingScreen/type";
 
 export class EpubEngine {
     public rendition: Rendition | null = null; // Lưu lại để điều khiển sau này
@@ -42,8 +43,37 @@ export class EpubEngine {
 
         // this.rendition.themes.font("Be Vietnam Pro");
 
+        this.rendition.themes.default({
+            body: {
+                'line-height': '1.7 !important',
+            },
+            p: {
+                'text-align': 'justify !important',
+            }
+        })
+
         this.rendition.themes.font('system-ui')
-        this.rendition.themes.fontSize('20px')
+        // Đăng ký các bộ màu (Theme)
+        this.rendition.themes.register(ThemeCodes.light, {
+            body: {
+                background: "#ffffff !important",
+                color: "#000000 !important"
+            }
+        });
+        this.rendition.themes.register(ThemeCodes.dark, {
+            body: {
+                background: "#1a1a1a !important",
+                color: "#d1d1d1 !important"
+            }
+        });
+        this.rendition.themes.register(ThemeCodes.sepia, {
+            body: {
+                background: "#f4ecd8 !important",
+                color: "#5b4636 !important"
+            }
+        });
+
+        this.resetTheme()
 
         // Tự động lưu vị trí mỗi khi người dùng cuộn hoặc chuyển trang
         this.rendition.on("relocated", (location: Location) => {
@@ -183,7 +213,27 @@ export class EpubEngine {
         return await this.start();
     }
 
+    resetTheme() {
+        if (!this.rendition) return;
+        // Khi đổi màu:
+        this.rendition.themes.select(ThemeCodes.light);
+        this.rendition.themes.fontSize('18px')
+    }
+
+    setTheme(theme: Theme) {
+        console.log(theme)
+        if (!this.rendition) return;
+        this.rendition.themes.select(theme.code);
+    }
+
+    setFont(font: Font) {
+        if (!this.rendition) return;
+        this.rendition.themes.fontSize(`${font.value}px`)
+    }
+
     private saveProgress(cfi: string) {
         localStorage.setItem(this.ID, cfi);
     }
+
+
 }
