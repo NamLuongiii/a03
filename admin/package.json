@@ -25,6 +25,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
+    "flyonui": "^2.4.1",
     "lucide-react": "^0.575.0",
     "motion": "^12.34.3",
     "pretty-bytes": "^7.1.0",

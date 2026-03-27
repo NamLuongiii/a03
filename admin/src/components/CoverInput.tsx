@@ -57,15 +57,11 @@ export function CoverInput({value, initialUrl, onChange, maxSize = 2}: CoverInpu
     });
 
     return (
-        <div className="space-y-1.5 w-full">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
-                Ảnh bìa sách
-            </label>
-
+        <div className="space-y-1.5 w-40 mx-auto">
             <div
                 {...getRootProps()}
                 className={`
-                    relative group cursor-pointer rounded-2xl border border-dashed transition-all
+                    relative group cursor-pointer border border-dashed transition-all
                     flex flex-col items-center justify-center overflow-hidden aspect-[1/1.6] bg-slate-50/50
                     ${isDragActive ? 'border-slate-900 bg-slate-100' : 'border-slate-200 hover:border-slate-300'}
                 `}

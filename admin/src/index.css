@@ -1,5 +1,6 @@
 @import "tailwindcss";
-@import "@heroui/styles";
+
+@plugin "flyonui";
 
 @theme {
     /* Đưa biến CSS vào hệ thống Tailwind để dùng: bg-main, text-main... */
@@ -34,92 +35,8 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar tối giản cho Admin */
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #e2e8f0;
-    border-radius: 10px;
-}
-
 body {
     margin: 0;
     min-height: 100vh;
     -webkit-tap-highlight-color: transparent;
-}
-
-/* Typography Bento */
-h1, h2, h3 {
-    color: var(--text-main);
-    font-weight: 700; /* Đậm hơn để tạo độ tương phản */
-    letter-spacing: -0.02em;
-}
-
-/* Class Admin Card chuẩn Bento */
-.admin-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-bento);
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
-    padding: 1.5rem;
-    transition: transform 0.2s ease;
-}
-
-/* Table Style Minimalist */
-table {
-    width: 100%;
-    border-collapse: separate; /* Dùng separate để border-radius hoạt động nếu cần */
-    border-spacing: 0;
-    font-size: 0.875rem;
-}
-
-th {
-    text-align: left;
-    padding: 1rem;
-    background: transparent;
-    color: var(--text-muted);
-    font-weight: 600;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--border-color);
-}
-
-td {
-    padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-main);
-}
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-tr:hover td {
-    background-color: #f8fafc;
-}
-
-/* Dark Mode tối giản */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-main: #020617; /* Slate 950 */
-        --bg-card: #0f172a; /* Slate 900 */
-        --text-main: #f8fafc;
-        --text-muted: #94a3b8;
-        --border-color: #1e293b; /* Slate 800 */
-    }
-
-    .admin-card {
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
-    }
-
-    button:hover {
-        background-color: #1e293b;
-    }
 }

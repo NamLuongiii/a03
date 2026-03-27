@@ -1,10 +1,9 @@
 import {createFileRoute, useNavigate} from '@tanstack/react-router'
-import {Button} from "@components/ui/Button.tsx";
 import {useForm} from "react-hook-form";
 import {useAuth} from "../../Auth.tsx";
 import {useMutation} from "@tanstack/react-query";
 import {Auth, type ModelsAccount, postAuthLoginMutation} from "@/api";
-import {Form, InputGroup, toast} from "@heroui/react";
+import {Form, toast} from "@heroui/react";
 
 export const Route = createFileRoute('/_public/login')({
     component: RouteComponent,
@@ -34,33 +33,24 @@ function RouteComponent() {
     return (
         <main>
             <section className="flex flex-col items-center justify-center h-screen text-center gap-4">
-                <header>
-                    <h1>Đăng nhập Admin</h1>
-                    <p>Hệ thống quản trị docluon.com</p>
-                </header>
+                <h1>Đăng nhập</h1>
 
                 <Form onSubmit={onSubmit} className='inline-flex flex-col gap-4 w-auto mx-auto'>
-                    <InputGroup>
-                        <InputGroup.Input
-                            type="email"
-                            required
-                            placeholder="Email"
-                            {...register("email")}
-                        />
-                    </InputGroup>
+                    <div className="input-floating w-96">
+                        <input type="text" placeholder="Email" className="input" id="email" {...register('email')}/>
+                        <label className="input-floating-label" htmlFor="email">Email</label>
+                    </div>
 
-                    <InputGroup>
-                        <InputGroup.Input
-                            type="password"
-                            required
-                            placeholder="Password"
-                            {...register("password")}
-                        />
-                    </InputGroup>
+                    <div className="input-floating w-96">
+                        <input type="password" placeholder="Mật khẩu" className="input"
+                               id="password" {...register('password')}/>
+                        <label className="input-floating-label" htmlFor="password">Mật khẩu</label>
+                    </div>
 
-                    <Button type="submit" isLoading={isPending}>
+                    <button type='submit' className='btn btn-primary'>
+                        {isPending && <span className="loading loading-spinner loading-sm"></span>}
                         Đăng nhập
-                    </Button>
+                    </button>
                 </Form>
 
                 <footer>

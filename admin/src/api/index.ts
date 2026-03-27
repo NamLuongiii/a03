@@ -18,8 +18,12 @@ client.instance.interceptors.request.use((config) => {
 client.instance.interceptors.response.use(
     (response) => response,
     (error) => {
-        console.error('Error:', error);
-        toast.danger(error.message);
+        if (error.response && error.response.status === 401) {
+            localStorage.removeItem('token');
+        } else {
+            console.error('Error:', error);
+            toast.danger(error.message);
+        }
         return Promise.reject(error);
     }
 );

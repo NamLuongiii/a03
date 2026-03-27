@@ -1,6 +1,5 @@
 import {createFileRoute, Outlet} from '@tanstack/react-router'
 import {Sidebar} from '../components/Sidebar'
-import {cn} from "../ultis/cn.ts"
 
 export const Route = createFileRoute('/_auth')({
     // Logic check auth có thể mở lại khi bạn đã xong phần Login
@@ -14,29 +13,13 @@ export const Route = createFileRoute('/_auth')({
 
 function AuthLayout() {
     return (
-        <div className="flex min-h-screen bg-slate-50/50 font-sans">
+        <div className="flex h-screen overflow-hidden">
             {/* 1. Sidebar (Đã có logic Responsive bên trong) */}
             <Sidebar/>
 
             {/* 2. Vùng Content chính */}
-            <main className={cn(
-                "flex-1 w-full min-h-screen transition-all duration-300 ease-in-out",
-                // Trên Desktop (lg): Chừa khoảng trống 64 đơn vị (256px) cho Sidebar cố định
-                "lg:ml-64",
-                // Trên Mobile: Chừa khoảng trống 16 đơn vị (64px) cho Top Header đã làm ở Sidebar
-                "pt-16 lg:pt-0"
-            )}>
-                {/* Container nội dung:
-                   - p-4 cho mobile để tiết kiệm diện tích
-                   - p-8 cho desktop để thoáng đãng chuẩn Bento
-                */}
-                <div className="p-4 md:p-8 max-w-[1600px] mx-auto">
-
-                    {/* Render các trang con (Books, Dashboard, etc.) */}
-                    <section className="animate-in fade-in slide-in-from-bottom-2 duration-700">
-                        <Outlet/>
-                    </section>
-                </div>
+            <main className="flex flex-col flex-1 min-w-0 overflow-y-auto p-6">
+                <Outlet/>
 
                 {/* Footer nhẹ nhàng chuẩn Admin Panel (Tùy chọn) */}
                 <footer
