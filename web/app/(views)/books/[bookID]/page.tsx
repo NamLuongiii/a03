@@ -4,7 +4,7 @@ import {getBooksById} from "@/app/api";
 import {Comments} from "@/app/components/Comments";
 import BookInformation from "@/app/components/BookInformation";
 
-export const revalidate = 1800;
+export const revalidate = 3600;
 
 // Import file cấu hình API của bạn vào đây
 // import { getBookDetail } from "@/services/book-service"; 
