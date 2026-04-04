@@ -241,7 +241,7 @@ export default function ReadOnline({book}: Props) {
 
                                 <div className='space-y-2'>
                                     <div className='text-lg font-semibold'>Kích thước chữ</div>
-                                    <div className='grid grid-cols-5 gap-4'>
+                                    <div className='flex items-center gap-4'>
                                         {fonts.map(font => (
                                             <Button
                                                 key={font.value}
@@ -256,12 +256,11 @@ export default function ReadOnline({book}: Props) {
                                     </div>
                                 </div>
                             </div>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button type='button' className="w-full" onClick={clickReset}>
+
+                            <Button type='button' onClick={clickReset}>
                                 Đặt lại
                             </Button>
-                        </Modal.Footer>
+                        </Modal.Body>
                     </Modal.Dialog>
                 </Modal.Container>
             </Modal.Backdrop>

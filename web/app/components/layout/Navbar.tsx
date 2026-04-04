@@ -23,7 +23,7 @@ function DesktopNavbar({categories, me, logout}: Props) {
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="hidden md:flex mx-auto h-16 max-w-7xl items-center justify-between px-4 gap-4 w-full">
+        <div className="hidden md:flex mx-auto h-16 items-center justify-between px-4 gap-4 max-page-width">
             {/* Logo */}
             <Link href="/" className="text-xl font-bold tracking-tighter text-primary shrink-0">
                 Đọc Luôn
@@ -222,7 +222,8 @@ export default function Navbar() {
     }
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b border-divider bg-background/70 backdrop-blur-md">
+        <nav
+            className="sticky top-0 z-50 w-full border-b border-divider bg-background/70 backdrop-blur-md">
             <DesktopNavbar categories={categories} me={me} logout={logout}/>
             <MobileNavbar categories={categories} me={me} logout={logout}/>
         </nav>

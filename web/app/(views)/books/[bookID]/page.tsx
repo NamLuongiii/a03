@@ -59,7 +59,7 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
             {/*Lời phê bình sách */}
             <div className="space-y-2">
                 <h3 className="text-base font-semibold">Giới thiệu sách</h3>
-                <p className="text-sm text-default-600 leading-relaxed whitespace-pre-line">
+                <p className="text-sm text-default-600 leading-relaxed whitespace-pre-line text-justify">
                     {book.summary}
                 </p>
             </div>
@@ -68,7 +68,7 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
                 <h3>Tác giả</h3>
                 <Avatar size={42}/>
                 <p>{book.author?.name}</p>
-                {book.summary && <p className='line-clamp-5 text-ellipsis'>{book.summary}</p>}
+                {book.summary && <p className='line-clamp-5 text-ellipsis text-justify'>{book.summary}</p>}
                 <Link href={`/authors/${book.author?.id}`} as={`/authors/${book.author?.id}`}>Xem sách của tác giả
                     này</Link>
             </div>

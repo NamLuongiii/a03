@@ -23,11 +23,11 @@ const Header = ({book}: Props) => {
 
     return (
         <header
-            className={`fixed top-0 left-0 w-full bg-white border-b z-50 transition-all duration-300 p-4 py-2 ${
+            className={`fixed top-0 left-0 w-full bg-white border-b z-50 transition-all duration-300 p-4 ${
                 isVisible ? 'translate-y-0' : '-translate-y-full'
             }`}
         >
-            <div className="flex items-center justify-between h-16 px-4">
+            <div className="flex items-center justify-between max-page-width">
                 {/* Tên sách: sử dụng truncate để không làm vỡ layout khi tên quá dài */}
                 <div>
                     <h2 className="font-bold truncate mr-4">{book?.name}</h2>

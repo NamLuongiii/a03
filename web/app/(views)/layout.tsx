@@ -8,7 +8,7 @@ export default function ViewsLayout({children}: { children: React.ReactNode }) {
             <Navbar/>
 
             {/* Main Container: Flex row trên màn hình lớn (lg), mặc định là flex-col */}
-            <main className="grow container mx-auto max-w-7xl px-4 py-4 lg:py-12 flex flex-col lg:flex-row gap-12">
+            <main className="grow container mx-auto max-page-width px-4 py-4 lg:py-12 flex flex-col lg:flex-row gap-12">
 
                 {/* Content chính: Chiếm hết chỗ trống */}
                 <section className="flex-1 min-w-0">
@@ -21,8 +21,8 @@ export default function ViewsLayout({children}: { children: React.ReactNode }) {
                     <SavedBook/>
 
                     <div className='space-y-2'>
-                        <h3 className='text-center'>Trính đoạn</h3>
-                        <blockquote className='text-sm text-justify'>
+                        <h3 className='text-center'>Trích đoạn</h3>
+                        <p className='text-sm'>
                             Chúng ta là những hòn đá ít nữa sẽ gắn thành tường
                             <br/>
                             Làm lâu đài, nhà kho, đền chùa hay là nhà tù.
@@ -33,7 +33,7 @@ export default function ViewsLayout({children}: { children: React.ReactNode }) {
                             <br/>
                             Khi đám cưới đã xong - Cần phải dựng nhà.
                             <br/>
-                        </blockquote>
+                        </p>
                         <Link href="/book/dagestan-cua-toi"><small>Dagestan Của Tôi</small></Link>
 
                     </div>
