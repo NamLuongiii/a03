@@ -3,7 +3,6 @@ package db
 import (
 	"log"
 	"quickstart/db/seeding"
-	"quickstart/models"
 
 	"gorm.io/gorm"
 )
@@ -18,25 +17,25 @@ func RunMigrations(db *gorm.DB) error {
 	}
 
 	// Auto migrate models
-	if err := db.AutoMigrate(
-		&models.Account{},
-		&models.Profile{},
-		&models.OTP{},
-		&models.Author{},
-		&models.Category{},
-		&models.BookSeries{},
-		&models.Book{},
-		&models.DigitalBook{},
-		&models.Comment{},
-		&models.BookRating{},
-		&models.FeaturedBookGroup{},
-		&models.FeaturedGroupBook{},
-		&models.Image{},
-		&models.UserBook{},
-		&models.Tags{},
-	); err != nil {
-		return err
-	}
+	//if err := db.AutoMigrate(
+	//	&models.Account{},
+	//	&models.Profile{},
+	//	&models.OTP{},
+	//	&models.Author{},
+	//	&models.Category{},
+	//	&models.BookSeries{},
+	//	&models.Book{},
+	//	&models.DigitalBook{},
+	//	&models.Comment{},
+	//	&models.BookRating{},
+	//	&models.FeaturedBookGroup{},
+	//	&models.FeaturedGroupBook{},
+	//	&models.Image{},
+	//	&models.UserBook{},
+	//	&models.Tags{},
+	//); err != nil {
+	//	return err
+	//}
 
 	// Run seeding
 	//e := runSeeding(db)

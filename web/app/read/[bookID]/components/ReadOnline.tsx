@@ -1,14 +1,15 @@
 'use client'
 
 import {ModelsBook} from "@/app/api";
-import {Button, CloseIcon, Modal} from "@heroui/react";
+import {Button, CloseIcon, Modal, Tabs} from "@heroui/react";
 import {useRouter} from "next/navigation";
-import {ALargeSmall, FullscreenIcon, MenuIcon, Rocket} from "lucide-react";
+import {ALargeSmall, FullscreenIcon, MenuIcon} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
-import {EpubEngine} from "@/app/epubEngine";
-import BookNavigation from "@/app/components/BookNavigation";
+import {EpubEngine} from "@/app/read/[bookID]/epub";
+import BookNavigation from "@/app/read/[bookID]/components/BookNavigation";
 import {NavItem} from "epubjs";
-import {type Font, fonts, Theme, themes} from "@/app/components/ReadingScreen/type";
+import {type Font, fonts, Theme, themes} from "@/app/read/[bookID]/types/type";
+import {getFullUrl} from "@/app/helpers";
 
 type Props = {
     book: ModelsBook
@@ -168,15 +169,38 @@ export default function ReadOnline({book}: Props) {
             <Modal.Backdrop>
                 <Modal.Container>
                     <Modal.Dialog>
-                        <Modal.CloseTrigger/>
                         <Modal.Header>
-                            <Modal.Icon>
-                                <Rocket className="size-5"/>
-                            </Modal.Icon>
-                            <Modal.Heading>Mục lục</Modal.Heading>
+                            <Modal.Heading>{book.name}</Modal.Heading>
                         </Modal.Header>
                         <Modal.Body>
-                            <BookNavigation nav={nav} jumpTo={jumpToChapter}/>
+                            <Tabs className="w-full max-w-md">
+                                <Tabs.ListContainer>
+                                    <Tabs.List aria-label="Options">
+                                        <Tabs.Tab id="overview">
+                                            Mục lục
+                                            <Tabs.Indicator/>
+                                        </Tabs.Tab>
+                                        <Tabs.Tab id="analytics">
+                                            Tổng quan
+                                            <Tabs.Indicator/>
+                                        </Tabs.Tab>
+                                    </Tabs.List>
+                                </Tabs.ListContainer>
+                                <Tabs.Panel className="pt-4" id="overview">
+                                    <BookNavigation nav={nav} jumpTo={jumpToChapter}/>
+                                </Tabs.Panel>
+                                <Tabs.Panel className="pt-4 flex flex-col items-center gap-4" id="analytics">
+                                    {book.cover?.md && (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={getFullUrl(book.cover?.md)} alt='cover' width={200}/>
+                                    )}
+
+                                    <p>{book.description}</p>
+
+                                    <p>{book.author?.name}</p>
+                                    <p>{book.category?.name}</p>
+                                </Tabs.Panel>
+                            </Tabs>
                         </Modal.Body>
                         <Modal.Footer>
                             <Button className="w-full" slot="close">
@@ -217,16 +241,16 @@ export default function ReadOnline({book}: Props) {
 
                                 <div className='space-y-2'>
                                     <div className='text-lg font-semibold'>Kích thước chữ</div>
-                                    <div className='grid grid-cols-4 gap-4'>
+                                    <div className='grid grid-cols-5 gap-4'>
                                         {fonts.map(font => (
-                                            <button
+                                            <Button
                                                 key={font.value}
                                                 style={{fontSize: font.value}}
-                                                className='border'
                                                 onClick={() => clickFont(font)}
+                                                variant='outline'
                                             >
                                                 Aa
-                                            </button>
+                                            </Button>
                                         ))}
 
                                     </div>

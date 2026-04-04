@@ -1,8 +1,12 @@
 import {Metadata} from "next";
-import {Breadcrumbs, Button} from "@heroui/react";
+import {Button} from "@heroui/react";
 import {getBooksById} from "@/app/api";
-import {Comments} from "@/app/components/Comments";
-import BookInformation from "@/app/components/BookInformation";
+import {Comments} from "@/app/(views)/books/[bookID]/components/Comments";
+import BookInformation from "@/app/(views)/books/[bookID]/components/BookInformation";
+import Header from "@/app/(views)/books/[bookID]/components/Header";
+import Avatar from "boring-avatars";
+import Link from "next/link";
+import Rating from "@/app/(views)/books/[bookID]/components/Rating";
 
 export const revalidate = 3600;
 
@@ -47,18 +51,7 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
 
     return (
         <div className="space-y-4 md:space-y-8">
-
-            {/* --- BREADCRUMBS --- */}
-            <Breadcrumbs className="text-xs md:text-sm">
-                <Breadcrumbs.Item href="/">Trang chủ</Breadcrumbs.Item>
-                <Breadcrumbs.Item href='/books'>Tất cả</Breadcrumbs.Item>
-                {book.category && (
-                    <Breadcrumbs.Item className='hidden lg:flex' href={`/categories/${book.category_id}`}>
-                        {book.category.name}
-                    </Breadcrumbs.Item>
-                )}
-                <Breadcrumbs.Item className="hidden md:inline">{book.name}</Breadcrumbs.Item>
-            </Breadcrumbs>
+            <Header book={book}/>
 
             {/* --- 2 CỘT LAYOUT --- */}
             <BookInformation book={book}/>
@@ -70,6 +63,17 @@ export default async function BookDetailPage({params}: { params: Promise<{ bookI
                     {book.summary}
                 </p>
             </div>
+
+            <div className='space-y-2 text-sm'>
+                <h3>Tác giả</h3>
+                <Avatar size={42}/>
+                <p>{book.author?.name}</p>
+                {book.summary && <p className='line-clamp-5 text-ellipsis'>{book.summary}</p>}
+                <Link href={`/authors/${book.author?.id}`} as={`/authors/${book.author?.id}`}>Xem sách của tác giả
+                    này</Link>
+            </div>
+
+            <Rating book={book}/>
 
             <Comments bookID={bookID}/>
         </div>

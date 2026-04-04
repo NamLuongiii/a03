@@ -13,7 +13,7 @@ export default function SavedBooks() {
     const me = useMe()
 
     const {data, isLoading} = useQuery({
-        queryKey: ['get-user-books', me?.id || ''],
+        queryKey: ['get-user-books', me?.id],
         queryFn: async () => {
             const res = await getUserBooks()
             return res.data?.data || []
@@ -21,14 +21,7 @@ export default function SavedBooks() {
         enabled: !!me
     })
 
-    if (!me) return <div>
-        <Link href="/login" className="block">
-            <Image
-                src="/loginBanner.jpg"
-                alt="Banner Sidebar"
-                className='w-full' width={500} height={250}/>
-        </Link>
-    </div>
+    if (!me) return null
 
     const userBooks = (data || []) as ModelsUserBook[]
     const len = userBooks.length
@@ -37,10 +30,7 @@ export default function SavedBooks() {
         <Card className="w-full">
             <Card.Header className="flex gap-2 px-4 py-3">
                 <BookmarkIcon/>
-                <div>
-                    <p className="text-sm font-semibold">Sách đã lưu</p>
-                    <p className="text-xs text-default-400">5 quyển gần nhất</p>
-                </div>
+                <p className="text-sm font-semibold">Sách đã lưu</p>
             </Card.Header>
 
             <Separator className="my-0"/>
@@ -57,7 +47,7 @@ export default function SavedBooks() {
                         Chưa có sách nào được lưu
                     </p>
                 ) : (
-                    userBooks.map((book) => (
+                    userBooks.slice(0, 2).map((book) => (
                         <Link
                             key={book.book_id}
                             href={`/books/${book.book_id}`}
@@ -78,6 +68,9 @@ export default function SavedBooks() {
                     ))
                 )}
             </Card.Content>
+            <Card.Footer>
+                <Link href="/profile">Xem tất cả</Link>
+            </Card.Footer>
         </Card>
     )
 }

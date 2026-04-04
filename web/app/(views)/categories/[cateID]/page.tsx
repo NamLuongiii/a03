@@ -1,5 +1,5 @@
 import {getBooks, ModelsBook} from "@/app/api";
-import BookPagination from "@/app/components/BookPagination";
+import BookPagination from "@/app/(views)/books/components/BookPagination";
 import {BookCard} from "@/app/components/BookCard";
 import {Breadcrumbs} from "@heroui/react";
 import {BOOK_CATEGORIES, CATEGORY_KEY_MAP, CategoryKey} from "@/app/api/types";

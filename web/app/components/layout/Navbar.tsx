@@ -10,7 +10,7 @@ import Avatar from "boring-avatars";
 import {useState} from "react";
 import {LogOutIcon, MenuIcon, SearchIcon, UserIcon} from "lucide-react";
 import MobileOverlay from "@/app/components/ui/MobileOverlay";
-import Search from "@/app/components/Search";
+import Search from "@/app/components/layout/Search";
 
 type Props = {
     categories: ModelsCategory[],

@@ -12,6 +12,7 @@ import (
 	"quickstart/jobs"
 	"quickstart/middleware"
 	"quickstart/models"
+	"quickstart/queue"
 	"quickstart/services"
 	"quickstart/types"
 	"time"
@@ -26,141 +27,63 @@ import (
 	"gorm.io/gorm"
 )
 
-// Database instance
-var database *gorm.DB
+type Application struct {
+	DB          *gorm.DB
+	Router      *gin.Engine
+	QueueClient *queue.Client
+	QueueServer *queue.Server
+}
 
-func ConnectDatabase() {
+func connectDatabase() (*gorm.DB, error) {
 	url := os.Getenv("TURSO_DATABASE_URL")
 	token := os.Getenv("TURSO_AUTH_TOKEN")
 
-	// 1. Tạo URL đúng định dạng Turso yêu cầu
 	dbUrl := fmt.Sprintf("%s?authToken=%s", url, token)
 
-	// 2. Mở kết nối SQL thuần túy bằng driver libsql
 	db, err := sql.Open("libsql", dbUrl)
 	if err != nil {
-		log.Fatal("Lỗi khởi tạo driver libsql:", err)
+		return nil, fmt.Errorf("failed to initialize libsql driver: %w", err)
 	}
 
-	// 3. Truyền kết nối đó vào GORM
-	// Dùng github.com/glebarez/sqlite thay vì gorm.io/driver/sqlite để tránh CGO
-	var dbErr error
-	database, dbErr = gorm.Open(sqlite.Dialector{Conn: db}, &gorm.Config{})
-
-	if dbErr != nil {
-		log.Fatal("Không thể kết nối GORM với Turso:", dbErr)
+	database, err := gorm.Open(sqlite.Dialector{Conn: db}, &gorm.Config{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect GORM with Turso: %w", err)
 	}
 
-	log.Println("--- Kết nối Turso Cloud thành công! ---")
+	log.Println("Successfully connected to Turso Cloud!")
+	return database, nil
 }
 
-//	@title		My API
-//	@version	1.0
-//	@BasePath	/api/v1
-
-// @securityDefinitions.apikey	BearerAuth
-// @in							header
-// @name						Authorization
-// @description				Type only token (not include Bearer)
-func main() {
-	// Setup Environment Variables
-	env.SetupEnv()
-
-	docs.SwaggerInfo.Host = "localhost:8080"
-	docs.SwaggerInfo.Schemes = []string{"http", "https"}
-
-	// 3. Kết nối bằng GORM
-	ConnectDatabase()
-
-	dbmigrate.InitRedis()
-	defer dbmigrate.CloseRedis()
-
-	log.Println("Successfully connected to Turso!")
-
-	// Run migrations
-	if err := dbmigrate.RunMigrations(database); err != nil {
-		log.Fatal("Failed to run migrations:", err)
-		return
-	}
-
-	// Initialize repositories
-	bookRepo := models.NewBookRepository(database)
-
-	// Start cron jobs
-	jobs.StartScheduler(bookRepo)
-	defer jobs.StopScheduler()
-
-	// Initialize mailer
-	mailClient, mailErr := mail.NewClient(
+func initializeMailClient() (*mail.Client, error) {
+	return mail.NewClient(
 		env.GetEnv(env.MailHost),
 		mail.WithPort(587),
 		mail.WithSMTPAuth(mail.SMTPAuthPlain),
 		mail.WithUsername(env.GetEnv(env.MailAddress)),
-		mail.WithPassword(env.GetEnv(env.MailPassword)))
-	if mailErr != nil {
-		log.Fatal("failed to create mail client:", mailErr)
-		return
-	}
-	mailHandler := handlers.NewMailHandler(mailClient)
-
-	// Initialize repositories (moved up)
-	accountRepo := models.NewAccountRepository(database)
-	OTPRepo := models.NewOTPRepository(database)
-	bookSeriesRepo := models.NewBookSeriesRepository(database)
-	digitalBookRepo := models.NewDigitalBookRepository(database)
-	bookRatingRepo := models.NewBookRatingRepository(database)
-	categoryRepo := models.NewCategoryRepository(database)
-	commentRepo := models.NewCommentRepository(database)
-	featuredGroupRepo := models.NewFeaturedBookGroupRepository(database)
-	authorRepo := models.NewAuthorRepository(database)
-	imageRepo := models.NewImageRepository(database)
-	userBookRepo := models.NewUserBookRepository(database)
-	tagsRepo := models.CreateTagsRepository(database)
-
-	// Init services
-	epubService := services.NewEpubService()
-	userBookService := services.NewUserBookService(bookRepo, accountRepo, userBookRepo)
-	tagsService := services.NewTagsService(tagsRepo)
-	automationService := services.NewAutomationService()
-
-	// Initialize handlers
-	authHandler := handlers.NewAuthHandler(mailHandler, accountRepo, OTPRepo)
-
-	storage := handlers.NewFileStorage(
-		env.GetEnv(env.R1Key),
-		env.GetEnv(env.R1Keypassword),
-		env.GetEnv(env.R1Bucket),
-		env.GetEnv(env.R1Region),
-		env.GetEnv(env.R1Endpoint),
+		mail.WithPassword(env.GetEnv(env.MailPassword)),
 	)
+}
 
-	authorHandler := handlers.NewAuthorHandler(authorRepo)
+func initializeRepositories(db *gorm.DB) map[string]interface{} {
+	return map[string]interface{}{
+		"book":          models.NewBookRepository(db),
+		"account":       models.NewAccountRepository(db),
+		"otp":           models.NewOTPRepository(db),
+		"bookSeries":    models.NewBookSeriesRepository(db),
+		"digitalBook":   models.NewDigitalBookRepository(db),
+		"bookRating":    models.NewBookRatingRepository(db),
+		"category":      models.NewCategoryRepository(db),
+		"comment":       models.NewCommentRepository(db),
+		"featuredGroup": models.NewFeaturedBookGroupRepository(db),
+		"author":        models.NewAuthorRepository(db),
+		"image":         models.NewImageRepository(db),
+		"userBook":      models.NewUserBookRepository(db),
+		"tags":          models.CreateTagsRepository(db),
+	}
+}
 
-	imageProcessor := handlers.NewImageProcessor()
-
-	bookHandler := handlers.NewBooksHandler(handlers.BookParams{
-		BookRepository:          bookRepo,
-		CategoryRepository:      categoryRepo,
-		AuthorRepository:        authorRepo,
-		CommentRepository:       commentRepo,
-		FeaturedGroupRepository: featuredGroupRepo,
-		DigitalBookRepository:   digitalBookRepo,
-		BookSeriesRepository:    bookSeriesRepo,
-		BookRatingRepository:    bookRatingRepo,
-		FileStorage:             storage,
-		ImageProcessor:          imageProcessor,
-		ImageRepository:         imageRepo,
-		EpubService:             epubService,
-	})
-
-	userBookHandler := handlers.NewUserBookHandler(userBookService)
-	tagsHandler := handlers.NewTagsHandler(tagsService)
-	automationHandler := handlers.NewAutomationHandler(automationService, bookRepo, categoryRepo)
-
-	router := gin.Default()
-
-	// Add CORS for all ip - Must be before ErrorHandler
-	router.Use(cors.New(cors.Config{
+func setupCORS() gin.HandlerFunc {
+	return cors.New(cors.Config{
 		AllowOrigins: []string{
 			"http://localhost:5173",
 			"http://localhost:5174",
@@ -174,82 +97,205 @@ func main() {
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
-	}))
+	})
+}
 
-	router.Use(middleware.ErrorHandler())
+func setupAuthRoutes(group *gin.RouterGroup, handler *handlers.AuthHandler) {
+	auth := group.Group("/auth")
+	auth.GET("/me", middleware.RequiredAuth(types.RoleUser, types.RoleAdmin), handler.Me)
+	auth.POST("/login", handler.Login)
+	auth.POST("/signup", handler.SignUp)
+	auth.POST("/ask-reset-password", handler.RequestChangePassword)
+	auth.POST("/verify-OTP", handler.VerifyOTP)
+	auth.POST("/reset-password", handler.ResetPassword)
+}
 
+func setupBookRoutes(group *gin.RouterGroup, handler *handlers.BooksHandler) {
+	book := group.Group("/books")
+	book.GET("", handler.GetBooks)
+	book.GET("/most-viewed", handler.GetMostViewedBooks)
+	book.GET("/featured", handler.GetFeaturedBooks)
+	book.GET("/categories", handler.GetCategories)
+	book.GET("/:id", handler.GetBookByID)
+	book.GET("/authors/:authorID", handler.GetAuthors)
+	book.GET("/:id/comments", handler.GetComments)
+	book.POST("", middleware.RequiredAuth(types.RoleAdmin), handler.CreateBook)
+	book.POST("/create-tool", middleware.RequiredAuth(types.RoleAdmin), handler.CreateBookForTool)
+	book.POST("/test-upload", middleware.RequiredAuth(types.RoleAdmin), handler.TestUpload)
+	book.POST("/test-delete", middleware.RequiredAuth(types.RoleAdmin), handler.TestDelete)
+	book.POST("/:id/comments", middleware.RequiredAuth(types.RoleUser), handler.AddComment)
+	book.POST("/:id/ratings", middleware.RequiredAuth(types.RoleUser), handler.AddRating)
+	book.POST("/:id/view", handler.View)
+	book.PUT("/:id", middleware.RequiredAuth(types.RoleAdmin), handler.UpdateBook)
+	book.DELETE("/:id", middleware.RequiredAuth(types.RoleAdmin), handler.DeleteBook)
+	book.DELETE("/test-delete-folder", handler.TestDeleteFolder)
+}
+
+func setupUserBookRoutes(group *gin.RouterGroup, handler handlers.UserBookHandlerInterface) {
+	userBook := group.Group("/user-books")
+	userBook.POST("", middleware.RequiredAuth(types.RoleUser), handler.AddBookToUser)
+	userBook.GET("", middleware.RequiredAuth(types.RoleUser), handler.GetBooksByUser)
+	userBook.GET("/:bookID", middleware.RequiredAuth(types.RoleUser), handler.FindByID)
+	userBook.DELETE("/:bookID", middleware.RequiredAuth(types.RoleUser), handler.RemoveBookFromUser)
+}
+
+func setupAuthorRoutes(group *gin.RouterGroup, handler *handlers.AuthorHandler) {
+	author := group.Group("/authors")
+	author.GET("", handler.GetAll)
+	author.POST("", handler.Create)
+}
+
+func setupTagRoutes(group *gin.RouterGroup, handler handlers.TagsHandlerInterface) {
+	tags := group.Group("/tags")
+	tags.GET("", handler.GetAll)
+}
+
+func setupAutomationRoutes(group *gin.RouterGroup, handler handlers.AutomationHandlerInterface) {
+	automation := group.Group("/automation")
+	automation.POST("task", middleware.RequiredAuth(types.RoleAdmin), handler.Task)
+	automation.POST("book-processing", middleware.RequiredAuth(types.RoleAdmin), handler.BookProcessing)
+}
+
+func initializeQueueClient() *queue.Client {
+	redisAddr := os.Getenv("REDIS_HOST")
+	if redisAddr == "" {
+		redisAddr = "localhost:6379"
+	}
+	redisPassword := os.Getenv("REDIS_PASSWORD")
+
+	return queue.NewClient(redisAddr, redisPassword)
+}
+
+func initializeQueueServer() *queue.Server {
+	redisAddr := os.Getenv("REDIS_HOST")
+	if redisAddr == "" {
+		redisAddr = "localhost:6379"
+	}
+	redisPassword := os.Getenv("REDIS_PASSWORD")
+
+	server := queue.NewServer(queue.ServerConfig{
+		RedisAddr:     redisAddr,
+		RedisPassword: redisPassword,
+		Concurrency:   2,
+		Queues: map[string]int{
+			"critical": 6,
+			"default":  3,
+			"low":      1,
+		},
+	})
+
+	// Register handlers
+	server.RegisterHandler(queue.TypeEmailDelivery, queue.NewEmailHandler())
+	server.RegisterHandler(queue.TypeBookProcess, queue.NewBookProcessHandler())
+	server.RegisterHandler(queue.TypeImageResize, queue.NewImageResizeHandler())
+
+	return server
+}
+
+//	@title		My API
+//	@version	1.0
+//	@BasePath	/api/v1
+
+// @securityDefinitions.apikey	BearerAuth
+// @in							header
+// @name						Authorization
+// @description				Type only token (not include Bearer)
+func main() {
+	env.SetupEnv()
+
+	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
-	v1 := router.Group("/api/v1")
-	{
-		// Auth routes
-		auth := v1.Group("/auth")
-		{
-			auth.GET("/me",
-				middleware.RequiredAuth(types.RoleUser, types.RoleAdmin),
-				authHandler.Me)
-			auth.POST("/login", authHandler.Login)
-			auth.POST("/signup", authHandler.SignUp)
-			auth.POST("/ask-reset-password", authHandler.RequestChangePassword)
-			auth.POST("/verify-OTP", authHandler.VerifyOTP)
-			auth.POST("/reset-password", authHandler.ResetPassword)
-		}
-
-		// Book routes
-		book := v1.Group("/books")
-		{
-			book.GET("", bookHandler.GetBooks)
-			book.POST("/create-tool", middleware.RequiredAuth(types.RoleAdmin), bookHandler.CreateBookForTool)
-			book.POST("/test-upload", middleware.RequiredAuth(types.RoleAdmin), bookHandler.TestUpload)
-			book.POST("/test-delete", middleware.RequiredAuth(types.RoleAdmin), bookHandler.TestDelete)
-			book.DELETE("/test-delete-folder", bookHandler.TestDeleteFolder)
-			book.GET("/most-viewed", bookHandler.GetMostViewedBooks)
-			book.GET("/:id", bookHandler.GetBookByID)
-			book.POST("", middleware.RequiredAuth(types.RoleAdmin), bookHandler.CreateBook)
-			book.GET("/featured", bookHandler.GetFeaturedBooks)
-			book.GET("/categories", bookHandler.GetCategories)
-			book.GET("/authors/:authorID", bookHandler.GetAuthors)
-			book.POST("/:id/comments", middleware.RequiredAuth(types.RoleUser), bookHandler.AddComment)
-			book.POST("/:id/ratings", middleware.RequiredAuth(types.RoleUser), bookHandler.AddRating)
-			book.GET("/:id/comments", bookHandler.GetComments)
-			book.DELETE("/:id", middleware.RequiredAuth(types.RoleAdmin), bookHandler.DeleteBook)
-			book.PUT("/:id", middleware.RequiredAuth(types.RoleAdmin), bookHandler.UpdateBook)
-			book.POST("/:id/view", bookHandler.View)
-		}
-
-		// UserBook routes
-		userBook := v1.Group("/user-books")
-		{
-			userBook.POST("", middleware.RequiredAuth(types.RoleUser), userBookHandler.AddBookToUser)
-			userBook.DELETE("/:bookID", middleware.RequiredAuth(types.RoleUser), userBookHandler.RemoveBookFromUser)
-			userBook.GET("", middleware.RequiredAuth(types.RoleUser), userBookHandler.GetBooksByUser)
-			userBook.GET("/:bookID", middleware.RequiredAuth(types.RoleUser), userBookHandler.FindByID)
-		}
-
-		// Author routes
-		author := v1.Group("/authors")
-		{
-			author.GET("", authorHandler.GetAll)
-			author.POST("", authorHandler.Create)
-		}
-
-		// Tag routes
-		tags := v1.Group("/tags")
-		{
-			tags.GET("", tagsHandler.GetAll)
-		}
-
-		// Automation routes
-		automation := v1.Group("/automation")
-		{
-			automation.POST("task", middleware.RequiredAuth(types.RoleAdmin), automationHandler.Task)
-		}
-
+	db, err := connectDatabase()
+	if err != nil {
+		log.Fatal("Database connection failed:", err)
 	}
+
+	dbmigrate.InitRedis()
+	defer dbmigrate.CloseRedis()
+
+	if err := dbmigrate.RunMigrations(db); err != nil {
+		log.Fatal("Failed to run migrations:", err)
+	}
+
+	repos := initializeRepositories(db)
+
+	jobs.StartScheduler(repos["book"].(*models.BookRepository))
+	defer jobs.StopScheduler()
+
+	// Initialize queue client and server
+	queueClient := initializeQueueClient()
+	defer queueClient.Close()
+
+	queueServer := initializeQueueServer()
+	go func() {
+		if err := queueServer.Start(); err != nil {
+			log.Fatal("Failed to start queue server:", err)
+		}
+	}()
+	defer queueServer.Shutdown()
+
+	mailClient, err := initializeMailClient()
+	if err != nil {
+		log.Fatal("Failed to create mail client:", err)
+	}
+
+	mailHandler := handlers.NewMailHandler(mailClient)
+	authHandler := handlers.NewAuthHandler(mailHandler, repos["account"].(*models.AccountRepository), repos["otp"].(*models.OTPRepository))
+
+	storage := handlers.NewFileStorage(
+		env.GetEnv(env.R1Key),
+		env.GetEnv(env.R1Keypassword),
+		env.GetEnv(env.R1Bucket),
+		env.GetEnv(env.R1Region),
+		env.GetEnv(env.R1Endpoint),
+	)
+
+	bookHandler := handlers.NewBooksHandler(handlers.BookParams{
+		BookRepository:          repos["book"].(*models.BookRepository),
+		CategoryRepository:      repos["category"].(*models.CategoryRepository),
+		AuthorRepository:        repos["author"].(*models.AuthorRepository),
+		CommentRepository:       repos["comment"].(*models.CommentRepository),
+		FeaturedGroupRepository: repos["featuredGroup"].(*models.FeaturedBookGroupRepository),
+		DigitalBookRepository:   repos["digitalBook"].(*models.DigitalBookRepository),
+		BookSeriesRepository:    repos["bookSeries"].(*models.BookSeriesRepository),
+		BookRatingRepository:    repos["bookRating"].(*models.BookRatingRepository),
+		FileStorage:             storage,
+		ImageProcessor:          handlers.NewImageProcessor(),
+		ImageRepository:         repos["image"].(*models.ImageRepository),
+		EpubService:             services.NewEpubService(),
+	})
+
+	userBookService := services.NewUserBookService(
+		repos["book"].(*models.BookRepository),
+		repos["account"].(*models.AccountRepository),
+		repos["userBook"].(*models.UserBookRepository),
+	)
+	userBookHandler := handlers.NewUserBookHandler(userBookService)
+
+	authorHandler := handlers.NewAuthorHandler(repos["author"].(*models.AuthorRepository))
+	tagsHandler := handlers.NewTagsHandler(services.NewTagsService(repos["tags"].(models.TagsRepository)))
+	automationHandler := handlers.NewAutomationHandler(
+		services.NewAutomationService(queueClient, repos["book"].(*models.BookRepository)),
+		repos["book"].(*models.BookRepository),
+		repos["category"].(*models.CategoryRepository),
+	)
+
+	router := gin.Default()
+	router.Use(setupCORS())
+	router.Use(middleware.ErrorHandler())
+
+	v1 := router.Group("/api/v1")
+	setupAuthRoutes(v1, authHandler)
+	setupBookRoutes(v1, bookHandler)
+	setupUserBookRoutes(v1, userBookHandler)
+	setupAuthorRoutes(v1, authorHandler)
+	setupTagRoutes(v1, tagsHandler)
+	setupAutomationRoutes(v1, automationHandler)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, ginSwagger.PersistAuthorization(true)))
 
-	// Ping GoDoc
 	//	@Summary	Ping the server
 	//	@Schemes
 	//	@Description	Ping the server to check if it's alive
@@ -259,14 +305,10 @@ func main() {
 	//	@Success		200	{object}	map[string]string
 	//	@Router			/ping [get]
 	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong🚀 hehe",
-		})
+		c.JSON(200, gin.H{"message": "pong🚀 hehe"})
 	})
 
-	errRun := router.Run() // listens on 0.0.0.0:8080 by default
-	if errRun != nil {
-		log.Fatal(errRun)
+	if err := router.Run(); err != nil {
+		log.Fatal(err)
 	}
-
 }

@@ -1,6 +1,6 @@
 import {Breadcrumbs, Button, Table} from "@heroui/react";
 import {getBooksById} from "@/app/api";
-import BookInformation from "@/app/components/BookInformation";
+import BookInformation from "@/app/(views)/books/[bookID]/components/BookInformation";
 import prettyBytes from "pretty-bytes";
 import {FileTypeKey, FileTypes} from "@/app/api/types";
 import {getFullUrl} from "@/app/helpers";

@@ -16,48 +16,51 @@ type Props = {
 }
 
 export default function FeaturedBooks({title, description, books, href = "/books"}: Props) {
-    const [emblaRef, emblaApi] = useEmblaCarousel({align: 'start', dragFree: true});
+    const [emblaRef, emblaApi] = useEmblaCarousel({
+        align: 'start',
+        dragFree: true,
+        containScroll: 'trimSnaps' // UX: Không cho phép scroll lố ở cuối danh sách
+    });
 
     const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
     const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
 
     return (
-        <section className="relative">
-            {/* Header */}
-            <div className="flex justify-between items-end mb-6">
-                <div>
-                    <h3 className="text-base lg:text-2xl font-bold text-wave-bold">{title}</h3>
+        <section className="group/section relative py-4">
+            {/* Header: Cân đối lại size chữ và khoảng cách */}
+            <div className="flex justify-between items-center mb-6">
+                <div className="space-y-1">
+                    <h3 className="text-xl lg:text-2xl font-bold tracking-tight text-gray-900">{title}</h3>
                     {description && <p className="text-gray-500 text-sm">{description}</p>}
                 </div>
-                <Link href={href} className="text-primary hover:underline text-sm font-medium">
-                    Xem tất cả
+                <Link href={href} className="text-sm font-semibold">
+                    Xem tất cả →
                 </Link>
             </div>
 
             {/* Carousel Container */}
-            <div className="relative">
-                {/* Nút Prev */}
+            <div className="relative overflow-visible">
+                {/* Nút Prev: Chỉnh vị trí ra ngoài mép một chút và đổ bóng */}
                 <Button
                     onClick={scrollPrev}
                     isIconOnly
-                    size='lg'
-                    variant='ghost'
-                    className="hidden lg:flex absolute top-1/2 -translate-y-10/12 z-10 bg-gray-100"
+                    variant='secondary'
+                    className="hidden lg:flex absolute top-1/2 -left-5 -translate-y-1/2 z-20 shadow-lg opacity-0 group-hover/section:opacity-100 transition-opacity"
                 >
-                    <ChevronLeft size={20}/>
+                    <ChevronLeft size={24}/>
                 </Button>
 
                 <div className="overflow-hidden" ref={emblaRef}>
-                    <div className="flex gap-4 md:gap-6">
+                    <div className="flex gap-4 lg:gap-5">
                         {books?.map((book: ModelsBook) => (
                             <div
                                 key={book.id}
-                                // MOBILE: 2 cuốn (50% - gap)
-                                // TABLET/DESKTOP: 4 cuốn (25%)
-                                // LG trở lên: 6 cuốn (16.66%)
-                                className="flex-[0_0_calc(50%-8px)] md:flex-[0_0_calc(25%-12px)] lg:flex-[0_0_calc(16.66%-20px)] min-w-0"
+                                // Responsive: Mobile 2.2 cuốn (để người dùng biết còn có thể scroll tiếp)
+                                className="flex-[0_0_calc(45%)] md:flex-[0_0_calc(25%-15px)] lg:flex-[0_0_calc(16.66%-17px)] min-w-0"
                             >
-                                <BookCard book={book}/>
+                                <div className="transition-transform duration-300 hover:-translate-y-2">
+                                    <BookCard book={book}/>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -66,12 +69,11 @@ export default function FeaturedBooks({title, description, books, href = "/books
                 {/* Nút Next */}
                 <Button
                     onClick={scrollNext}
-                    variant='ghost'
-                    size='lg'
                     isIconOnly
-                    className="hidden lg:flex absolute top-1/2 right-0 -translate-y-10/12 z-10 p-2 bg-gray-100"
+                    variant='secondary'
+                    className="hidden lg:flex absolute top-1/2 -right-5 -translate-y-1/2 z-20 shadow-lg opacity-0 group-hover/section:opacity-100 transition-opacity"
                 >
-                    <ChevronRight size={20}/>
+                    <ChevronRight size={24}/>
                 </Button>
             </div>
         </section>

@@ -8,7 +8,8 @@ enum FontValues {
     small = "small",
     medium = "medium",
     large = "large",
-    xlarge = "xlarge"
+    xlarge = "xlarge",
+    xxlarge = "xxlarge",
 }
 
 interface Theme {
@@ -56,7 +57,11 @@ const fonts: Font[] = [
     {
         code: FontValues.xlarge,
         value: 20,
-    }
+    },
+    {
+        code: FontValues.xxlarge,
+        value: 24,
+    },
 ]
 
 export type {Theme, Font};

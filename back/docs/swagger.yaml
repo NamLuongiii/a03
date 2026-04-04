@@ -511,6 +511,23 @@ paths:
       summary: Create a new author
       tags:
       - Authors
+  /automation/book-processing:
+    post:
+      consumes:
+      - application/json
+      description: Book processing
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CommonResponse'
+      security:
+      - BearerAuth: []
+      summary: Book processing
+      tags:
+      - Automation
   /automation/task:
     post:
       consumes:

@@ -2,7 +2,7 @@ import {getFullUrl} from "@/app/helpers";
 import Link from "next/link";
 import {Button} from "@heroui/react";
 import {DownloadIcon} from "lucide-react";
-import SaveBook from "@/app/components/SaveBook";
+import SaveBook from "@/app/(views)/books/[bookID]/components/SaveBook";
 import {ModelsBook} from "@/app/api";
 
 type Props = {
@@ -39,8 +39,8 @@ export default function BookInformation({book}: Props) {
         {/* CỘT PHẢI: Thông tin sách & Nút Tải về */}
         <div className="col-span-1 md:col-span-8 lg:col-span-9 flex flex-col gap-5">
             {/* Tên & Tác giả */}
-            <div>
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-1">{book.name}</h2>
+            <div className='space-y-1'>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{book.name}</h2>
                 <p className="text-sm text-default-500">
                     <Link
                         href={`/authors/${book.author_id}`}
@@ -49,6 +49,18 @@ export default function BookInformation({book}: Props) {
                     </Link>
                 </p>
             </div>
+
+            {!!book.category && (
+                <div>
+                    <small>Danh mục</small>
+                    <br/>
+                    <Link href={`/categories/${book.category_id}`}>
+                        {book.category?.name}
+                    </Link>
+                    <br/>
+                    <small>Xem thêm sách trong thư mục này</small>
+                </div>
+            )}
 
             {/* Thống kê */}
             <div className="flex flex-wrap gap-4">

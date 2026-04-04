@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"log"
 	"quickstart/env"
+	"quickstart/models"
+	"quickstart/queue"
+	"quickstart/types"
 
 	"google.golang.org/genai"
 )
@@ -27,14 +30,17 @@ type AutomationServiceInterface interface {
 		books []BookInput,
 		categories []string,
 	) ([]BookClassification, error)
+	ProcessingBook() (bool, error)
 }
 
 type AutomationServiceImpl struct {
-	client *genai.Client
-	model  string
+	client         *genai.Client
+	model          string
+	queueClient    *queue.Client
+	bookRepository models.BookRepositoryInterface
 }
 
-func NewAutomationService() AutomationServiceInterface {
+func NewAutomationService(queueClient *queue.Client, bookRepository models.BookRepositoryInterface) AutomationServiceInterface {
 	key := env.GetEnv(env.GEMINI_KEY)
 	modelName := env.GetEnv(env.GEMINI_MODEL)
 	ctx := context.Background()
@@ -49,8 +55,10 @@ func NewAutomationService() AutomationServiceInterface {
 	}
 
 	return &AutomationServiceImpl{
-		client: client,
-		model:  modelName,
+		client:         client,
+		model:          modelName,
+		queueClient:    queueClient,
+		bookRepository: bookRepository,
 	}
 }
 
@@ -106,4 +114,34 @@ func (a *AutomationServiceImpl) AutomateCategories(ctx context.Context, books []
 	}
 
 	return result, nil
+}
+
+// ProcessingBook Create job book processing and add to queue
+func (a *AutomationServiceImpl) ProcessingBook() (bool, error) {
+	books, e := a.bookRepository.GetAll(types.PaginationParams{
+		Page: 1,
+		Size: 24,
+	})
+
+	if e != nil {
+		return false, e
+	}
+
+	for _, b := range books.Items.([]models.Book) {
+		task, e := queue.NewBookProcessTask(b.ID)
+		if e != nil {
+			fmt.Println(e)
+			continue
+		}
+
+		info, err := a.queueClient.Enqueue(task)
+		if err != nil {
+			// handle error
+			fmt.Println(err)
+			continue
+		}
+
+		fmt.Println("Enqueue success", info.ID)
+	}
+	return true, nil
 }

@@ -333,6 +333,34 @@ const docTemplate = `{
                 }
             }
         },
+        "/automation/book-processing": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Book processing",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Automation"
+                ],
+                "summary": "Book processing",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CommonResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/automation/task": {
             "post": {
                 "security": [

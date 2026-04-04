@@ -90,6 +90,13 @@ export default async function HomePage() {
                 </div>
             </div>
 
+            {/*Hero section*/}
+            <div className='p-4 text-center'>
+                <h3>Đọc luôn là trang web dành cho bạn đọc</h3>
+                <p>Đọc sách trực tiếp trên trình duyệt miễn phí</p>
+                <div>Ngoài ra bạn đọc có thể tải file sách về để đọc trên các trình đọc khác</div>
+            </div>
+
             {/* 2. Truyền dữ liệu vào component FeaturedBooks bạn vừa viết */}
             <FeaturedBooks
                 title="Sách mới nhất"

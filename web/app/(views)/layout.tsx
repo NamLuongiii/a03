@@ -1,5 +1,6 @@
-import Navbar from "@/app/components/Navbar";
-import SavedBook from "@/app/components/SavedBooks";
+import Navbar from "@/app/components/layout/Navbar";
+import SavedBook from "@/app/(views)/homepage/SavedBooks";
+import Link from "next/link";
 
 export default function ViewsLayout({children}: { children: React.ReactNode }) {
     return (
@@ -16,9 +17,26 @@ export default function ViewsLayout({children}: { children: React.ReactNode }) {
 
                 {/* Sidebar bên phải */}
                 <aside className="w-full lg:w-80 space-y-6 self-start hidden lg:block">
-
                     {/* Widget 1: Ví dụ Sách đang đọc */}
                     <SavedBook/>
+
+                    <div className='space-y-2'>
+                        <h3 className='text-center'>Trính đoạn</h3>
+                        <blockquote className='text-sm text-justify'>
+                            Chúng ta là những hòn đá ít nữa sẽ gắn thành tường
+                            <br/>
+                            Làm lâu đài, nhà kho, đền chùa hay là nhà tù.
+                            <br/>
+                            Lời ghi trên đá
+                            <br/>
+                            Đá quý phải xem trong khung, nhìn người phải nhìn trong nhà.
+                            <br/>
+                            Khi đám cưới đã xong - Cần phải dựng nhà.
+                            <br/>
+                        </blockquote>
+                        <Link href="/book/dagestan-cua-toi"><small>Dagestan Của Tôi</small></Link>
+
+                    </div>
                 </aside>
             </main>
 

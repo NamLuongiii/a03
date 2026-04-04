@@ -13,6 +13,7 @@ import (
 
 type AutomationHandlerInterface interface {
 	Task(c *gin.Context)
+	BookProcessing(c *gin.Context)
 }
 
 type AutomationHandler struct {
@@ -148,4 +149,27 @@ func (a *AutomationHandler) getCategoriesData() ([]string, map[string]string, er
 	}
 
 	return cates, cateMap, nil
+}
+
+// BookProcessing godoc
+//
+//	@Summary		Book processing
+//	@Description	Book processing
+//	@Tags			Automation
+//	@Accept			json
+//	@Produce		json
+//	@Router			/automation/book-processing [post]
+//	@Security		BearerAuth
+//	@Success		200		{object}	types.CommonResponse{}
+func (a *AutomationHandler) BookProcessing(c *gin.Context) {
+	v, e := a.automationService.ProcessingBook()
+	if e != nil {
+		c.Error(e)
+		return
+	}
+
+	c.JSON(200, types.CommonResponse{
+		Success: true,
+		Data:    v,
+	})
 }
