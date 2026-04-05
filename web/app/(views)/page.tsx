@@ -1,9 +1,10 @@
-export const revalidate = 12000;
-
+import {Center} from "@/app/components/ui/Center";
 import {getBooks, getBooksFeatured, ModelsBook} from "@/app/api";
 import FeaturedBooks from "@/app/components/FeaturedBooks";
 import Link from "next/link";
 import {BOOK_CATEGORIES} from "@/app/api/types";
+
+export const revalidate = 12000;
 
 
 export default async function HomePage() {
@@ -91,10 +92,13 @@ export default async function HomePage() {
             </div>
 
             {/*Hero section*/}
-            <div className='p-4 text-center'>
-                <h3>Đọc luôn là trang web miễn phí dành cho bạn đọc</h3>
+            <Center>
+                <h3>
+                    <strong className='text-wave-bold mr-2'><i>Đọc luôn</i> </strong>
+                    là trang web miễn phí dành cho bạn đọc
+                </h3>
                 <p>Đọc trực tiếp trên trình duyệt hoặc tải sách về</p>
-            </div>
+            </Center>
 
             {/* 2. Truyền dữ liệu vào component FeaturedBooks bạn vừa viết */}
             <FeaturedBooks

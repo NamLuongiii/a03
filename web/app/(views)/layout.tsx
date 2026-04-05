@@ -1,6 +1,7 @@
 import Navbar from "@/app/components/layout/Navbar";
 import SavedBook from "@/app/(views)/homepage/SavedBooks";
-import Link from "next/link";
+import {Blockquote} from "@/app/components/ui/Blockquote";
+import {Center} from "@/app/components/ui/Center";
 
 export default function ViewsLayout({children}: { children: React.ReactNode }) {
     return (
@@ -16,39 +17,34 @@ export default function ViewsLayout({children}: { children: React.ReactNode }) {
                 </section>
 
                 {/* Sidebar bên phải */}
-                <aside className="w-full lg:w-80 space-y-6 self-start hidden lg:block">
+                <aside className="w-full lg:w-80 space-y-6 self-start hidden lg:block sticky top-20">
                     {/* Widget 1: Ví dụ Sách đang đọc */}
                     <SavedBook/>
 
-                    <div className='space-y-2'>
-                        <h3 className='text-center'>Trích đoạn</h3>
-                        <p className='text-sm'>
-                            Chúng ta là những hòn đá ít nữa sẽ gắn thành tường
-                            <br/>
-                            Làm lâu đài, nhà kho, đền chùa hay là nhà tù.
-                            <br/>
-                            Lời ghi trên đá
-                            <br/>
-                            Đá quý phải xem trong khung, nhìn người phải nhìn trong nhà.
-                            <br/>
-                            Khi đám cưới đã xong - Cần phải dựng nhà.
-                            <br/>
-                        </p>
-                        <Link href="/book/dagestan-cua-toi"><small>Dagestan Của Tôi</small></Link>
-
-                    </div>
+                    <Blockquote cite='Dagestan Của Tôi'>
+                        Chúng ta là những hòn đá ít nữa sẽ gắn thành tường
+                        <br/>
+                        Làm lâu đài, nhà kho, đền chùa hay là nhà tù.
+                        <br/>
+                        Lời ghi trên đá
+                        <br/>
+                        Đá quý phải xem trong khung, nhìn người phải nhìn trong nhà.
+                        <br/>
+                        Khi đám cưới đã xong - Cần phải dựng nhà.
+                        <br/>
+                    </Blockquote>
                 </aside>
             </main>
 
-            <footer className="w-full flex flex-col items-center gap-2 py-3 border-t">
-                <div className="text-xs lg:text-sm text-default-400 text-center">
-                    <p>Toàn bộ sách được sưu tập trên mạng</p>
-                    <p>Mọi vấn đề về bản quyền vui lòng liên hệ với chúng tôi qua email</p>
-                    <p><i>docluonbook@gmail.com</i></p>
-                </div>
-                <small className="text-small text-default-400 text-center">
-                    © 2026
-                </small>
+            <footer>
+                <Center>
+                    <small>Toàn bộ sách được sưu tập trên mạng</small>
+                    <small>Mọi vấn đề về bản quyền vui lòng liên hệ với chúng tôi qua email</small>
+                    <small><i>docluonbook@gmail.com</i></small>
+                    <small className="text-small text-default-400 text-center">
+                        © 2026
+                    </small>
+                </Center>
             </footer>
         </div>
     );

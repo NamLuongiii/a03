@@ -8,7 +8,7 @@ import {deleteCookie} from "cookies-next";
 import {useMe} from "@/app/hooks/useMe";
 import Avatar from "boring-avatars";
 import {useState} from "react";
-import {LogOutIcon, MenuIcon, SearchIcon, UserIcon} from "lucide-react";
+import {ChevronDown, LogOutIcon, MenuIcon, SearchIcon, UserIcon} from "lucide-react";
 import MobileOverlay from "@/app/components/ui/MobileOverlay";
 import Search from "@/app/components/layout/Search";
 
@@ -23,7 +23,7 @@ function DesktopNavbar({categories, me, logout}: Props) {
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="hidden md:flex mx-auto h-16 items-center justify-between px-4 gap-4 max-page-width">
+        <div className="hidden md:flex mx-auto max-page-width items-center justify-between p-4 gap-4">
             {/* Logo */}
             <Link href="/" className="text-xl font-bold tracking-tighter text-primary shrink-0">
                 Đọc Luôn
@@ -31,7 +31,9 @@ function DesktopNavbar({categories, me, logout}: Props) {
 
             {/* Categories + Search */}
             <Dropdown>
-                <Button variant="tertiary" className='ml-auto'>Thể loại</Button>
+                <Button variant="tertiary" className='ml-auto'>Thể loại
+                    <ChevronDown/>
+                </Button>
                 <DropdownPopover>
                     <DropdownMenu
                         aria-label="Categories"

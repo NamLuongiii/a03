@@ -11,10 +11,11 @@ export const BookCard = ({book}: Props) => (
         <div className='space-y-2'>
             {/* 3. Bìa sách ratio 1.6/1 */}
             <div
-                className="relative w-full aspect-[1/1.6] overflow-hidden group-hover:shadow-xl transition-shadow duration-300">
+                className="relative w-full">
                 {book.cover?.md && (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
-                        className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+                        className="object-cover w-full h-full"
                         src={getFullUrl(book.cover?.md) || "/placeholder-book.jpg"}
                         alt={book.name || "Book Cover"}
                     />
