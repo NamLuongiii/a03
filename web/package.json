@@ -31,7 +31,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-headroom": "^3.2.1",
-    "react-hook-form": "^7.71.2"
+    "react-hook-form": "^7.71.2",
+    "use-debounce": "^10.1.1"
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "0.93.1",

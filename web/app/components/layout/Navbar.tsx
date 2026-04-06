@@ -1,5 +1,5 @@
 'use client';
-import {Button, Dropdown, DropdownItem, DropdownMenu, DropdownPopover, DropdownTrigger, Modal,} from "@heroui/react";
+import {Button, Dropdown, DropdownItem, DropdownMenu, DropdownPopover, DropdownTrigger,} from "@heroui/react";
 import Link from "next/link";
 import {usePathname, useRouter} from "next/navigation";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
@@ -11,6 +11,8 @@ import {useState} from "react";
 import {ChevronDown, LogOutIcon, MenuIcon, SearchIcon, UserIcon} from "lucide-react";
 import MobileOverlay from "@/app/components/ui/MobileOverlay";
 import Search from "@/app/components/layout/Search";
+import Image from "next/image";
+import SearchDesktop from "@/app/components/layout/SearchDesktop";
 
 type Props = {
     categories: ModelsCategory[],
@@ -23,11 +25,15 @@ function DesktopNavbar({categories, me, logout}: Props) {
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="hidden md:flex mx-auto max-page-width items-center justify-between p-4 gap-4">
+        <div className="hidden md:flex mx-auto max-page-width items-center justify-between px-4 py-1 gap-4">
             {/* Logo */}
             <Link href="/" className="text-xl font-bold tracking-tighter text-primary shrink-0">
-                Đọc Luôn
+                <Image
+                    src="/logo.png"
+                    alt="Logo" width={120} height={60} className="mr-2 inline-block"/>
             </Link>
+
+            <SearchDesktop/>
 
             {/* Categories + Search */}
             <Dropdown>
@@ -53,26 +59,6 @@ function DesktopNavbar({categories, me, logout}: Props) {
                     </DropdownMenu>
                 </DropdownPopover>
             </Dropdown>
-
-            <Button isIconOnly variant='ghost' onClick={() => setOpen(true)}>
-                <SearchIcon/>
-            </Button>
-
-            <Modal isOpen={open} onOpenChange={setOpen}>
-                <Modal.Backdrop>
-                    <Modal.Container placement='top'>
-                        <Modal.Dialog>
-                            <Modal.CloseTrigger/>
-                            <Modal.Header>
-                                <Modal.Heading>Tìm kiếm</Modal.Heading>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Search onClose={() => setOpen(false)}/>
-                            </Modal.Body>
-                        </Modal.Dialog>
-                    </Modal.Container>
-                </Modal.Backdrop>
-            </Modal>
 
             {/* Avatar / Login */}
             <div className="flex items-center gap-2">
@@ -117,7 +103,9 @@ function MobileNavbar({categories, me, logout}: Props) {
             {/* Logo */}
             <Link href="/" className="text-sm font-bold tracking-tighter block mr-auto"
                   onClick={() => selectCate({id: '/books',})}>
-                Đọc Luôn
+                <Image
+                    src="/logo.png"
+                    alt="Logo" width={60} height={30} className="mr-2 inline-block"/>
             </Link>
 
             {me ? <Link href='/profile' className='block'>
